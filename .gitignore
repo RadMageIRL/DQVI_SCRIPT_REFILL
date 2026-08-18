@@ -10,3 +10,7 @@
 *.srm
 *.txt
 *.dmp
+
+# python bytecode
+__pycache__/
+*.pyc

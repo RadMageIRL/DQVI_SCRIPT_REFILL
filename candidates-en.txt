@@ -1,0 +1,2623 @@
+DQ6 Script Refill - the 421 authored messages
+==================================================================
+
+Message ID, the English written for it, and where one exists, the reasoning
+or the precedent in NoPrgress's own script that it follows.
+
+NOTATION
+  |  page break     /  line break     {XX}  a control code
+  {C0} {C9} {D3} and similar are runtime name inserts: the game substitutes
+  a party member's name, so the text around them has to read correctly
+  whatever the player called that character.
+
+This file carries no Japanese. The source text belongs to Enix and the
+translation to NoPrgress; anyone wanting to compare can decode both ROMs
+with the published tooling. Where a note needed to quote the Japanese to
+explain a choice, the quote is romanized.
+
+==================================================================
+IDs 2894-2912   (19 messages)
+==================================================================
+
+---- 2894
+  I don't know why, but as the days pass, the unease in my chest keeps growing.
+     | 
+     / As if some enormous evil were growing too, little by little.
+  -- the scene-opening dread line; JP kyodai na aku kept concrete ("enormous evil").
+
+---- 2895
+  They say one of the legendary arms, the Armor of Orgo, is somewhere in the world.
+     | 
+     / I'll bet it's nothing like this ratty old armor of mine.
+  -- THE ARMOR OF ORGO, their form (5188, 5986), corrected 2026-08-18 from the possessive form, after all four legendary arms were catalogued. "legendary arms" is their term (543, 287).
+
+---- 2896
+  Looks like Rand went off to Tania's place again.
+     | 
+     / Well, Tania would make a fine wife. You won't hear me complain!
+  -- ore wa dai-sansei sa rendered idiomatic ("You won't hear me complain!") to keep the speaker's easy approval.
+
+---- 2897
+  At last, a girl to take over the weaving! It does my heart good.
+  -- the old weaver; Judy is taking over the loom (Tania's craft).
+
+---- 2898
+  That's it! Pass the thread through there. Now! put your back into it!!
+  -- koshi wo ireru = "put your back into it"; the weaving instructor mid-lesson. TIC at "Now!" mirrors JP imperative break hora!
+
+---- 2899
+  {D4}Judy{SPK}Let's see! the thread goes here, and then, like this,
+     / and CLACK!
+  -- gikkon (loom-clack onomatopoeia) rendered CLACK; the thread glyph is the low-confidence derived glyph, flagged in the map.
+
+---- 2900
+  {D4}Judy{SPK}Don't talk to me now! You'll make me slip up, oh?
+  -- her interruption beat: annoyance pivoting to recognition ("...oh?") sets up 2901.
+
+---- 2901
+  {D4}Judy{SPK}Well, if it isn't {C9}! Where have you been all this time?
+     | 
+     / {D4}Judy{SPK}More importantly!
+     / look at me working the loom! Pretty ladylike, right? Heehee.
+  -- hataori-sugata = "me, working the loom"; onnanoko-ppoi kept girlish, ufufu = Heehee. TIC at "look!" where JP breaks sore yori dou?
+
+---- 2902
+  Hmmm. Rand or {C9}!
+     / now which of them suits our little Tania better?
+  -- name-token line kept short; Tania-chan = "our little Tania" for the villager's fondness. TIC mirrors JP mid-thought break.
+
+---- 2903
+  My husband's acting strange.
+     / Mention {C9}, and he just says forget about him.
+     | 
+     / What could {C9} have done, I wonder?
+  -- restructured with {AD} so the name-token segment stays under 60 visible chars (the husband beat).
+
+---- 2904
+  {D4}Elder{SPK}Oh! {C9}! Welcome back.
+     / I never thought you'd return to the village.
+     | 
+     / {D4}Elder{SPK}The king's messenger told us everything.
+     / I suppose I shouldn't call you plain {C9} anymore.
+     | 
+     / {D4}Elder{SPK}At any rate, you belong to a bigger world than this village now.
+     / Give my regards to your father.
+  -- Elder is their Lifecod term. yobisute = "call you plain {C9}" - the prince reveal without saying prince. {AD} splits added to honor the name-token and segment caps.
+
+---- 2905
+  {D4}Rand{SPK}I see, so I can't take {C9}'s place after all.
+  -- Rand's quiet defeat; kept clipped per his character notes.
+
+---- 2906
+  {D4}{D9}Tania{SPK}No, that's not it, Rand. You're you. And {C9} is!
+     | 
+     / {D4}{D9}Tania{SPK}{C9} is my big brother,
+     / so I don't need anyone to replace him.
+     | 
+     / {D4}{D9}Tania{SPK}Rand. Just stay the way you are.
+  -- the run's emotional center. nii-chan = "my big brother" - their corpus confirms the sibling framing ("Ever since Tania found you wounded"). The JP stumbles ({C9}nii-chan wa…… / {C9}nii-chan da shi……) are kept as trailing ellipses across the page break.
+
+---- 2907
+  {D4}Rand{SPK}Huh? Tania!
+     / does that mean, um, that is!
+  -- Rand missing the point; TIC at "Tania!" where JP breaks eeto…tsumari…。
+
+---- 2908
+  {D4}Tania{SPK}Ah! {C9}! Welcome home, no, welcome!
+     | 
+     / {D4}Tania{SPK}Thank you for coming. I'm so happy.
+     | 
+     / {D4}Tania{SPK}Stay a while, won't you? I want to hear all about your travels!
+  -- okaeri…uun irasshai = "Welcome home... no, welcome!" - she corrects herself because he no longer lives here. Load-bearing, do not smooth.
+
+---- 2909
+  {D4}Tania{SPK}{C9}!
+     / where are you now? What are you doing, I wonder.
+  -- Tania alone; soft repetition of ellipses per JP.
+
+---- 2910
+  {D4}Rand{SPK}{C9}!
+     | 
+     / {D4}Rand{SPK}Why!? Why did you have to go off on some journey!?
+     | 
+     / {D4}Rand{SPK}Don't you care about Tania at all?
+  -- Rand's outburst, three pages preserved.
+
+---- 2911
+  {D4}Rand{SPK}Hah! You really have changed.
+  -- han! = "Hah!"
+
+---- 2912
+  {D4}Rand{SPK}Then why!
+  -- cut-off line - the JP ends mid-sentence into 2913 "Tania Rand, stop it." (their line). Must end unresolved.
+
+==================================================================
+IDs 2915-2915   (1 message)
+==================================================================
+
+---- 2915
+  {D4}{D9}Tania{SPK}Don't blame {C9}, my big brother.
+  -- CLOSES RUN 1. Tania per her character notes: gentle, halting, trailing ellipsis rather than exclamation. nii-chan = 'my big brother', the same choice made at 2906.
+
+==================================================================
+IDs 2917-2918   (2 messages)
+==================================================================
+
+---- 2917
+  {D4}Rand{SPK}I was wrong, {C9}. When it comes to Tania
+     / I get carried away.
+     | 
+     / {D4}Rand{SPK}You must have your own reasons, {C9}!
+     | 
+     / {D4}Rand{SPK}Leave Tania to me. I'll look after her, no fear.
+  -- Rand's apology, three pages. His character notes says feelings arrive as outbursts and defeat is clipped; this is the settled version of him, so it is plainer than 2910. do-n to makasete oke = 'leave her to me', rendered with 'no fear' to keep the bluntness.
+
+---- 2918
+  {D4}Rand{SPK}Hm? You're {C9}'s friends, aren't you.
+     / Then take him a message.
+     | 
+     / {D4}Rand{SPK}Tell him Rand is here for Tania, so he needn't worry.
+  -- RAND REFERS TO HIMSELF IN THE THIRD PERSON, 'kono Rando ga'. That is characterization, not a slip, and it goes on the deliberate list beside Gina. He is puffing himself up for the message he wants carried, which is the point of the line.
+
+==================================================================
+IDs 3020-3060   (41 messages)
+==================================================================
+
+---- 3020
+  Hooray for world peace!
+     | 
+     / Imagine, two bazaars in one year! We owe it all to the demon king's defeat.
+  -- trailing ellipsis restored per review: JP okage…… trails off as the speaker hears themselves - it is what makes 3021 a correction rather than a non sequitur. Their '...' precedent: msgs 3923, 4883.
+
+---- 3021
+  Ah! *cough* I mean, it's all thanks to you, isn't it?
+  -- the *cough* follows their asterisk convention for actions (*puff*, msg 445).
+
+---- 3022
+  {D4}Doga{SPK}Curses! I didn't expect another bazaar so soon!
+     | 
+     / {D4}Doga{SPK}I haven't prepared anything yet!
+  -- speaker prefix follows their convention: {D4}Name + space, no bracket (their msg 3018, "Bilte Good, good.").
+
+---- 3023
+  {D4}Boga{SPK}Ha ha ha! I did it! What a fortune!
+     | 
+     / {D4}Boga{SPK}When my brother hears about my profits, he'll fall flat on his back!
+     | 
+     / {D4}Boga{SPK}Brother! This bazaar settles things between us, once and for all!
+  -- koshi wo nukasu rendered "fall flat on his back"; every page kept under the 72-char working cap.
+
+---- 3024
+  This is just a rumor. We finally defeat Mudo, and then what?
+     | 
+     / They say the king and his captain both vanished. Can you believe it?
+  -- de-ticced per the measured rule: JP has no mid-thought hesitation here.
+
+---- 3025
+  This shop buys folk crafts from all over.
+
+---- 3026
+  Oh my, you're! from Lifecod, aren't you?
+     | 
+     / My, how strong you've grown since I last saw you!
+  -- TIC KEPT, single interrogative per review; pattern matches their msg 246 exactly ('Eh? You're! travellers, right?'). Lifecod is their spelling (11 uses).
+
+---- 3027
+  If you're shopping, try somewhere else.
+
+---- 3028
+  My dad's a great merchant!
+
+---- 3029
+  Praise be, praise be. To think I'd live to see peace!
+     | 
+     / Just look at the life in everyone's faces!
+
+---- 3030
+  After Mudo fell, they say the king and Captain Soldi both went missing.
+     | 
+     / But then the king came back alone. Strange story, isn't it?
+  -- Captain Soldi: their name, 230 uses; heishichou rendered "Captain" to match.
+
+---- 3031
+  I rushed back as soon as I heard about the second bazaar!
+     | 
+     / But this spot was the only one left. *grumble*
+     | 
+     / 
+  -- tohoho no ho = comic deflation, not tears: *grumble* (their 3rd-commonest action, 9 uses) rather than *sob* (msg 3188, genuine distress - Holse weeping at rescue). reviewed. Trailing {AF} preserved.
+
+---- 3032
+  Now that peace is here, what the world wants is festivals!
+     | 
+     / And that means Bilte's sacred crowns are the hottest item around!
+     | 
+     / I'm sticking around until he takes me on as an apprentice!
+
+---- 3033
+  The younger brother finally surpassed the elder! Hmmm. How moving!
+
+---- 3034
+  It's only a rumor, but they say the Land of Happiness is out there somewhere.
+     | 
+     / If it's true, I'd love to see it someday.
+
+---- 3035
+  Huh? It was a lie? I knew it!
+
+---- 3036
+  Can I help you? If you're here to be an apprentice, forget it.
+
+---- 3037
+  Oh, if it isn't {C9}! I've heard the rumors!
+     | 
+     / The boy from Lifecod became a volunteer soldier and defeated Mudo!
+     | 
+     / When you first came to buy a crown, you looked so helpless!
+     | 
+     / You've really grown strong. I hardly recognized you!
+  -- tayorinage = 'helpless' per review - affectionate, not a character judgment; sets up 'grown strong'. Four pages preserved; name-token page under 60 visible.
+
+---- 3038
+  {D4}Bilte{SPK}Busy, busy! No rest for me!
+
+---- 3039
+  {D4}Bilte{SPK}Oh, it's you! I hear you've gone and done something incredible!
+     | 
+     / {D4}Bilte{SPK}My daughter talks about nothing but you people, every single day!
+     | 
+     / {D4}Bilte{SPK}Oops. If I say any more, she'll get mad at me again. Wahahaha!
+
+---- 3040
+  Normally 500 gold! But today, just 200 gold!
+     | 
+     / 
+  -- trailing {AF} preserved. nanto! rendered as a capitalized sentence break, not the tic.
+
+---- 3041
+  Cheap! Get your Amoru Water cheap!
+     | 
+     / Right now, three Amoru Waters AND a Wing of Wyvern for only 400 gold!
+  -- Amoru is their spelling (9 uses). kimera no tsubasa = "Wing of Wyvern": their script is DW-era ("Firebal" one-L, "Fairy Water"), so NES-era Dragon Warrior terms are the house convention; Madante shows they kept romaji only where no era term existed.
+
+---- 3042
+  Welcome to Shiena. Two bazaars this year. It's been so hectic.
+     | 
+     / But now that it's over, it feels a little lonely.
+  -- Shiena is their spelling (msg 3019). De-ticced: no JP hesitation.
+
+---- 3043
+  {D4}Doga{SPK}Grrr! Boga! Fine, this round goes to you!
+     | 
+     / {D4}Doga{SPK}But I won't lose the next one!
+
+---- 3044
+  {D4}Boga{SPK}I did it! I finally surpassed my brother Doga!
+     | 
+     / {D4}Boga{SPK}But he won't stay down for long. I'll have to do my part too!
+  -- kyouryoku points outward: Boga pledging his part alongside a brother who will bounce back, not self-improvement. reviewer ruling.
+
+---- 3045
+  You know, it doesn't really feel like world peace anymore.
+     | 
+     / The monsters haven't gone anywhere. So the customers stopped coming!
+     | 
+     / The bazaar just petered out on its own.
+
+---- 3046
+  Welcome, welcome! The bazaar's over, so it's clearance time!
+     | 
+     / Our famous world map, just 10 gold! You'll take one, right?
+
+---- 3047
+  That so? Then move along, move along!
+
+---- 3048
+  Hey, you look well traveled! All this way without a map?
+     | 
+     / I like your spirit! It's free! Take the map and go!
+
+---- 3049
+  Hey now, you already have a map!
+     | 
+     / Don't get greedy. Move along, move along!
+
+---- 3050
+  Once the bazaar ends, this town gets lonely fast.
+
+---- 3051
+  At the last bazaar, Boga finally outsold his big brother Doga.
+
+---- 3052
+  Everyone says the world is safe now that Mudo's gone. I don't buy it.
+
+---- 3053
+  Next time, I'm getting a better spot!
+     | 
+     / That's why I'm staying right here instead of going home!
+
+---- 3054
+  Except during the bazaar, this inn hardly sees a guest. Well then!
+     | 
+     / 
+  -- trailing {AF} preserved. Sate-to = "Well then!" - the innkeeper turning back to work.
+
+---- 3055
+  My business takes me to all kinds of towns, and I always stop by the church.
+
+---- 3056
+  Oh, a customer? I'm sorry. My father's resting! the bazaar wore him out.
+     | 
+     / He can't take any orders right now.
+  -- TIC KEPT: JP yasunde ite… carries the hesitation. Echoes their msg 3017 for the same household.
+
+---- 3057
+  Oh, {C9}! How nice of you to come!
+     | 
+     / Father's asleep, worn out as you can see. But please, make yourself at home.
+
+---- 3058
+  Father wasn't going to take any apprentices, but their passion won him over.
+
+---- 3059
+  Master Bilte finally took me on as an apprentice.
+     | 
+     / But all I do is pull weeds and chop firewood, every single day.
+     | 
+     / When will he ever let me near a crown?
+  -- JP page 1 would exceed the 104-char hard cap in English; split with an added {AF} per the standing rule.
+
+---- 3060
+  {D4}Bilte{SPK}Grrgh! Zzzzz!!
+  -- snoring, rendered as their UI line "You can hear snoring!" implies; no words in the JP either.
+
+==================================================================
+IDs 3428-3448   (21 messages)
+==================================================================
+
+---- 3428
+  {D4}{CA}{SPK}Hold on a minute.
+     / Like I said, you've got me confused with someone else.
+     | 
+     / {D4}{CA}{SPK}I'm a traveling Fighter!
+  -- their own msg 3375 is the precedent for this exact beat: 'I think you've confused me for someone else.' Their 3377 drops the buto-ka clause, but here it is load-bearing (3429 mocks it), so it is kept. buto-ka = Fighter per their vocation blurb 6021, 'The Fighter uses his body as his primary weapon.' Page split added: the JP page runs 101 visible in English.
+
+---- 3429
+  Gahahaha! Right you are. No son by the name of {CA}
+     / lives in this house.
+     | 
+     / Least of all a swaggering fool
+     / who calls himself a traveling Fighter!
+  -- the father disowning him. gahhahha rendered 'Gahahaha!' on the pattern of their 'Wahahaha!' (Bilte, msg 3018). masshiteya = 'Least of all'. yaro kept as 'fool' rather than anything coarser; their script does not swear.
+
+---- 3430
+  {D9}What are you being so stubborn about? Really, dear.
+  -- {D9} is the female-voice marker, not a name token (their 100, 'Oh, you're awake!'). anta trailing at the end kept as the trailing address 'Really, dear...'
+
+---- 3431
+  Quiet, you old fool! You're in the way of my work.
+     / Out with you, now!
+  -- berabo-me is Edo-rough; 'you old fool' carries it without swearing. tottoto = 'now', clipped.
+
+---- 3432
+  {D4}{CA}{SPK}What was all that about?
+     / I really don't remember any of it???
+  -- the JP's ...??? is its own emphasis and is preserved; their script uses single ? elsewhere but this is the speaker's bewilderment, not punctuation drift.
+
+---- 3433
+  He's lost in his work and doesn't seem to notice you.
+  -- narration. Their msg 17 is the precedent for the same construction ({D3} ni wa kizukanai): they render it 'He doesn't seem to be able to see you' and DROP the {D3} token entirely, using 'you'. Followed exactly.
+
+---- 3434
+  {D9}Oh, customers? I'm sorry, but as you can see,
+     / my husband is terribly busy.
+  -- uchi no hito = 'my husband', matching the choice already made at 2903. The wife deflecting customers.
+
+---- 3435
+  All ashore, all ashore! We've made port at San Marino.
+  -- sa- orita orita: the doubled imperative is the barker rhythm already used for the Shiena map seller.
+
+---- 3436
+  One of your friends was up on deck being sick a while back.
+     | 
+     / Is he all right? Take care, now.
+  -- gege yatteta softened to 'being sick', consistent with their PG register. Page split added rather than run the JP's three lines to 103 visible.
+
+---- 3437
+  You're all landlubbers, but not one of you gets seasick.
+     | 
+     / That's what comes of traveling
+     / the world, I suppose. Take care.
+  -- shirouto = 'landlubbers' for the sailor's mouth. traveling, one L, per the standing US-spelling rule (their own 3397 writes 'travelling'; house style overrides).
+
+---- 3438
+  A sea voyage now and then isn't bad, eh?
+     / Sail with us again. So long.
+  -- closing sailor line, kept light.
+
+---- 3439
+  Dragging a coffin around like that,
+     / yours must be a hard journey.
+     | 
+     / Take care of yourself!
+  -- kan-oke = 'coffin', their term across 11 translated messages (1405, 1408, 1418). Page split added. No tic: the JP carries no mid-thought hesitation.
+
+---- 3440
+  Whoa there, friend. The ferry only just docked.
+     / We can't sail yet.
+  -- teikisen = 'ferry', their term (2362 'Ferry to Reidock', 3216).
+
+---- 3441
+  Whew. That voyage really wore me out.
+  -- a passenger, not crew; short and flat.
+
+---- 3442
+  They say a fake prince has turned up at Reidock castle.
+     / Can it be true?
+     | 
+     / If he's out and about anyway, why not come and see me?
+     | 
+     / I don't mind a fake,
+     / so long as he's a prince on a white horse!
+  -- 'They say' carries the rumor-bearer hedge established in the character notes. Reidock castle is their form (3416). The JP ends on a music note; there is NO note glyph in this ROM's charset (checked: 0 occurrences across 6,544 messages), so the exclamation carries it. Split into three pages: the JP's second page reaches 114 visible in English, over the 104 hard cap.
+
+---- 3443
+  He's staring nervously at the woman standing in front of him.
+     | 
+     / 
+  -- narration, trailing {AF} preserved.
+
+---- 3444
+  U-um... e-excuse me...
+     / W-would you... m- marry...
+     | 
+     / marry... m-mighty cold today, isn't it.
+  -- WORDPLAY. The JP gag is kekkon (marriage) collapsing into kekkou samui ('quite cold'): he loses his nerve mid-word. Rebuilt as marry -> m-mighty cold, which keeps the shared onset and the same chicken-out. The page break lands where the JP pivots, at the start of its third line.
+
+---- 3445
+  {D4}Vivian{SPK}You know that swordsman I was telling you about?
+     | 
+     / {D4}Vivian{SPK}They say he travels the world
+     / in search of the strongest sword.
+     | 
+     / {D4}Vivian{SPK}He must mean to strike down
+     / the demon king Mudo with it.
+     | 
+     / {D4}Vivian{SPK}And if that's so, then he's the hero. Oooh, I wonder.
+  -- Vivian is their name (7 translated messages). demon king, lowercase, is their term for maou (107, 123). hero for yusha (2625, 'Our village's hero'). uwa~ has no tilde glyph in the charset; rendered 'Oooh'. Four pages preserved.
+
+---- 3446
+  That's strange. I'm sure I put it in here.
+     / Did somebody take it?
+  -- the man who lost something; plain.
+
+---- 3447
+  Huh, you did? Oh, so that's what happened.
+     / Well, what can you do.
+     | 
+     / Ah, never mind. Truth be told, I found it myself
+     / and put it there. Hahaha.
+  -- his own confession, pages preserved, second page tightened to stay near the working cap.
+
+---- 3448
+  How strange.
+  -- single beat.
+
+==================================================================
+IDs 3450-3469   (20 messages)
+==================================================================
+
+---- 3450
+  Thank goodness! The king and queen are cured.
+     / I'm so relieved!
+  -- 'cured' reuses their own 3449, the immediately preceding translated line ('The king and queen of Reidock have been cured'), so the two read as one crowd reacting.
+
+---- 3451
+  If Reidock castle is all right, our ferry is all right too.
+     | 
+     / No more fear of losing my job.
+  -- the ferryman's relief is economic, not sentimental: shitsugyo = losing his job. Page split added rather than run the JP's three lines to 104 visible, exactly at the hard cap.
+
+---- 3452
+  Reidock castle must be one big festival by now.
+     / Blast it, I want to go!
+  -- chikusho softened to 'Blast it'. Their script does not swear, so the frustration has to come from rhythm.
+
+---- 3453
+  The king and queen of Reidock, asleep for so long,
+     / have woken at last.
+     | 
+     / The rumor is that both of them
+     / were wandering in the dream world.
+     | 
+     / Strange things do happen.
+  -- 'dream world' is their term (204, 318). Third page added: the JP's second page reaches 89 visible in English. The narrator hedges twice (They say / The rumor is), matching the rumor-bearer convention in the character notes.
+
+---- 3454
+  That awful mayor is gone, and the king and queen
+     / are cured too.
+     | 
+     / Good things come in a run, don't they.
+     / Don't you think so too?
+  -- the optimist. 'Good things come in a run' for ii koto wa tsuzuku, keeping it colloquial; he is talking to himself as much as to the party. Sets up 3455, the pessimist who answers him.
+
+---- 3455
+  Still. Get too pleased with yourself
+     / and you'll be sorry before long.
+  -- the pessimist's reply to 3454. Kept short and flat so the pairing lands.
+
+---- 3456
+  You're a sour one. Be more agreeable,
+     / or people won't like you.
+  -- the answer back to 3455. hinekuremono = 'a sour one'. Trimmed hard: the JP's three lines run to 79 visible if rendered fully.
+
+---- 3457
+  The king and queen of Reidock had been wandering
+     / in the dream world.
+     | 
+     / But at last the two of them have woken! What a joyous thing!
+  -- a second, more formal telling of the same news as 3453. Deliberately NOT phrased the same way: the JP varies too, and identical English across two adjacent NPCs would read as a copy-paste.
+
+---- 3458
+  {D4}Amanda{SPK}Oh dear. It's about time I found someone new
+     / to fall in love with.
+     | 
+     / {D4}Amanda{SPK}Having nobody at all to be fond of is a lonely thing.
+  -- Amanda is their name (3244, 3422). a~a opens with a chouon-tilde which is NOT encodable in the English trees, so 'Oh dear' carries it. Her two pages are one thought, split as the JP splits them.
+
+---- 3459
+  Seems like more people have been coming in
+     / to buy weapons lately.
+     | 
+     / Now the king is awake, the last battle with Mudo
+     / must be near at hand.
+  -- the weapon seller. 'demon king Mudo' compressed to 'Mudo' alone on the second page for length; their script uses the bare name constantly (3473, 3476, 3479), so nothing is lost.
+
+---- 3460
+  Say. Do you think the dream world really exists?
+  -- a child asking. Paired with 3461 and 3462 as one exchange.
+
+---- 3461
+  If it does, I'd like to go there.
+  -- the child's follow-up.
+
+---- 3462
+  Aww. How boring.
+  -- the child's deflation when told no. na-nda opens with a chouon; not encodable, and English does not need it.
+
+---- 3463
+  Nod... nod...
+  -- kokkuri kokkuri is the head-nodding of someone falling asleep, not snoring. Rendered as the action itself. Their *yawn* was available but this is the nodding, not the yawn, and their snoring line at 3060 is already a separate register.
+
+---- 3464
+  I can't laze about forever. It's about time I got a job.
+     | 
+     / I've decided! I'm going to open a puff-puff shop!
+     | 
+     / But how do you make a puff-puff, I wonder.
+  -- puff-puff is THEIR term, hyphenated (3545, 3547). The hyphen is symbol $236, confirmed available. Three pages preserved; the joke is that she has decided to sell a thing she cannot describe.
+
+---- 3465
+  Well? A sea voyage isn't bad. Don't be a stranger.
+     / Sail with us again.
+  -- another ferry hand. Deliberately distinct from 3438's closing line so the two sailors do not sound like one person.
+
+---- 3466
+  Whew. That voyage really wore me out.
+  -- IDENTICAL Japanese to 3441, so identical English. Same passenger line reused by the game; consistency is the correct call and a divergence here would be a defect.
+
+---- 3467
+  They say if you go to Reidock
+     / you might see the king and queen
+     | 
+     / looking well again!
+  -- page split added; the JP's single page runs to 88 visible in English.
+
+---- 3468
+  The queen's name is Shera. A very beautiful woman, they say.
+  -- Shera is their name for the queen (44 translated messages, 1230/1231/1233).
+
+---- 3469
+  Come on, get this loaded quick
+     / or the ship will sail without us!
+  -- a dockhand, hurried. Closes the run on the ship that opened it at 3435.
+
+==================================================================
+IDs 3535-3535   (1 message)
+==================================================================
+
+---- 3535
+  Lately, people have been disappearing all of a sudden.
+     | 
+     / Some say that if you let yourself go listless enough,
+     | 
+     / the world of darkness swallows you up, body and all.
+  -- CENSUS MISS, category B. Untranslated as TEXT3535, invisible to the original census because that test asks whether a message BEGINS with its own ID in digits. Same world-of-darkness rumour as 4002 and deliberately worded differently: two NPCs telling one story in identical words reads as copy-paste, the rule applied at 3453/3457 and 3622/4004. 'the world of darkness' is their term (2202). This message is also where a screen-corruption defect first showed in play. The cause was a page break landing directly on a letter, which their own script never does once in 4,638 page breaks; it was fixed corpus-wide rather than here.
+
+==================================================================
+IDs 3603-3631   (29 messages)
+==================================================================
+
+---- 3603
+  Look there, now. The children are playing,
+     / happy as you please.
+  -- an old villager watching the children; the nasare/oru register kept gentle rather than archaic.
+
+---- 3604
+  Hup! Hup! There, that's got it!
+     | 
+     / When I'm grown up I'll find way better treasure
+     / than this. You'll see.
+     | 
+     / And when I set out to hunt for treasure,
+     / I'll take you along. Don't worry.
+     | 
+     / Come on, let's go. If we're not back soon
+     / the priest will scold us.
+  -- Iria burying his treasure, four pages preserved. 'the priest' is their term for shinpu-sama (188-191, where the tagged form is {D4}Priest and the direct address is 'Father').
+
+---- 3605
+  {D9}Waaait! Wait for me!
+  -- Gina. a-n opens on a chouon, which is NOT encodable in the English trees; the stretched vowel is carried by 'Waaait' instead. No speaker tag in the JP, so none here.
+
+---- 3606
+  If you're like that now you'll never keep up with me.
+     / Come on, hurry up!
+  -- Iria, bossy. The JP's three lines run to 82 visible if rendered fully; trimmed rather than split, since the beat is one breath.
+
+---- 3607
+  {D9}Ooh! Iria, you're so mean!
+  -- Gina's protest. ijiwaru = 'so mean'.
+
+---- 3608
+  Junk to {D3},
+     / but it is the children's treasure, buried here!
+     | {D3} quietly put it back the way it was.
+  -- narration. Their 155 keeps the {D3} token in narration ('{D3} has aquired the flying bed'), so it is kept here rather than dropped as at 3433. The line is the reward for digging: it is the children's buried treasure, and the party quietly reburies it.
+
+---- 3609
+  Here now, here! Such a racket. Do be a little quieter!
+     | 
+     / Oh. Forgive me. Not you, of course. I meant the children.
+  -- the priest, interrupted mid-scolding by the party's arrival. The comic beat is that he is telling off the children, not the visitors, and has to say so.
+
+---- 3610
+  I do wish they would study a little, but there it is.
+     | 
+     / Children ought to be lively above all else.
+     | 
+     / Now then. I've kept you waiting. Let us begin the service.
+     | 
+     / 
+  -- his recovery into the service. Page added: the JP's first page reaches 91 visible in English.
+
+---- 3611
+  Let us pray for world peace and for children everywhere.
+     / Let us begin.
+     | 
+     / 
+  -- the service itself. Their church lines elsewhere are plain and unadorned, so no flourish.
+
+---- 3612
+  Hup! Hup! Hyah!
+     | 
+     / Hey! Here I am practicing
+     / how to fight monsters,
+     / and you go and interrupt!
+     | 
+     / ............
+     / What? What's that funny look for?
+     / Something on my face?
+     | 
+     / Well, never mind.
+     / I'm Iria. Nice to meet you!
+  -- Iria's introduction, four pages. 'practicing' one C per the US-spelling rule. The row of dots is his silence while he stares back; the JP is twelve dots and that count is kept. 'I'm Iria' matches their own 1203, 'Thank you. I am Iria.'
+
+---- 3613
+  {D4}Iria{SPK}When I'm grown I'll travel the world
+     / collecting every treasure.
+     | 
+     / {D4}Iria{SPK}They'll call me Iria the Gale.
+     / Pretty cool, don't you think!
+  -- hayate no Iria rendered 'Iria the Gale'. APPROVED coinage, and the PRECEDENT for any further epithet. The reasoning, in order: hayate is a sudden squall rather than a steady wind, so 'Gale' carries the speed and the abruptness both; the definite article makes it a title the boy has awarded himself, which is the joke; it stays in a register the NES-era script could have used, so it does not import a modern localization voice; and it SCANS like something a child would actually pick for himself, which is the test that matters, since the line is him trying the name out loud. Rule for the next epithet: no precedent in their corpus means build it from the Japanese sense, keep it era-plausible, and check it sounds like the character naming themselves rather than a translator naming them.
+
+---- 3614
+  Yaargh! A lizard's tail here of all places!!
+     / It's Iria's doing again!
+  -- a rustic villager (be-copula). Kept as plain grumbling rather than rendered dialect, since their script does not write accents phonetically anywhere.
+
+---- 3615
+  The priest's fondness for children is really something.
+     | 
+     / Taking in those two was all very well, but now
+     / it's mischief every day!
+  -- the same speaker's second line. hikitotta = 'taking in', the adoption framing that runs through this whole run.
+
+---- 3616
+  Oh, travelers. How lovely, going all around the world.
+     | 
+     / When Gina's grown, Gina's going to travel the world
+     / looking for treasure.
+     | 
+     / 
+  -- Gina refers to herself in the third person throughout, which is her characterization and is preserved. 'travelers' one L per the US rule.
+
+---- 3617
+  {D4}Gina{SPK}Gina will find lots, and pay the priest back
+     / for looking after us.
+     | 
+     / {D4}Gina{SPK}And then, and then! heehee, Gina's going to be
+     / Iria's bride!
+  -- Gina tagged {D4}Gina. CORRECTED at final QA: their 1200/1201 use {D4}{D9}Gina, but {D9} is a SOURCE control code and THIS message's Japanese does not carry it, only {D4}. Mirror the source, do not normalize toward a form used elsewhere. ehe = 'heehee', matching the choice already made for Judy at 2901. Her two pages are one thought.
+
+---- 3618
+  The children's hearts and Amoru's river water.
+     / Both so clear and fresh.
+  -- the old villager again, closing the pairing he opened at 3603. Amoru is their spelling (3584, 3632).
+
+---- 3619
+  Lately, when night falls,
+     / I often hear the voices of monsters.
+     | 
+     / Will this town be all right, I wonder.
+  -- the first note of unease in an otherwise warm town.
+
+---- 3620
+  Say! Do you know of a thing called the Final Key
+     / that opens any door?
+  -- the Final Key is THEIR term (3548, 'The Final Key was one of the treasures on board'). That line and this one are the same rumor from two directions.
+
+---- 3621
+  Eh? You do? Oh. So it's quite a well-known
+     / story after all. I see.
+  -- his deflation when the party already knows.
+
+---- 3622
+  Well. They say the ship carrying that key was set upon
+     / by monsters
+     | 
+     / and sank deep to the sea floor.
+     | 
+     / But at the bottom of the sea there's nothing to be done.
+  -- the rest of the rumor. Three pages instead of the JP's two: the first page reaches 100 visible in English, close enough to the 104 hard cap to be unsafe.
+
+---- 3623
+  Eh? Iria and Gina? Ah, the children the church
+     / is looking after.
+     | 
+     / But there's a strange thing about that.
+     | 
+     / I can't remember at all when those children first
+     / came to the church.
+  -- PLOT-BEARING. The town cannot remember when Iria and Gina arrived. Kept understated, exactly as the JP does, with the strangeness on its own short page.
+
+---- 3624
+  They say peace has come, but a feeling of evil
+     / has never gone away.
+     | 
+     / I pray that the world may soon become as clear
+     / as the water of Amoru.
+  -- a devout villager. The prayer mirrors 3611 deliberately: the priest prays for children, the parishioner for clarity.
+
+---- 3625
+  The man in the house on the right
+     / says if I'll be his adopted son
+     | 
+     / he'll give me lots of nice food and sweets.
+  -- a child repeating an adult's offer he does not understand. Page split: the JP's single page hits 104 visible exactly, the hard cap.
+
+---- 3626
+  Ahh, you've finally decided to be our child!
+     / Look, such a feast for you.
+  -- the neighbor mistaking the party for the child. Comic, and immediately punctured by 3627.
+
+---- 3627
+  Oh dear, I'm sorry. It seems I mistook you for someone else.
+     | 
+     / 
+  -- his apology. Echoes their own 3375 phrasing for a mistaken identity, keeping the two occurrences consistent. Trailing {AF} preserved.
+
+---- 3628
+  The child next door is clever. I hope he'll become
+     / my adopted heir.
+     | 
+     / Nothing but study all my life, and before I knew it
+     | 
+     / I'd reached this age alone. It is a lonely thing.
+  -- the scholar next door, the other half of the adoption thread. Page added; the JP's second page reaches 87 visible.
+
+---- 3629
+  Some folk speak ill of the two children
+     / the priest looks after.
+     | 
+     / But the other day they brought me the glasses
+     / I'd lost out in the street.
+     | 
+     / Kin or no kin, Iria and Gina are good children.
+  -- the defense of the children, and the run's warmest line. megane has no occurrence in their translated text, so 'glasses' is an ordinary-word choice, not a coinage.
+
+---- 3630
+  A traveler told me the other day
+     / that far out to sea from this town
+     | 
+     / there's a great hole opened up in the middle of the water.
+     | 
+     / If that's true, I wonder what was there before
+     / it became a hole.
+  -- the hole in the sea, foreshadowing. Page split: the JP's first page reaches 106 visible in English, over the hard cap.
+
+---- 3631
+  Outrageous! Those children at the priest's
+     / are truly outrageous!
+     | 
+     / Almost every day they leave horse dung and worse
+     / outside people's houses!
+  -- the complainer, closing the run. keshikaran is repeated twice in the JP and twice here. 'horse dung and worse' for uma no fun yara nanyara.
+
+==================================================================
+IDs 3991-4007   (17 messages)
+==================================================================
+
+---- 3991
+  People really can change, can't they.
+  -- Pescani AFTER Rob's recovery. The whole run is the village noticing a change in a man they had written off, mostly without understanding it. Their translated before-state is 3978-3990, which is the tone to play against.
+
+---- 3992
+  They say a terrible monster lives on the sea floor
+     / to the southeast.
+     | 
+     / If somebody would strike it down, maybe we'd catch
+     / a few fish again.
+  -- bakemono rendered 'monster', their commoner choice (4009); 'beast' exists in their script too (733, 737) but is used for one specific creature.
+
+---- 3993
+  We're selling fish in this shop again.
+
+---- 3994
+  Rob's manner has changed.
+     | 
+     / He's taken to saying he'll put out to sea again,
+     / no matter what.
+     | 
+     / It's as though something has been shaken loose in him.
+  -- fukkireta = he has shaken something off. Avoided quotation marks: their inline quote pair exists ($577/$578) but has only 13 uses in the whole script, so a reported-speech construction is safer and commoner.
+
+---- 3995
+  {D4}Rob{SPK}Ah, {D3}! Denae? What's become of Denae!?
+     | 
+     / {D4}Rob{SPK}I-I see. So she made it back to her own people.
+     / Good! That's good!!
+     | 
+     / {D4}Rob{SPK}Thank you. I'm in your debt.
+     / And while I'm at it, one more!
+     | 
+     / {D4}Rob{SPK}If you meet Denae again, give her a message from me!
+     | 
+     / {D4}Rob{SPK}That one day, without fail, I'll come in my own boat
+     / to see you!
+     | 
+     / {D4}Rob{SPK}No. That I'll come to take you home!!
+  -- THE PAYOFF OF THE RUN, six pages, all preserved. TWO THINGS ARE LOAD-BEARING. First, the self-correction at the end: the JP moves from omae ni ai ni (to come SEE you) to omae wo mukae ni (to come FETCH you), and that shift from visiting to taking her home is the whole character arc. Do not smooth it. Second, the message is in the SECOND PERSON even though Rob is asking the party to relay it, because he is dictating the words he wants Denae to hear. Both belong on the deliberate list. Denae is their name (36 translated messages, 1264, 1265).
+
+---- 3996
+  That's strange. No fish orders from Rob at all lately.
+     | 
+     / I wonder what's happened. Has he grown tired of fish?
+
+---- 3997
+  Rob? His injuries have healed and he's gone out fishing.
+  -- the neighbor, matter of fact. Contrast with their 3985, where Rob could not fill an order.
+
+---- 3998
+  I can tell, you know. Rob's found himself
+     / a sweetheart, hasn't he.
+  -- the gossip who has guessed half of it and none of the important half.
+
+---- 3999
+  Oh, fish is it? Not much, but we're landing good ones.
+     | 
+     / The sea's been calm lately. We can manage to fish
+     / again, somehow or other.
+
+---- 4000
+  They say a terrible monster lives on the sea floor
+     / to the southeast.
+     | 
+     / But someone or other may have struck it down.
+  -- FIRST PAGE IS IDENTICAL JAPANESE TO 3992, so the English is identical too. Only the second page differs: 3992 wishes someone would kill the monster, this one says someone may already have. Registered with 3466/3441.
+
+---- 4001
+  Look! The time has come for the nets I've kept mended
+     / to earn their keep!
+     | 
+     / And I must keep them well mended from here on!
+  -- the net mender, vindicated. His whole character is that he kept maintaining gear nobody needed.
+
+---- 4002
+  This is only a rumor, but lately people
+     / have been vanishing suddenly.
+     | 
+     / They say if you hate yourself or envy others,
+     / something grabs your leg
+     | 
+     / and drags you down into the world of darkness.
+     | 
+     / Monsters are skilled at preying on human weakness.
+     / You be careful too.
+  -- the darkest line in the run and the plot hook for the world of darkness, which is their term (2202). Four pages instead of the JP's three: page two reaches 100 visible in English. The rumor-bearer hedge opens it, per the character notes.
+
+---- 4003
+  True, we can fish again now.
+     | 
+     / It's still too early to call it peace, I'd say.
+
+---- 4004
+  Have you heard the tale of the Final Key? It's a famous one.
+     | 
+     / They say the ship that bore it lies sunken still,
+     / deep on the sea floor.
+  -- the Final Key rumor, THEIR term (3548). This is the same rumor already authored at 3622 for an Amoru villager, deliberately worded differently: two towns telling the same story in the same words would read as a copy-paste. Compare 3453 and 3457.
+
+---- 4005
+  Rob's gone and done it! Healing injuries like that
+     / by his own strength.
+     | 
+     / Honestly, I never thought he had that much grit in him.
+  -- SUSPECTED MAP ISSUE, flagged not fixed. The JP reads as shou-[X] where the sense plainly requires shoujiki, 'honestly'. The second glyph currently maps to the kanji for 'heal', which makes no sense in this slot and is suspicious given the surrounding talk of healing. It occurs only in placeholders here, so there is no forcing context to settle it. Rendered by sense as 'Honestly'; the glyph needs re-checking.
+
+---- 4006
+  Seems Rob's stopped going to that cave
+     / on the edge of the village.
+
+---- 4007
+  The other day, for the first time in ages, Rob ordered
+     / a lot of fish.
+     | 
+     / But deliver it to the boat, he said. Where does he mean
+     / to take it all?
+  -- the fishmonger, baffled. He is describing Rob provisioning a boat for a voyage without realizing it, which is the quiet ending of the run.
+
+==================================================================
+IDs 4478-4492   (15 messages)
+==================================================================
+
+---- 4478
+  The soldiers eat so well that cooking for them
+     / feels good to me too.
+  -- DREAM-WORLD REIDOCK, late game, the castle staff. Their translated neighbors 4464-4477 set the tone: everyone is comfortable and slightly disbelieving of the peace.
+
+---- 4479
+  The head cook works us so hard. It's dreadful.
+  -- ryourichou has one occurrence and no precedent; 'head cook' is the plain reading, not a coinage worth flagging.
+
+---- 4480
+  Thirty years of research. Still the world holds
+     / mysteries beyond me.
+
+---- 4481
+  I wonder if that apprentice cook is working hard.
+     | 
+     / I gave her a little of my unbreakable heart.
+     / Oh! Keep it secret.
+  -- TERM FLAGGED FOR A RULING. kujikenu kokoro is a key item meaning an UNBREAKING heart. Their only naming of it is the debug flag string 6076, which reads 'Broken heart aquired' and inverts the sense. In the one PLAYER-FACING line where it appears (4134, Soldi) they paraphrased around the name entirely rather than use it. This line follows their player-facing practice and renders it descriptively as 'my unbreakable heart'. Using their 6076 wording would propagate a probable slip from a developer-facing string into visible text. open: their form could be used instead.
+
+---- 4482
+  {D4}Geban{SPK}Mm. Shut up in here for so long a time.
+     | 
+     / {D4}Geban{SPK}I have begun to feel that I really was
+     / doing something wrong.
+     | 
+     / {D4}Geban{SPK}Hm. But what it was, exactly, I still cannot say.
+  -- Geban is their name (39 translated messages, 4375-4377). He is the imprisoned former prime minister, and the joke is that he has been locked up long enough to half-believe he did something wrong without remembering what. Three pages, all preserved. Keep him baffled rather than repentant.
+
+---- 4483
+  Ah, {C9} and {CA}! Still working hard, I see.
+
+---- 4484
+  How are things outside? Still plenty of monsters, I expect.
+     | 
+     / Unlike you, our duty is to guard the castle.
+     / Let us both do our best.
+  -- onushi flattened per the standing rule. The guard's whole point is that his duty is smaller than theirs and he is at peace with it.
+
+---- 4485
+  Ah, if it isn't {C9} and company. So you've come back.
+     | 
+     / The king is well as ever. Sleeps well and eats well.
+     | 
+     / Quite a change from when they called him
+     / the king who never sleeps.
+  -- THEIR PHRASE: nemuranu ou = 'the king who never sleeps', from their 4090 ('I heard that the king never sleeps') and 4242. Their 4097 drops the nickname; 4090 keeps it, so 4090 is followed.
+
+---- 4486
+  Listen to this, {C9}!
+     | 
+     / These days the king himself has taken to speaking to me.
+     | 
+     / My retired father was pleased. He said I'd become
+     / a man at last.
+  -- CONTINUITY: this is the young soldier whose father retired, established in their own 4154 ('I recently became a soldier in place of my retired father'). The payoff is the father's approval, so the last page is his line, not the son's.
+
+---- 4487
+  Oh, where have you all been until now?
+     | 
+     / Work matters, of course, but you must learn
+     / to rest now and then.
+
+---- 4488
+  Ah, {C9} and {CA}. Sturdier every time I see you.
+
+---- 4489
+  Heehee. The king, honestly! Every day it's my backside
+     / he goes for.
+     | 
+     / It must be the fine shape of it that draws his hand.
+     / It must be!
+  -- the king's masseuse. Register calibrated against their own 5023, 'He dared to flip up my skirt. Ooooh!.' - so this level of bawdy is within their range, and no further.
+
+---- 4490
+  {D4}King{SPK}{C9}, is it! I should not say it loudly,
+     / but well come, my son.
+     | 
+     / {D4}King{SPK}You seem to be doing well in this world too.
+     / Most reassuring.
+     | 
+     / {D4}King{SPK}Thanks to you I get to take a breather
+     / here in the dream world.
+     | 
+     / {D4}King{SPK}Though I cannot shake the feeling Shera is watching
+     / from somewhere.
+  -- THE HERO'S FATHER, four pages, tagged {D4}King per their form (123 messages). 'well come, my son' is the beat: he must not say it loudly because the party is incognito. Shera is their spelling for the queen (1230, 1233). The closing line is the joke, a king enjoying a holiday from his own reality and feeling watched by his wife.
+
+---- 4491
+  Oh my! A puff-puff, is it?
+  -- PAIRS WITH 4492. puff-puff is their term (3545, 3547) and the hyphen is symbol $236.
+
+---- 4492
+  Oh, dear me. My old habits slipping out!
+     | 
+     / I am only a maid now, appointed to take care of the king.
+  -- the same maid as their translated 4457, where she explains she was a dancer the king's scouts found at the casino. That is why the puff-puff slips out at 4491 and why she catches herself here. Echoes 4457's 'I am the maid that had to take care of the king's...' phrasing so the two lines read as one person.
+
+==================================================================
+IDs 4496-4496   (1 message)
+==================================================================
+
+---- 4496
+  What's this? Dragging a coffin about with you.
+     / It's bad luck, that is.
+     | 
+     / Why not get along to a church and see it done properly?
+  -- kan-oke = 'coffin', their term (1405, 1408). engi ga warui = 'bad luck', their phrase (2312). The speaker is telling the party to go get their dead revived, rudely.
+
+==================================================================
+IDs 5002-5020   (19 messages)
+==================================================================
+
+---- 5002
+  Oooh! I don't want your sympathy now, of all times!
+  -- the jilted woman, answering their translated 5001 ('Hmph. If he wanted an older woman!'). 'Oooh!' matches their own frustration marker at 5023.
+
+---- 5003
+  Why, {D3}! We were all searching for you,
+     / but could never reach you.
+     | 
+     / The king and queen will be overjoyed, I'm sure.
+     / Come in, quickly!
+  -- the gatekeeper. {D3} is kept as a token here because the line addresses the party directly, unlike the narration case at 3433.
+
+---- 5004
+  And so the wicked sorcerer was struck down by the hero.
+     | 
+     / And the prince and princess found love at last,
+     / across thousands of years.
+     | 
+     / They lived happily ever after. There now.
+     / A fine happy ending, isn't it.
+  -- a storyteller finishing the tale of the mirror princess as a fairy story. mahoutsukai = 'sorcerer', yusha = 'hero' per 2625. The JP's three pages are kept; the closing 'A fine happy ending, isn't it' is him fishing for agreement.
+
+---- 5005
+  Ah, {D3}. How I wish you could have seen it!
+     | 
+     / Our gallant lord, King Foan, and a queen of such pure beauty!
+  -- 'King Foan' is their form (5000). The speaker is a courtier gushing.
+
+---- 5006
+  Ah- ah- agh! *cough* *cough*!
+     | 
+     / I sang too much at the wedding and my v- voice has
+     / gone hoarse. *cough*!
+  -- the wedding singer who has lost his voice. *cough* is in their asterisk inventory. The stammered 'v- voice' mirrors the JP's ko...koe.
+
+---- 5007
+  Oh, what a shame. I did so want to let you all taste it.
+     | 
+     / My own proud cooking, that I put my whole arm into
+     / for the happy occasion!
+  -- the cook. ude wo furutta is literally 'swung my arm', kept as 'put my whole arm into' so the boast survives.
+
+---- 5008
+  Princess Erika in that wedding dress. Just remembering
+     / makes me swoon.
+  -- ERIKA, not Irika: their spelling across 20 translated messages (2323, 2324, 4949).
+
+---- 5009
+  What! {D3}, you came after all!
+     | 
+     / When the date was set we had the country searched
+     / to bring you word.
+     | 
+     / But before anyone could find you the day of the ceremony
+     / came upon us.
+     | 
+     / It was lonely without {D3}, but it was a splendid wedding
+     / all the same.
+  -- the chancellor's four-page apology. The JP repeats the {D3} token in the last page and so does this.
+
+---- 5010
+  {D4}King Foan{SPK}Ah, {D3}! How I've wanted to see you!
+     | 
+     / {D4}King Foan{SPK}I did so want you all to attend our wedding!
+     | 
+     / {D4}King Foan{SPK}But Erika kept me waiting so long,
+     / I could wait no longer!
+     | 
+     / {D4}King Foan{SPK}So we held it as planned.
+     / Forgive me, {D3}! Hahaha!
+  -- King Foan himself, four pages, tagged {D4} because the JP tags him. The joke is that he waited thousands of years for Erika and then would not wait a few days for the party. 'Hahaha' for hah-hah-ha.
+
+---- 5011
+  Truly, those two are so devoted to each other.
+
+---- 5012
+  This is the mirror room.
+     | 
+     / When a beautiful princess was
+     / inside the mirror, a great fuss.
+     | 
+     / Now that she is gone, they crowd in to gawk all the same.
+     | 
+     / Humans really are an innocent sort.
+  -- 'This is the mirror room' is THEIR sentence, verbatim from 4912. The rest is a guard's dry observation about human nature; kept flat, since the humor is in the flatness.
+
+---- 5013
+  I came all this way to buy the famous mirror of
+     / the mirror princess.
+     | 
+     / However high the price, I meant to have it without fail!
+  -- a would-be buyer who arrived too late. Paired with 5014, the man still staring into the empty mirror.
+
+---- 5014
+  If I wait here like this, surely a beautiful princess
+     / will appear again!
+     | 
+     / So I think, and I go on staring into the mirror.
+
+---- 5015
+  Mudo is gone, and Miralgo struck down as well.
+     | 
+     / The power of evil ought to be dwindling away,
+     / yet I do not feel it is.
+     | 
+     / I hope it is only my needless worry.
+  -- the note of unease. Miralgo is their spelling (2322-2324). This line plants that the evil is not finished.
+
+---- 5016
+  {D4}Erika{SPK}Why, welcome. How good of you to come.
+     | 
+     / {D4}Erika{SPK}I have been recalling the distant past,
+     / hoping my wisdom helps.
+     | 
+     / 
+  -- Erika tagged {D4}Erika, matching the JP's own tagging. Trailing {AF} preserved.
+
+---- 5017
+  {D4}Erika{SPK}It was so long ago. Without something to stir it,
+     / my memory is dim.
+     | 
+     / {D4}Erika{SPK}I am sorry to be of so little help.
+  -- her apology for a memory thousands of years old. kikkake rendered 'something to stir it', which sets up 5018 where the sword IS the prompt.
+
+---- 5018
+  {D4}Erika{SPK}Oh? That sword! could it be the legendary
+     / Sword of Ramias?
+     | 
+     / {D4}Erika{SPK}Ah, so it is after all. I have remembered
+     / something important.
+     | 
+     / 
+  -- 'Sword of Ramias' is their term (564, 1331). This is the trigger line: showing her the sword unlocks 5019.
+
+---- 5019
+  {D4}Erika{SPK}The four legendary arms each bear a different mark,
+     / so it is said.
+     | 
+     / {D4}Erika{SPK}And one who brings them to the Shrine of the Gods,
+     / wherever it is,
+     | 
+     / {D4}Erika{SPK}will surely open the road to the castle of the gods.
+     / So ran our legend.
+     | 
+     / {D4}Erika{SPK}I hope this memory serves you well on your journey.
+  -- THE PLOT-BEARING LINE OF THE RUN, four pages, the legend of the four legendary arms. 'legendary arms' is their term for the four bugu (287, 543, 2228). 'Shrine' capitalized follows their 'the Shrine at Dhama' (626, 1587). COINAGE WITHDRAWN, corpus term found instead. monshou occurs once, but the game DESCRIBES those same sigils elsewhere with shirushi, and NoPrgress renders that as 'mark': 'There is a cross engraved on the Shield of Sufida' (5984), 'a heart engraved on the Armor of Orgo' (5986), 'The mark should appear' (2227). Same verb kizamareteiru, same objects, so 'each bear a different mark' reuses their vocabulary instead of coining 'emblem'. THE CASTLE: kami no shiro is 'the castle of the gods', THEIR established term across four translated messages (287, 2228, 2405, 4857) plus 'the castle of the ancient gods' (2227). It is NOT Zenithia: they use Zenith for the king and Zenithia / Cloud Castle for the dream-world castle (5555, 5564, 5588), a different place with a different name.
+
+---- 5020
+  {D4}Erika{SPK}Beyond the tale of the four legendary arms,
+     / I remember nothing else.
+     | 
+     / {D4}Erika{SPK}Married to King Foan, perhaps I have become
+     / a woman of this age.
+  -- her limit, and the quiet closing note: she has become a woman of this age rather than the ancient princess. Deliberately understated.
+
+==================================================================
+IDs 5786-5786   (1 message)
+==================================================================
+
+---- 5786
+  {C0} hid!
+     | 
+     / 
+  -- their 5783 is the register: '{C0} began walking stealthily.'
+
+==================================================================
+IDs 5789-5790   (2 messages)
+==================================================================
+
+---- 5789
+  {C0} thought back deeply on what people had said.
+     | 
+     / 
+  -- follows their 5788, '{C0} recalled a story someone told.'
+
+---- 5790
+  {C0} tried to forget the words so far. And they were!
+     | 
+     / 
+
+==================================================================
+IDs 5794-5794   (1 message)
+==================================================================
+
+---- 5794
+  {C0} is paralyzed and cannot cast spells.
+  -- their 5796 supplies the exact wording for this state: '{C0} is paralyzed and cannot use the {B5}.'
+
+==================================================================
+IDs 5802-5802   (1 message)
+==================================================================
+
+---- 5802
+  The poison vanished from {C1}'s body!
+  -- near-duplicate of their 5801, 'The poison left {C1}'s body.' The JP differs slightly and so does this, per the block-variation practice.
+
+==================================================================
+IDs 5805-5805   (1 message)
+==================================================================
+
+---- 5805
+  Chamoro isn't here, so you can't fly there!
+  -- CHAMORO IS A COINAGE, flagged. The name occurs exactly ONCE in the whole script (here) and never in translated text, so there is no precedent. Everywhere else this character is a runtime name token, which is why the corpus is silent; this one line hardcodes the katakana, so the English must hardcode a name too. Chamoro is the direct romanization. If the player renamed the character, this line will disagree with the rest of the game, which is a defect present in the JAPANESE and not introduced here.
+
+==================================================================
+IDs 5818-5819   (2 messages)
+==================================================================
+
+---- 5818
+  {C0} strained {C8} eyes and gazed out over the world!
+  -- {C8} ADDED DELIBERATELY and it is precedented. The Japanese carries no such token, but NoPrgress THEMSELVES insert it where English needs a possessive that Japanese omits: their 5785 renders {C0}-wa ashimoto-wo hotte-mita as '{C0} dug at {C8} feet.' Same construction, same need. This is the one class of token it is correct to add.
+
+---- 5819
+  {C0}'s gaze became a hawk's and raced across the sky!
+     | 
+     / 
+  -- the JP carries the hawk image explicitly, so it is kept. Their plainer 5779 ('{C0} sees the surrounding land from high above') is the same spell described without the metaphor, which is why this line does not copy it.
+
+==================================================================
+IDs 5825-5825   (1 message)
+==================================================================
+
+---- 5825
+  {C0} rested and fell into a deep sleep.
+
+==================================================================
+IDs 5849-5849   (1 message)
+==================================================================
+
+---- 5849
+  You don't remember a single place to go!
+  -- the Zoom spell with no destinations learned. Their 5851 is the neighbouring register.
+
+==================================================================
+IDs 5896-5896   (1 message)
+==================================================================
+
+---- 5896
+  Strength wells up in {C0}'s body!
+
+==================================================================
+IDs 5906-5906   (1 message)
+==================================================================
+
+---- 5906
+  It's rusted shut and will not open!
+  -- the rusted door. Paired with 5908 as two ways of failing to open something.
+
+==================================================================
+IDs 5908-5908   (1 message)
+==================================================================
+
+---- 5908
+  The watergate doesn't budge!
+  -- suimon = 'watergate', their term: 'You do not have the Watergate Key' (8) and 'A key for the watergate' (5769). They also wrote 'floodgate' once at 2232, but Watergate is dominant at five uses and is the item name, so it wins.
+
+==================================================================
+IDs 5911-5912   (2 messages)
+==================================================================
+
+---- 5911
+  {C0} put the {B5} into {C1}'s hands.
+
+---- 5912
+  {C0} put the {B5} away to carry.
+
+==================================================================
+IDs 5915-5917   (3 messages)
+==================================================================
+
+---- 5915
+  {D3} took the {B5} from {C0} and gave it to {C1}.
+  -- ITEM TRANSFER. Their translated neighbors set the pattern: '{C0} put the {B5} into the sack' (5919), '{C0} took the {B5} from the sack' (5921), '{C0} decided to keep the {B5}' (5913). mochimono is handled as 'from {C0}' / 'to {C1}' rather than translated as a noun, which keeps these under the parameter-token cap.
+
+---- 5916
+  {D3} took the {B5} to carry.
+
+---- 5917
+  {D3} took the {B5} from {C1} and gave it to {C1}.
+  -- THE SAME TOKEN APPEARS TWICE with different runtime values, which is what the Japanese does. It reads oddly on the page and is correct in the engine. Mirrored exactly rather than tidied.
+
+==================================================================
+IDs 5920-5920   (1 message)
+==================================================================
+
+---- 5920
+  {C0} doesn't have a sack.
+
+==================================================================
+IDs 5922-5925   (4 messages)
+==================================================================
+
+---- 5922
+  There isn't a single item in the sack.
+  -- dougu-bukuro = 'the sack', their term (5919, 5921, 6038 'You are not holding anything in a sack', 6069 'Sack received').
+
+---- 5923
+  {D3} took the {B5} from {C0} and put it in the sack.
+
+---- 5924
+  {D3} took the {B5} from the sack and gave it to {C0}.
+
+---- 5925
+  {C0} isn't carrying any items.
+
+==================================================================
+IDs 5927-5927   (1 message)
+==================================================================
+
+---- 5927
+  {C0} tried using the {B5} as an item.
+
+==================================================================
+IDs 5933-5937   (5 messages)
+==================================================================
+
+---- 5933
+  {C0} threw the {B5}!
+
+---- 5934
+  {C0} gave the {B5} to {C1}!
+     | 
+     / 
+
+---- 5935
+  {C0} gave the {B5} to the whole party!
+     | 
+     / 
+
+---- 5936
+  Everyone's wounds were healed in an instant!
+     | 
+     / 
+  -- the mass-heal result. Their 5938 '{C0} recovered {BB} MP' is the register.
+
+---- 5937
+  {C0} put on the {B5} and prayed!
+     | 
+     / 
+  -- SUSPECTED SOURCE ODDITY, flagged not guessed. The JP reads [item] wo [X] ni hamete inotta, where [X] is the glyph for duty or mission. That glyph is WELL attested: it forms ninmu ('the king ordered me') in five translated messages (1988, 1993, 4240, 4455, 6797), so it is not a mapping error of the kind found at $239 and $488. But 'fitted it onto a duty' is not Japanese, and hameru wants a body part, most likely a finger. The finger kanji is unmapped and does not appear here. Either the source has a typo or two glyphs are conflated in a way the corpus cannot separate. Rendered as 'put on the {B5}', which is correct under every reading.
+
+==================================================================
+IDs 5953-5963   (11 messages)
+==================================================================
+
+---- 5953
+  {C0} held the {B5} up to the sky!
+     | 
+     / 
+  -- ITEM-USE SYSTEM MESSAGES. Register taken directly from their translated neighbors 5938-5966: '{C0} unfolded the {B5}.', '{C0} opened the sand container.', '{C0} recovered {BB} MP.' Terse, past tense, one clause, full stop. No color. These are the engine talking, not a character.
+
+---- 5954
+  {C0} gripped the {B5} tightly.
+     | 
+     / 
+
+---- 5955
+  The {B5} has been crumpled up.
+  -- PAIRED WITH 5954. The structure of this whole block is action-then-result: grip it, and it gets crumpled; check it, and courage rises; open it, and the tools gleam. Keep each pair reading as one beat.
+
+---- 5956
+  {C0} checked the {B5}!
+     | 
+     / 
+
+---- 5957
+  A little courage wells up!
+  -- the result of 5956. 'courage' is their word (10 occurrences).
+
+---- 5958
+  {C0} gripped the ticket tightly.
+     | 
+     / 
+  -- joursenken = 'ticket', their term (2006, 2007, 3383, and 'Ticket to San Marino 50G' at 2372). This pair repeats 5954/5955 with the ticket named outright instead of via {B5}, which is why the wording deliberately matches.
+
+---- 5959
+  The ticket has been crumpled up.
+
+---- 5960
+  {C0} read the Royal Letter.
+     | 
+     / 
+  -- ou no shojou = 'the Royal Letter', their capitalized item name (4670, 6099); they also use lowercase 'royal letter' in prose at 3766. Capitalized here because the line names the item.
+
+---- 5961
+  The hand is poor, but the letter is heartfelt, and commends
+     / {C0} and company.
+  -- the letter's contents. The joke is affectionate: the king writes a poor hand but a warm letter. yoroshiku rendered as 'commends {C0} and company', which is what a letter of introduction does.
+
+---- 5962
+  {C0} took the {B5} in hand!
+     | 
+     / 
+
+---- 5963
+  The pipe is well used and gives off a quiet gleam.
+  -- their item is the 'Rusted Pipe' (769, 828), but this line describes a pipe generically while {B5} supplies the name in 5962, so lowercase 'pipe' is correct here.
+
+==================================================================
+IDs 5967-5974   (8 messages)
+==================================================================
+
+---- 5967
+  Small as it is, it carries a solid weight.
+  -- the result of a weight being lifted; no {C0} in the JP, so none here.
+
+---- 5968
+  {C0} took a small pinch of the {B5}.
+     | 
+     / 
+
+---- 5969
+  {C0} has been made to feel quite ill.
+
+---- 5970
+  {C0} tried opening the {B5}.
+     | 
+     / 
+  -- -te mita is 'tried opening', which is why this is not word for word their 5946 ('{C0} opened the {B5}'). The Japanese differs slightly and so does the English.
+
+---- 5971
+  The tools have each been polished
+     / ready for use at a moment's notice.
+
+---- 5972
+  {C0} took the {B5} in hand!
+     | 
+     / 
+  -- IDENTICAL JAPANESE TO 5962, so identical English. Registered with 3466/3441 and 4000/3992.
+
+---- 5973
+  Looking closely, there is a picture of a beautiful woman
+     / in a bikini.
+  -- USES A FLAGGED GLYPH. The kanji here is one of the three thin-evidence entries from the derived-tier audit ($28A, currently 'picture', alternative 'figure'). It does not matter for this line: 'a picture of a beautiful woman in a bikini' and 'the figure of a beautiful woman in a bikini' are both correct renderings of the sentence, so the flag does not block authoring. Noted so the dependency is visible if the glyph is ever revised.
+
+---- 5974
+  {C0} feels a little bit happier.
+  -- the payoff of 5973, and the driest possible delivery, which is the joke.
+
+==================================================================
+IDs 5977-5977   (1 message)
+==================================================================
+
+---- 5977
+  But there's no flying right now!
+
+==================================================================
+IDs 5979-5981   (3 messages)
+==================================================================
+
+---- 5979
+  Falshion spread his wings and tried to take off.
+     | 
+     / But his body turned heavy as lead, and he could not fly!
+  -- Falshion is their name (5978). This is the failed take-off. The lead simile is the JP's own.
+
+---- 5980
+  {C0} held the {B5} up to the sky!
+     | 
+     / 
+  -- near-identical to 5953 but NOT identical Japanese: 5953 has -te mita, this does not, so the English differs by the same small degree.
+
+---- 5981
+  Some kind of pattern is engraved on the rusted sword.
+     | 
+     / But the rust is too thick to make it out.
+  -- 'engraved on' matches their own construction for the other three legendary arms (5982, 5984, 5986). The joke is that this one is too rusted to read, which is why it is a placeholder for a mark rather than one of the named ones.
+
+==================================================================
+IDs 5983-5983   (1 message)
+==================================================================
+
+---- 5983
+  {C0} raised the {B5} aloft to the heavens!
+     | 
+     / 
+  -- kakageta = raised aloft, distinct from the 'held up to the sky' already used at 5953 and 5980 for a different verb.
+
+==================================================================
+IDs 5985-5985   (1 message)
+==================================================================
+
+---- 5985
+  {C0} took the {B5} in hand and looked it over.
+     | 
+     / 
+
+==================================================================
+IDs 5987-5987   (1 message)
+==================================================================
+
+---- 5987
+  There is a sun engraved on the Helm of Cevas.
+  -- COMPLETES THE SET OF FOUR MARKS. Their three are 'A lightning bolt is engraved on Ramia's Sword' (5982), 'There is a cross engraved on the Shield of Sufida' (5984) and 'There is a heart engraved on the Armor of Orgo' (5986). This is the fourth and follows their construction exactly. 'the Helm of Cevas' is their name for it (4813). NOTE their own inconsistency at 5982, 'Ramia's Sword' where elsewhere they write 'the Sword of Ramias'; that is theirs and is NOT propagated here.
+
+==================================================================
+IDs 5992-5992   (1 message)
+==================================================================
+
+---- 5992
+  Throwing that away is out of the question!
+
+==================================================================
+IDs 5998-6003   (6 messages)
+==================================================================
+
+---- 5998
+  You can't change the party order here.
+  -- no existing NoPrgress term for the party-order menu; "order" is used elsewhere in their script (519, 765, 1103). Open to a better word.
+
+---- 5999
+  {C0} alone doesn't know what to do or where to go!
+
+---- 6000
+  But {C1} is dead.
+
+---- 6001
+  Unfortunately, Adventure Log 1 has disappeared.
+  -- phrasing copied from their own message 138, "Unfortunately, the bed has disappeared", and their capitalization "Adventure Log" (579, 580, 582).
+
+---- 6002
+  Unfortunately, Adventure Log 2 has disappeared.
+
+---- 6003
+  Unfortunately, Adventure Log 3 has disappeared.
+
+==================================================================
+IDs 6006-6006   (1 message)
+==================================================================
+
+---- 6006
+  No telling where we are.{D6} This place doesn't seem
+     / to be on the map.
+  -- {D6} is a source control code and is kept in place. Their 5948 is the neighbouring register: 'How strange. You don't appear to be anywhere on this map!'
+
+==================================================================
+IDs 6012-6019   (8 messages)
+==================================================================
+
+---- 6012
+  You can't move as you are!
+  -- RESTRICTION MESSAGES, shown while the party is transformed. kono mama de wa = 'as you are'. The five (6012-6016) are a set and are worded in strict parallel, which is the whole requirement for a block like this.
+
+---- 6013
+  You can't speak as you are!
+
+---- 6014
+  You can't cast spells as you are!
+
+---- 6015
+  You can't examine things as you are!
+
+---- 6016
+  You can't use items as you are!
+
+---- 6017
+  This seems to be ???!
+  -- the ??? is literal in the Japanese, for an unidentified item.
+
+---- 6018
+  This seems to be a rusted sword!
+  -- sabite iru tsurugi. Lowercase and descriptive because the line is an identification guess, not an item name. Their own 'Rusted Pipe' (769) shows they capitalize actual item names.
+
+---- 6019
+  {DE}That's right!
+  -- a bare sentence fragment in the JP too, with no subject. Rendered as the same kind of fragment rather than invented into a sentence.
+
+==================================================================
+IDs 6039-6067   (29 messages)
+==================================================================
+
+---- 6039
+  Under construction!
+  -- ENTIRE RUN IS ENIX'S INTERNAL DEBUG MENU, not player-facing dialogue. Register is taken from their own translated debug strings at 6068-6081 ('Sack received', 'Acquired the wagon', 'Became a soldier') and their UI prompts at 6037-6038: terse, sentence case, question mark on prompts, no flourish. NoPrgress translated this block's neighbors, so leaving it in Japanese would be the inconsistency.
+
+---- 6040
+  Enable cancel walking?
+  -- cancel-walking is a debug movement mode; kept literal rather than guessed at, since its exact behavior is not observable from the text.
+
+---- 6041
+  Cancel walking enabled.
+
+---- 6042
+  Cancel walking disabled.
+
+---- 6043
+  Enable random encounters?
+  -- encounter toggle. The three-line group 6043-6045 follows the same prompt-then-confirmation shape as 6040-6042 and is worded in parallel deliberately.
+
+---- 6044
+  Random encounters will occur.
+
+---- 6045
+  Random encounters will not occur.
+
+---- 6046
+  Set the starting floor to the cheat floor?
+  -- inchiki = 'cheat'. The cheat floor is a debug test map.
+
+---- 6047
+  Starting floor set to the cheat floor.
+
+---- 6048
+  Starting floor set to the standard floor.
+  -- GLYPH CORRECTION SOURCE. This line is what proved $239 is the kanji for 'standard', not the one for 'target': hyoujun-furoa is a real word, the alternative is not. See the map note.
+
+---- 6049
+  Use the coordinate window?
+  -- za-hyou window = 'coordinate window', a debug overlay. Same glyph as 6048 and the second half of the proof.
+
+---- 6050
+  The coordinate window is available.
+
+---- 6051
+  The coordinate window is not available.
+
+---- 6052
+  Set the monster recruit rate to maximum?
+  -- PERCENT AVOIDED DELIBERATELY. The JP reads 'set the rate to 100[X]' where [X] is almost certainly a percent sign, but that symbol appears only in these two untranslated lines, so nothing in their English confirms it, and no percent glyph is confirmed encodable in the English trees. 'maximum' says the same thing with symbols known to exist. 'recruit' is their verb for this mechanic (6026, 'A Beastmaster can sometimes recruit enemies after battle').
+
+---- 6053
+  The rate is at maximum.
+  -- same avoidance as 6052; the pair reads consistently.
+
+---- 6054
+  The rate is normal.
+
+---- 6055
+  Raise class level only?
+  -- 'class' is their term for shokugyou throughout the vocation blurbs (6020-6036).
+
+---- 6056
+  Really jump into the great hole?
+  -- oo-ana is the great hole in the sea, the one foreshadowed by the villager at 3630. majime ni = 'really', the debug menu asking whether you mean it.
+
+---- 6057
+  Sorry, but the flags are not set.
+     | 
+     / Please obtain the wagon properly first.
+  -- the debug menu refusing because story flags are unset. majime ni here means 'by playing it properly', as opposed to via this menu, and that contrast is the joke. 'wagon' is their term (6079, 359).
+
+---- 6058
+  Get the ship?
+
+---- 6059
+  Get the island?
+  -- hyoutan-jima is the gourd island vehicle. Their own flag text calls it simply 'island' (6111, 'Jamiras defeated. Received island'), so that is followed rather than coining a fuller name.
+
+---- 6060
+  Get the flying bed?
+  -- 'flying bed' is their term (155, '{D3} has aquired the flying bed').
+
+---- 6061
+  Get the carpet?
+
+---- 6062
+  Enable class change to Slime?
+  -- Slime, Dragon and Debug are the three joke classes this menu unlocks. 'Debug' is left as-is: it is the developers naming their own tool.
+
+---- 6063
+  Enable class change to Dragon?
+
+---- 6064
+  Enable class change to Debug?
+
+---- 6065
+  Raise the party leader's style by 10?
+  -- 'style' is their term for kakkoyosa (447, "{D3}'s style went up 5 points"). The party leader gets 10 points a press, hence 6066.
+
+---- 6066
+  Raise it again?
+
+---- 6067
+  No admittance beyond this point for ordinary people.
+     | 
+     / Debuggers in particular are asked to refrain.
+  -- the developers' sign on the door of their own debug room, and the run's punchline: ordinary people are barred, and debuggers especially so. Kept dry; inflating it would spoil it.
+
+==================================================================
+IDs 6165-6165   (1 message)
+==================================================================
+
+---- 6165
+  Sorry, but the flags are not set.
+     | 
+     / Please bring Hassan along properly first.
+  -- DEBUG. Same shape as 6057, the other flags-not-set refusal. HASSAN IS A COINAGE, flagged: the katakana occurs exactly ONCE in the whole script, here, and never in translated text, because everywhere else this character is a runtime name token. Same situation as Chamoro at 5805, and the same consequence: if the player renamed him, this debug line disagrees with the game, which is a defect in the Japanese and not introduced here.
+
+==================================================================
+IDs 6167-6167   (1 message)
+==================================================================
+
+---- 6167
+  Want to be called the strongest?
+
+==================================================================
+IDs 6170-6172   (3 messages)
+==================================================================
+
+---- 6170
+  {STAR}Hunh?
+  -- {STAR} because the JP carries the shop-clerk marker. hanya is a cutesy noise, not a word.
+
+---- 6171
+  Danchone.
+  -- DANCHONE IS A COINAGE, flagged. One occurrence, no precedent, and it is not a sentence: it is the refrain of a Japanese folk song, dropped into the debug room as a non sequitur. Transliterated rather than translated or explained, because explaining it would make it mean something, and in context it deliberately means nothing.
+
+---- 6172
+  Please pretend there was nobody in that direction.
+  -- the debug joke version of their own 6007, 'There is no one in that direction.'
+
+==================================================================
+IDs 6174-6174   (1 message)
+==================================================================
+
+---- 6174
+  Gooong... {D6}Gooong...
+  -- a bell. The JP writes it with a chouon, which is NOT encodable in the English trees, so the long vowel is carried by repeated letters instead. {D6} preserved.
+
+==================================================================
+IDs 6177-6177   (1 message)
+==================================================================
+
+---- 6177
+  And so, the battle event. Do you win?
+  -- sengi = 'battle event', their term from the flag list at 6107 ('Terry's battle event finished').
+
+==================================================================
+IDs 6184-6186   (3 messages)
+==================================================================
+
+---- 6184
+  If you are lonely on your own
+     / you may weep. Here, on this breast.
+     | 
+     / And if your flags are aching
+     / you may raise them. Here, by my authority.
+  -- THE DEBUG ROOM'S JOKE POEM, 6184-6186, and the developers' own. It parodies a sentimental torch song by substituting programmer vocabulary: cry on my breast, and raise your FLAGS by my authority. Kept wry rather than explicit; their own bawdy ceiling is 5023 and 4489. The three messages are one poem and share a rhythm, so they are worded as a set.
+
+---- 6185
+  And if drops should overflow
+     / you may let them out, into that stream.
+
+---- 6186
+  And if you don't feel like it anyway
+     / you may throw such a thing away.
+
+==================================================================
+IDs 6200-6200   (1 message)
+==================================================================
+
+---- 6200
+  You don't want it, then.
+
+==================================================================
+IDs 6210-6210   (1 message)
+==================================================================
+
+---- 6210
+   Just when things were
+     /  getting good, we must
+     /  part here for today.
+  -- LEADING SPACES ARE DELIBERATE. Their surrounding demo messages are indented the same way: ' We would sincerely like{AD} to thank you for playing{AD} Dragon Quest VI today.' (6209), and 6211 and 6212 match. The JP indents too. Preserved exactly.
+
+==================================================================
+IDs 6223-6223   (1 message)
+==================================================================
+
+---- 6223
+  {DE}Drop a few things and come back.
+     | {D5}
+  -- SHOP BLOCK A gap-fill. This prompt now exists in four phrasings: 6223 here, 6302 (block B), 6328 (block C), 6942 (block D, which says it differently again). Check all four before writing a fifth.
+
+==================================================================
+IDs 6229-6229   (1 message)
+==================================================================
+
+---- 6229
+  {DE}Here you go, {B3}!
+     | {D5}
+
+==================================================================
+IDs 6233-6234   (2 messages)
+==================================================================
+
+---- 6233
+  {DE}Huh? {B3} isn't carrying a thing!
+     | {D5}
+  -- block A. Their 6222 and 6232 set the surrounding voice; distinct from 6336, the block D version.
+
+---- 6234
+  {DE}Huh? There's nothing in that {C3}!
+     | {D5}
+
+==================================================================
+IDs 6237-6237   (1 message)
+==================================================================
+
+---- 6237
+  {DE}Whoa! I'd buy it, but it looks like you can't carry
+     / any more gold!
+     | 
+     / Buy something here first, before you sell.
+     | 
+     / 
+  -- SHOP BLOCK A. The party is carrying so much gold the shop cannot pay them, and the brash clerk tells them to spend some first. Their 6236 and 6238 are the surrounding voice.
+
+==================================================================
+IDs 6247-6247   (1 message)
+==================================================================
+
+---- 6247
+  {DE}This one has its uses as an item in battle as well, sir.
+     | {D5}
+  -- THE DEFERENTIAL BLOCK, 6245-6268, the sixth and politest of the game's parallel shop scripts (-gozaimasu, customers addressed as -sama). Unlike blocks A, B and C this register SURVIVES in their own translated lines here ('The {B5}? Thank you.' 6246, 'Thank you very much.' 6265), so it is written polite, the same decision made for the block D clerk at 6931.
+
+==================================================================
+IDs 6249-6250   (2 messages)
+==================================================================
+
+---- 6249
+  {DE}But {B3} appears unable to carry more.
+     | {D5}
+
+---- 6250
+  {DE}Please reduce your load a little and come again.
+     | {D5}
+
+==================================================================
+IDs 6252-6253   (2 messages)
+==================================================================
+
+---- 6252
+  {DE}Then I shall place it in the {C3}.
+     | {D5}
+
+---- 6253
+  {DE}{B3} is unable to equip this. Is that acceptable?
+  -- deliberately NOT worded like 6305, the block B version of the same prompt, nor 6331 (block C) nor 6226 (block A, theirs). Four blocks, four phrasings.
+
+==================================================================
+IDs 6255-6257   (3 messages)
+==================================================================
+
+---- 6255
+  {DE}Here you are, {B3}.
+     | {D5}
+
+---- 6256
+  {DE}Then I shall place it in {B3}'s coffin.
+     | {D5}
+  -- the coffin line now exists in five forms: theirs at 6230 and 6282, and ours at 6308, 6333 and here. All five checked against each other.
+
+---- 6257
+  {DE}Then I shall have it taken to {B3} in the wagon.
+     | {D5}
+
+==================================================================
+IDs 6259-6260   (2 messages)
+==================================================================
+
+---- 6259
+  {DE}But {B3} is not carrying anything, sir.
+     | {D5}
+
+---- 6260
+  {DE}But the {C3} is quite empty, sir.
+     | {D5}
+
+==================================================================
+IDs 6262-6263   (2 messages)
+==================================================================
+
+---- 6262
+  {DE}I am very sorry, but I could not take so precious a thing.
+     | 
+     / Might you keep it safe yourself?
+     | {D5}
+  -- the polite refusal of a valuable item. kichou na mono uses the glyph flagged in the derived-tier audit as thin evidence; the reading 'precious' is not in doubt from context, and no alternative changes this sentence.
+
+---- 6263
+  {DE}Oh? I would pay you, but {C9} appears
+     / unable to carry more.
+     | 
+     / I cannot take it for nothing. How awkward this is.
+     | 
+     / 
+  -- the politest version of the too-much-gold refusal, and the funniest, because the clerk is genuinely distressed at the etiquette problem rather than the money.
+
+==================================================================
+IDs 6266-6266   (1 message)
+==================================================================
+
+---- 6266
+  {DE}I see. That is a great pity.
+     | {D5}
+
+==================================================================
+IDs 6273-6273   (1 message)
+==================================================================
+
+---- 6273
+  {DE}This is a bargain even used as an item in battle.
+     | {D5}
+  -- a fifth block, the bargain-talker. Their 6272 'The {B5}. Yes, sir.' sets the tone.
+
+==================================================================
+IDs 6275-6275   (1 message)
+==================================================================
+
+---- 6275
+  {DE}Oh dear, {B3} is carrying a full load.
+     | {D5}
+  -- CENSUS MISS. Belongs to the bargain-talker shop block around 6273. mochimono ga ippai = a full load; their 6222 is the model.
+
+==================================================================
+IDs 6285-6285   (1 message)
+==================================================================
+
+---- 6285
+  {DE}Eh? But {B3} isn't carrying anything.
+     | {D5}
+
+==================================================================
+IDs 6289-6292   (4 messages)
+==================================================================
+
+---- 6289
+  {DE}Oh dear? Customer. It looks like you can't
+     / carry any more gold.
+     | 
+     / How nice. Just once I'd like to have more money
+     / than I could spend.
+     | 
+     / 
+  -- the friendly block's version, where the clerk wistfully wishes he had that problem. The wistfulness is the JP's and is kept.
+
+---- 6290
+  {DE}Let me see. For the {B5} I can pay {BB} gold.
+     / Is that all right?
+  -- CENSUS MISS. The buy-back offer for the friendly block, so this is now the FIFTH phrasing of that three-part structure (item, price, confirm) alongside 6238, 6315, 6340 and 6939.
+
+---- 6291
+  {DE}You'll sell it to me? Thanks very much!
+     | {D5}
+  -- CENSUS MISS. maido doumo. 'Much obliged' is already used at 6324 and 6341 and 'My thanks to you' at 6316, so this block takes 'Thanks very much'.
+
+---- 6292
+  {DE}I see. That's a pity.
+     | {D5}
+
+==================================================================
+IDs 6297-6297   (1 message)
+==================================================================
+
+---- 6297
+  {DE}Ah? You're a touch short of gold for that, I'm afraid.
+     | {D5}
+  -- SHOP BLOCK B gap-fill, completing the block whose other lines they translated at 6294-6319.
+
+==================================================================
+IDs 6299-6299   (1 message)
+==================================================================
+
+---- 6299
+  {DE}This is a fine piece, useful as an item in battle as well.
+     | {D5}
+  -- the useful-in-battle pitch now exists in four phrasings: 6247, 6273, 6325 and here. Checked against each other.
+
+==================================================================
+IDs 6301-6305   (5 messages)
+==================================================================
+
+---- 6301
+  {DE}Say what you will, {B3} can carry no more.
+     | {D5}
+  -- SHOP BLOCK B, filling the gaps in the block whose other lines they translated (6294-6319). Each of these is now the third or fourth phrasing of its function; check 6222-6226 (block A, theirs), 6327-6331 (block C, ours) and 6931-6935 (block D, ours) before wording another.
+
+---- 6302
+  {DE}Lighten your load a little and come again.
+     | {D5}
+
+---- 6303
+  {DE}Will another take it?
+
+---- 6304
+  {DE}Then into the {C3} it goes.
+     | {D5}
+
+---- 6305
+  {DE}{B3} cannot equip this, but will that do?
+
+==================================================================
+IDs 6307-6309   (3 messages)
+==================================================================
+
+---- 6307
+  {DE}There you are, {B3}!
+     | {D5}
+
+---- 6308
+  {DE}Then into {B3}'s coffin it goes.
+     | {D5}
+
+---- 6309
+  {DE}Then I'll get it out to {B3} in the wagon.
+     | {D5}
+
+==================================================================
+IDs 6311-6312   (2 messages)
+==================================================================
+
+---- 6311
+  {DE}Ah? {B3} has nothing at all.
+     | {D5}
+
+---- 6312
+  {DE}Ah? There seems to be nothing in that {C3}.
+     | {D5}
+
+==================================================================
+IDs 6314-6314   (1 message)
+==================================================================
+
+---- 6314
+  {DE}Hmm. Sorry, but I can't take that one.
+     | {D5}
+
+==================================================================
+IDs 6316-6317   (2 messages)
+==================================================================
+
+---- 6316
+  {DE}Mm. My thanks to you.
+     | {D5}
+  -- 'Much obliged' was already used at 6324 and 6341 for a different block, so this one says 'My thanks to you' instead.
+
+---- 6317
+  {DE}That's a shame, that is.
+     | {D5}
+
+==================================================================
+IDs 6320-6345   (26 messages)
+==================================================================
+
+---- 6320
+  {DE}Oh? I'd buy it, but {B3} is carrying so much gold
+     / there's no room.
+     | 
+     / Enviable, that is.
+     | 
+     / 
+  -- SHOP UI, THIRD PARALLEL BLOCK. The game carries three of these: roughly 6210-6250 (brash, -daze), 6294-6319 (elderly, -ja), and this one (folksy, -dayo / sonja). NoPrgress translated most of the first two and FLATTENED ALL THREE REGISTERS to plain functional English: their brash 6236 became 'I cannot purchase that item' and their elderly 6318 became 'Do you need anything else?'. So this block is written plain too. Rendering it as dialect would be inventing a distinction they deliberately removed.
+
+---- 6321
+  {DE}Welcome. This is an item shop.
+  -- yorozu-ya rendered 'an item shop' because that is THEIR rendering of the identical Japanese at 6295. Same word, same term.
+
+---- 6322
+  {DE}Now then, what will you buy?
+     | {D5}
+  -- block B's counterpart is 6296, 'What would you like to buy?'. Deliberately reworded rather than copied: they give each block its own phrasing (compare 6232 'Who is selling?' with 6310 'Who is selling something?'), so a third variant is the faithful choice.
+
+---- 6323
+  {DE}Oh? You're a little short of gold for that one.
+     | {D5}
+
+---- 6324
+  {DE}The {B5}, is it? Much obliged!
+     | {D5}
+  -- maido-ari = a shopkeeper's thanks for custom. 'Much obliged' reused at 6341, since the Japanese repeats too.
+
+---- 6325
+  {DE}A fine piece, that. Use it as an item in battle
+     / and it serves you well!
+     | {D5}
+
+---- 6326
+  {DE}Who'll carry it?
+     | {D5}
+  -- their two existing variants are 'Who will take it?' (6300) and 'Will someone else take it?' (6224); this is the third.
+
+---- 6327
+  {DE}Say what you like, {B3} can't carry a thing more.
+     | {D5}
+  -- block A's 6222 is the model, '{B3} cannot carry any more.'
+
+---- 6328
+  {DE}Lighten your load a bit and come back, won't you.
+     | {D5}
+
+---- 6329
+  {DE}Will somebody else take it?
+
+---- 6330
+  {DE}Right, into the {C3} it goes.
+     | {D5}
+  -- block A's 6225 is '{B3}'ll put it in the {C3}'. Reworded, same function.
+
+---- 6331
+  {DE}{B3} can't equip that. Take it all the same?
+
+---- 6332
+  {DE}Shall we put it on right away?
+
+---- 6333
+  {DE}Into {B3}'s coffin it goes, then.
+     | {D5}
+  -- their two existing renderings are 'I will put it in {B3}'s coffin' (6230) and 'I put it in {B3}'s coffin' (6282), which is direct evidence that they varied wording between blocks rather than copying.
+
+---- 6334
+  {DE}I'll send it out to {B3} in the wagon, then.
+     | {D5}
+  -- block A's 6231, 'I will run it out to {B3} in the wagon'. 'wagon' is their term throughout.
+
+---- 6335
+  {DE}Who's got something to sell?
+     | {D5}
+
+---- 6336
+  {DE}Oh? {B3} isn't carrying a thing.
+     | {D5}
+
+---- 6337
+  {DE}Oh? There's nothing in that {C3} at all.
+     | {D5}
+
+---- 6338
+  {DE}Which one are you selling?
+     | {D5}
+
+---- 6339
+  {DE}Ah, sorry. I can't take that one off you.
+     | {D5}
+
+---- 6340
+  {DE}Right then. The {B5}?
+     | 
+     / I'll take it off you for {BB} gold. How's that?
+  -- the buy-back offer. Their two existing forms are 6315 ('I can give you {BB} gold for it... Really sell it?') and 6238 ('I can offer you {BB} gold for that... Is that okay?'). This is the third phrasing of the same three-part structure: item, price, confirm.
+
+---- 6341
+  {DE}Right you are. Much obliged!
+     | {D5}
+
+---- 6342
+  {DE}Ah, no? That's a shame.
+     | {D5}
+
+---- 6343
+  {DE}Anything else you need?
+  -- block B's 6318, 'Do you need anything else?'
+
+---- 6344
+  {DE}Drop in again any time!
+  -- block B's 6319, 'Come again.' The JP here is warmer (kigaru ni kite okure), so this variant is slightly warmer too, which is the one place register survives their flattening.
+
+---- 6345
+  {DE}Oh? I'd buy it, but {B3} is carrying so much gold
+     / there's no room for more.
+     | 
+     / Enviable, I'm sure, but it does make things awkward.
+     | 
+     / You ought to learn to spend a little now and then,
+     / not just hoard it!
+     | 
+     / 
+  -- the long form of 6320: the party is carrying so much gold the shop cannot pay them. Its first page deliberately mirrors 6320 with the JP's own small difference preserved (6320 ends on a soft -you ja, this on an exclamatory -janai ka), and it then runs on into the shopkeeper's advice to spend some. Three pages, as the JP has.
+
+==================================================================
+IDs 6400-6400   (1 message)
+==================================================================
+
+---- 6400
+  {DE}But you seem to be short of gold.
+     | {D5}
+
+==================================================================
+IDs 6413-6414   (2 messages)
+==================================================================
+
+---- 6413
+  {DE}Ho ho. You wish to return to your own self? That too is well.
+     | 
+     / To live as you truly are is a precious thing also.
+     | 
+     / O god who governs all life in this world. Let {C0}
+     / walk their own path!
+     | {D5}
+  -- THE CLASS-RESET PRIEST at Dhama, three pages. Same treatment as the naming-god priest: a light ceremonial register on the invocation only, plain elsewhere. Their surrounding lines (6412, 6415, 6416, '{C0}, I bestow upon you the class {B2}') confirm the formal-but-not-archaic level. The blessing asks the god to let {C0} walk their OWN path, which is the point of resetting to the base class.
+
+---- 6414
+  {DE}And so {C0} has become the true {C0} once more.
+     | {D5}
+  -- the confirmation. honrai no {C0} = 'the true {C0}', the token repeated as the JP repeats it.
+
+==================================================================
+IDs 6447-6447   (1 message)
+==================================================================
+
+---- 6447
+  {D4}{DE}Luisa{SPK}Oh, but I'm not keeping any of your companions here.
+     | {D5}
+  -- Luisa, tagged {D4}{DE} as the JP tags her. Their 6446 is the neighbouring line.
+
+==================================================================
+IDs 6470-6470   (1 message)
+==================================================================
+
+---- 6470
+  {D4}{DE}Luisa{SPK}Oh my, if you left too there'd be nobody
+     / to go adventuring.
+     | {D5}
+  -- her refusal to let the hero remove himself from his own party, and a joke: there would be nobody left to adventure.
+
+==================================================================
+IDs 6473-6473   (1 message)
+==================================================================
+
+---- 6473
+  {DE}I am very sorry, sir, but our vault is full
+     / and we can take no more.
+     | {D5}
+  -- the bank vault is full. 'vault' here renders kinko, a strongbox, and is unrelated to the azukarijo naming decision; the two never appear together.
+
+==================================================================
+IDs 6478-6478   (1 message)
+==================================================================
+
+---- 6478
+  {DE}You must be joking, sir. We are not holding so much
+     / as one gold of yours.
+     | {D5}
+  -- CENSUS MISS. The bank's joke: the player asks to withdraw with nothing deposited, and the clerk politely points out they are not holding a single gold piece. gojoudan wo = 'you must be joking'.
+
+==================================================================
+IDs 6490-6495   (6 messages)
+==================================================================
+
+---- 6490
+  {DE}Whoa there, customer. Sorry, but you seem
+     / to be short of gold.
+     | 
+     / Come again!
+  -- SAN MARINO TICKET COUNTER, the parallel of the Reidock counter they translated at 6486-6489. Same structure, deliberately different wording, same as the shop blocks. 'ferry' is their term (2362, 3216) and San Marino their spelling (2000, 2015).
+
+---- 6491
+  {DE}Welcome. This is the ticket counter for the ferry.
+     | 
+     / Passage to San Marino is 50 gold each. Will you buy a ticket?
+  -- their 6486 is the model: 'Welcome. This is a ticket counter. One ticket to Reidock castle is 50 gold. Will you buy one?' Reworded rather than copied.
+
+---- 6492
+  {DE}That comes to {BB} gold for all of you. Is that alright?
+
+---- 6493
+  {DE}Thank you kindly! The ferry landing is to the right.
+
+---- 6494
+  {DE}I see. Come by again whenever you like.
+
+---- 6495
+  {DE}Oh? I'm sorry, but you seem to be short of gold.
+     / Do come again.
+
+==================================================================
+IDs 6504-6504   (1 message)
+==================================================================
+
+---- 6504
+  {DE}Hmm. Rather more polish on it than the plain {B5}.
+     | 
+     / You're one who cares about looking good.
+     | {D5}
+  -- the Stylish Smith admiring his own work. Their 6496 gives him his name and 6503 and 6506 his register ('How uncool.'), which is vain and familiar rather than servile.
+
+==================================================================
+IDs 6528-6544   (17 messages)
+==================================================================
+
+---- 6528
+  {DE}Ho. You wish to return to the original name.
+     | 
+     / The name your parents gave you should be treasured. Mm, yes.
+     | 
+     / I shall return {B2}'s name to {D8}. Is that well?
+  -- THE NAME-CHANGING PRIEST. Register comes from their own translated half of this same block, 6515-6527: 'I am a priest of the name-changing god, Marnin', 'With the blessing of Marnin, I dub thee {D8}', 'The naming god Marnin will not let you.' That 'I dub thee' licenses a light archaic touch, which is used ONLY on the ceremonial lines here (6529, 6534, 6535) and not on the ordinary prompts. MARNIN is their name for Marinan (6515, 6519, 6527); it had been parked as unglossed katakana.
+
+---- 6529
+  {DE}O naming god Marnin! Return {B2}'s name to {D8} once more!!
+     | 
+     / 
+  -- an invocation, so the vocative. 'naming god Marnin' is their exact phrase from 6527.
+
+---- 6530
+  {DE}It is done! Your name has returned to {D8}!
+     | 
+     / 
+
+---- 6531
+  {DE}{D8}, is it? Oh? It seems one of your company
+     / already bears that name.
+     | 
+     / 
+  -- the refusal when the name is already taken by a party member. onushi rendered 'your company' rather than a dialect form, per the register rule.
+
+---- 6532
+  {DE}{D8}, you say. Do you seriously mean to give such a name?
+
+---- 6533
+  {DE}Rouse the naming god's wrath and I want no part of it.
+     / You insist!?
+  -- the priest washing his hands of it. The JP's three lines run to 77 visible if rendered fully, so the last is clipped to 'You insist!?' which also sharpens the beat.
+
+---- 6534
+  {DE}O naming god Marnin, upon the new name {D8}
+     / bestow thy blessing! whoa!!
+     | 
+     / 
+  -- the invocation that gets interrupted. The 'whoa!!' is the priest being struck mid-blessing, and it must stay mid-sentence: the JP breaks off inside the phrase for the blessing.
+
+---- 6535
+  {DE}Behold! Did I not say so! You have roused
+     / the naming god's wrath!!
+     | 
+     / Your name shall be {D8} for the rest of your life!!
+     | 
+     / 
+  -- the punishment. Its comedy is the priest's told-you-so, so 'Behold! Did I not say so!' leads. The second page is the sentence itself and is deliberately flat by contrast.
+
+---- 6536
+  {DE}{D8}, you say. Do you make light of what a name is?
+
+---- 6537
+  {DE}You do not make light of names, yet you would give
+     / such a one as that?
+  -- the priest's second attempt at talking them out of it. Follows 6536 as a pair; keep the escalation legible.
+
+---- 6538
+  {DE}Then choose another name. Tell me the new name for {B2}.
+
+---- 6539
+  {DE}What! That name rouses the naming god's wrath.
+     / It cannot be changed!
+     | 
+     / If you would change it even so, I need 5000 gold
+     / to appease his wrath.
+     | 
+     / 
+  -- the 5000-gold shakedown, which is the joke of the whole block: divine wrath is negotiable. Page split so the price lands on its own page.
+
+---- 6540
+  {DE}Is that acceptable?
+
+---- 6541
+  {DE}Then it stays as it is.
+     | 
+     / 
+
+---- 6542
+  {DE}{D3} handed over 5000 gold.
+     | 
+     / 
+  -- narration, not speech, so no priest register. {D3} kept as a token per their narration precedent (155).
+
+---- 6543
+  {DE}Very good. Now tell me the new name for {B2}.
+
+---- 6544
+  {DE}Hm? Regrettably you do not have such a sum.
+     / You must do without for now.
+     | 
+     / 
+  -- the refusal when the party cannot pay. Dry.
+
+==================================================================
+IDs 6931-6956   (26 messages)
+==================================================================
+
+---- 6931
+  {STAR}Who will be using it?
+     | 
+     / 
+  -- FOURTH SHOP BLOCK, the polite clerk. Every JP line opens with the star-plus-kagi clerk marker, and their translated neighbors 6926-6930 render that pair as the single symbol $559, written here as {STAR}. That correspondence is 5 of 5 and is NOT the discretionary NPC speech mark: it is the direct rendering of a source symbol, so it belongs in the authored text now rather than in the deferred pass. The tag-quote $240 never appears in those five, so {STAR} replaces the whole marker.
+
+---- 6932
+  {STAR}Here you are, {C0}!
+     | 
+     / 
+
+---- 6933
+  {STAR}Then I'll have it delivered to {C0} in the wagon.
+     | 
+     / 
+
+---- 6934
+  {STAR}But {C0} seems to be carrying quite enough already.
+     | 
+     / 
+  -- 'quite enough already' for the polite refusal; this block's Japanese is the courteous register (o-tsukai ni narimasu ka), and their own 6927 'Thank you for your patronage' confirms they kept it polite here rather than flattening it as they did the other three blocks.
+
+---- 6935
+  {STAR}Would another of you carry it?
+  -- FOURTH variant of this prompt. Theirs: 'Will someone else take it?' (6224). Mine: 'Will somebody else take it?' (6329). This one has to differ again.
+
+---- 6936
+  {STAR}Who will be selling?
+     | 
+     / 
+
+---- 6937
+  {STAR}Which item will you sell?
+     | 
+     / 
+
+---- 6938
+  {STAR}The {B5}, then. One moment, please!
+     | 
+     / 
+
+---- 6939
+  {STAR}Let me see. For that I can offer {BB} gold.
+     / Would that suit you?
+  -- the buy-back offer, fourth phrasing. Same three-part structure as 6238, 6315 and 6340: item, price, confirm.
+
+---- 6940
+  {STAR}You'll let me have it? Thank you kindly!
+     | 
+     / 
+
+---- 6941
+  {STAR}The {B5}? You would do better not to part with that.
+     | 
+     / 
+
+---- 6942
+  {STAR}When you can't carry any more, leave what you don't use
+     / in the Vault.
+     | 
+     / 
+  -- azukarijo = 'the Vault', reviewer ruling. NOTE THE PROVENANCE: 'vault' has ZERO occurrences in NoPrgress's script, so this is a series-convention term, not a corpus term. It is NOT their 'bank': their bank renders gorudo-ginkou and is gold-only, 1,000-gold increments, deposits and withdrawals (6471-6485). The azukarijo takes items (6942, 6954). Two facilities, two words.
+
+---- 6943
+  {STAR}Welcome! This is an item shop.
+     | 
+     / 
+  -- yorozu-ya = 'item shop', their rendering at 6295, matching the choice at 6321.
+
+---- 6944
+  {STAR}This is Luisa's Place.
+     | 
+     / Luisa{SPK}A tavern where travelers meet to find companions,
+     / and to part again.
+     | 
+     / Luisa{SPK}What is it you want?
+  -- THIRD parallel of the Luisa's Place introduction. Theirs: 6421 ('This is Luisa's Place... People come here to meet new companions and locate lost friends') and 3256 ('This is a place where you can meet with companions'). Written as a third variant per the shop-block discipline. Luisa is their name for Ruida (45 translated messages).
+
+---- 6945
+  Luisa{SPK}Come back and see me.
+  -- NO {D4} ANYWHERE IN THIS RUN. Their tagged form elsewhere is {D4}Luisa (6422, 6423), but {D4} is a SOURCE control code: 45 JP messages naming Luisa carry it and exactly 45 English ones do. These lines do not carry it, so none is added. Mirror the source, do not normalize it.
+
+---- 6946
+  Luisa{SPK}Anything else?
+
+---- 6947
+  Luisa{SPK}Who will you take along?
+     | 
+     / 
+
+---- 6948
+  Luisa{SPK}{C0} joins you, then. Very well.
+     | 
+     / Luisa{SPK}{C0}! {D3} is asking for you.
+     | 
+     / {C0} joined the party!
+     | 
+     / 
+  -- three pages. The middle page is Luisa calling across the room, which is why the name token appears twice in quick succession.
+
+---- 6949
+  Luisa{SPK}But there's nobody here you can take with you.
+     | 
+     / 
+
+---- 6950
+  Luisa{SPK}My, with such a crowd already following you?
+     | 
+     / Luisa{SPK}You'll have to leave somebody behind first.
+     | 
+     / 
+
+---- 6951
+  {C0} ran out to the wagon outside.
+     | 
+     / 
+  -- narration, not speech, so no speaker form at all. The JP has no tag quote here either, the only line in the run without one.
+
+---- 6952
+  Luisa{SPK}Who will you leave?
+     | 
+     / 
+
+---- 6953
+  Luisa{SPK}Very well. Rest easy, {C0}.
+     | 
+     / 
+
+---- 6954
+  Luisa{SPK}I'll send whatever {C0} was carrying to the Vault.
+     | 
+     / 
+  -- same storage wording as 6942, deliberately.
+
+---- 6955
+  Luisa{SPK}{C0} is in the wagon.
+     | 
+     / Luisa{SPK}I'll send word to come back here.
+     | 
+     / 
+
+---- 6956
+  Luisa{SPK}Hasn't {C9} still got something left
+     / that must be done?
+     | 
+     / 
+  -- LAST REAL MESSAGE IN THE ROM. Everything after the first {AF} in this message is the trailing-filler defect: decoded garbage in both ROMs, not content, and it is NOT authored. Luisa's line itself is a nudge that the hero still has something unfinished, and it is the last thing the script says.
+
