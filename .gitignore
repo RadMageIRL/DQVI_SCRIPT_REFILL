@@ -1,0 +1,12 @@
+# ROMs, patches, saves and dumps never belong in this repo.
+# The *.txt glob is deliberately broad: it catches emulator traces, the
+# two-language side-by-side file and the working table by default. Anything
+# that genuinely belongs can be force-added later with `git add -f`.
+
+*.sfc
+*.smc
+*.ips
+*.bps
+*.srm
+*.txt
+*.dmp
