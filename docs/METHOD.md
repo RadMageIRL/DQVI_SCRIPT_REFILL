@@ -372,8 +372,8 @@ than shipping a gloss.
 The last defect in this project was a text-window corruption: the first row of
 every page after the first drew on top of the previous page's first row, so a
 long message accumulated layers as it ran. It is worth recording how it was
-found, because three mechanisms were proposed from screenshots and all three
-were wrong, including one that was measured and still wrong.
+found, because FOUR rounds of mechanism were proposed from screenshots and all
+four were wrong, and two of them matched the corrupted cell counts exactly.
 
 **What settled it was a corpus-wide count of a structural invariant.**
 
@@ -393,7 +393,34 @@ is never followed directly by text.** The authored draft broke it 128 times.
 
 That is the whole diagnosis. Their engine was never asked to open a page on a
 letter, so that path was never exercised and the fault was never reachable in
-their script. It is not a bug the translators introduced or could have seen.
+their script. It is not a bug the translators introduced or could have seen: it
+has been latent since their release and only new text could reach it.
+
+**The fix was to write those 194 page breaks in their form**, and it was
+confirmed in play at the message that first showed the fault, along with
+multi-page dialogue elsewhere in the build that the fix was not tuned to.
+
+### The crash-fix patch was suspected and is exonerated
+
+A plausible chain of reasoning implicated an unrelated patch: it had relocated
+three word-wrap variables out of a block the game clears wholesale, so an
+implicit initialization those variables had been getting for free was gone. If
+one of them were the clear origin or a row bound, an off-by-one-row clear is
+exactly this symptom.
+
+That was wrong, and the way it was settled is worth copying. The obvious test,
+running the crash-fix patch WITHOUT the new text, cannot decide anything: with
+no new text there are no page breaks that open on a letter, so the path is
+never taken and a clean result proves nothing. The decisive build is the other
+diagonal: **the new text with the fault still in it, and the crash-fix patch
+absent.** That build corrupted identically, which puts the fault in stock
+behavior and clears the patch completely. No notice was needed anywhere.
+
+The general point: when isolating a fault between two changes, check whether
+each cell of the matrix can actually reach the fault. A cell that cannot
+exercise the code path produces a clean result for the wrong reason, and
+reading that as evidence is how a wrong conclusion gets a confident number
+attached to it.
 
 Three lessons generalize.
 
@@ -417,10 +444,15 @@ supposed to move and check that number afterwards.
 
 ### Layout style, kept as a separate matter
 
-Independently of the fault, this draft's hard line breaks were brought into
-line with theirs: 0.63 breaks per message and a mean segment of 38 visible
-characters, against 1.52 and 24.1 before. That is a VOICE change, not a fix,
-and it contributed nothing to the correction above. Its cost is recorded
-honestly: 20 pages now sit above the 72-character working target, up from 11,
-none near the 104 hard cap, which is the direct consequence of writing lines as
-long as theirs.
+Independently of the fault, 401 hard line breaks across 258 messages were
+merged out to bring this draft into line with theirs: 0.56 breaks per message
+and a mean segment of 37.0 visible characters, against their 0.63 and 38.0, and
+against this draft's own 1.52 and 24.1 before. They write long lines and let the
+variable-width font wrap; this draft had been breaking explicitly and often.
+
+**That is a VOICE change, not a fix. It contributed nothing to the correction
+above** and must not be described as having done so: it was made while chasing
+the fault, on a hypothesis that turned out to be wrong, and it survives on the
+distribution match alone. Its cost is recorded honestly: 20 pages now sit above
+the 72-character working target, up from 11, none near the 104 hard cap, which
+is the direct consequence of writing lines as long as theirs.
