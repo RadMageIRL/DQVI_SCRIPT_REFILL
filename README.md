@@ -104,18 +104,41 @@ back.
 
 **This is what you want if you just want to play.** One step, no Python.
 
-Patch a **headerless** NoPrgress-translated ROM.
+**One patch contains everything** - the 421 messages, the 178 names, both crash
+fixes and the gold window. There is nothing else to apply and no order to get
+right. Do not apply the menu-fix patch as well; this one already contains it.
+
+You need a **headerless** NoPrgress-translated ROM. Check it first:
 
 ```
 source   CRC32 B545C548
+```
+
+Then apply `DQ6-SFC-NoPrgress-RM-ScriptRefill.bps` with
+[Flips](https://www.romhacking.net/utilities/1040/) or any equivalent.
+
+**With the Flips window:** click *Apply Patch*, choose the `.bps`, then choose
+your ROM. It writes the patched copy beside it. Your original is not modified.
+
+**From a command line:**
+
+```
+flips --apply DQ6-SFC-NoPrgress-RM-ScriptRefill.bps "DQ6 NoPrgress.sfc" "DQ6 Refill.sfc"
+```
+
+Check what you get:
+
+```
 result   CRC32 11EB96A4   SHA-1 d0dd3fc5a87bc31412af983ae335a3fb8b80c696
 ```
 
-`DQ6-SFC-NoPrgress-RM-ScriptRefill.bps` is preferred. The `.ips` is the same
-patch in an older format, for tools that cannot read BPS - prefer the BPS,
-because it records its expected source and so refuses a wrong ROM instead of
-producing a broken one. IPS cannot check its input at all. Use
-[Flips](https://www.romhacking.net/utilities/1040/) or any equivalent.
+If the CRC32 does not match, your source ROM is not the one this targets. BPS
+records its expected source, so Flips will normally refuse a wrong ROM rather
+than producing a broken one - that is why the `.bps` is preferred.
+
+The `.ips` is the same patch in an older format, for tools that cannot read BPS.
+**IPS cannot check its input at all**: it will apply to anything and report
+success. Use it only if you have to, and check the hash afterwards.
 
 ## Building it yourself
 
