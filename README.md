@@ -126,11 +126,16 @@ your ROM. It writes the patched copy beside it. Your original is not modified.
 flips --apply DQ6-SFC-NoPrgress-RM-ScriptRefill.bps "DQ6 NoPrgress.sfc" "DQ6 Refill.sfc"
 ```
 
+![Applying the patch in an empty directory holding only the ROM and the .bps: flips reports the patch was applied successfully, a new DQ6 Refill.sfc appears, and its SHA-1 is d0dd3fc5a87bc31412af983ae335a3fb8b80c696](screenshots/apply-run.png)
+
 Check what you get:
 
 ```
 result   CRC32 11EB96A4   SHA-1 d0dd3fc5a87bc31412af983ae335a3fb8b80c696
 ```
+
+That is the whole thing. **You are done** - the 421 messages, the 178 names,
+both crash fixes and the gold window are all in that one output file.
 
 If the CRC32 does not match, your source ROM is not the one this targets. BPS
 records its expected source, so Flips will normally refuse a wrong ROM rather
@@ -142,8 +147,8 @@ success. Use it only if you have to, and check the hash afterwards.
 
 ## Building it yourself
 
-**You do not need this to play.** It is here so the patch does not have to be
-taken on trust: `build.py` rebuilds the released ROM from the English text in
+**You do not need this to play - the section above is the whole job.** This is
+here so the patch does not have to be taken on trust: `build.py` rebuilds the released ROM from the English text in
 this repository, so anyone can check that what the patch writes is what these
 files say it writes, and get the same hash.
 
