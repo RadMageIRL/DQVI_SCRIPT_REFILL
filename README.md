@@ -128,7 +128,20 @@ flips --apply DQ6-SFC-NoPrgress-RM-ScriptRefill.bps "DQ6 NoPrgress.sfc" "DQ6 Ref
 
 ![Applying the patch in an empty directory holding only the ROM and the .bps: flips reports the patch was applied successfully, a new DQ6 Refill.sfc appears, and its SHA-1 is d0dd3fc5a87bc31412af983ae335a3fb8b80c696](screenshots/apply-run.png)
 
-Check what you get:
+**Without Flips at all**, if you have Python: `patchRM.py` applies the same
+`.bps` and needs nothing installed. Put it beside the patch and your ROM.
+
+```
+python patchRM.py "DQ6 NoPrgress.sfc"
+```
+
+![patchRM.py run from a Windows command prompt in a folder holding only the ROM, the .bps and the script: it prints the patch and source CRC32s, writes DQ6 NoPrgress (Script Refill).sfc with CRC32 11EB96A4 and SHA-1 d0dd3fc5a87bc31412af983ae335a3fb8b80c696, and reports all checksums verified](screenshots/patchRM-run.png)
+
+It checks the patch's own CRC32, refuses a wrong or already-patched ROM, and
+verifies the output before telling you it worked. Standard-library Python 3, no
+dependencies.
+
+Check what you get, whichever route you used:
 
 ```
 result   CRC32 11EB96A4   SHA-1 d0dd3fc5a87bc31412af983ae335a3fb8b80c696
