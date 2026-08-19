@@ -7,11 +7,12 @@ build is reproducible and so anyone can see exactly what is written where.
 
   usage:  build.py <noprgress.sfc> <candidates-en.txt> <crashfix-v2.ips> <out.sfc>
 
-It does four things:
+It does five things:
   1. applies the v2 crash-fix IPS (Info > All, and Forget)
-  2. decodes all 6,960 messages from the unmodified payload
-  3. substitutes the 421 authored English messages
-  4. re-encodes every message with the ROM'S EXISTING Huffman trees, rebuilds
+  2. restores the gold window on the info screen (see apply_gold below)
+  3. decodes all 6,960 messages from the unmodified payload
+  4. substitutes the 421 authored English messages
+  5. re-encodes every message with the ROM'S EXISTING Huffman trees, rebuilds
      the 870-entry pointer table, and recomputes the internal checksum
 
 The trees are never modified. Every symbol already has exactly one code path in
@@ -113,6 +114,57 @@ class BitWriter:
             self.n += 1
 
 
+
+# ---------------------------------------------------------------------------
+# The gold window on the info screen
+#
+# NoPrgress widened the status window to fit English stat labels and moved the
+# gold window underneath it:
+#
+#     Japanese   status cols 10-21   gold cols 22-30    no overlap
+#     English    status cols 10-24   gold cols 16-23    gold buried
+#
+# Having no room left for it, they deleted the call that draws the gold "G"
+# from the routine at $C3:3593 - seven bytes, `LDA #$007A / JSL $C3763A` - and
+# padded the gap with a duplicated RTL epilogue so downstream addresses stayed
+# put. The same padding trick appears four bytes earlier in the deleted
+# `STA $3AC2` that causes the Info > All crash.
+#
+# This restores the original behaviour rather than adding anything:
+#
+#   - the draw call is put back, at exact size, over the English 15 bytes plus
+#     the dead duplicate epilogue. No relocation. The write ends at $35A8, one
+#     byte short of $35A9, which is the routine that opens the window.
+#   - it draws string $10, a bare one-byte "G". Entry $7A is NOT a gold string:
+#     $74-$7F are " A" through " L", an alphabet series where every entry
+#     carries an $88 prefix, and that prefix renders as a stray mark. $10 is
+#     what NoPrgress point their OTHER gold window at, so this is their own
+#     substitution applied to the site they missed.
+#   - the window moves to cols 1-9, rows 1-3, where the English layout has
+#     room. Only its own descriptor changes; no other window moves.
+#
+# Window geometry lives in a descriptor table at $C5:7B5C, 14 bytes per entry,
+# indexed by $3058. Gold is entry 58; bytes 11-13 of each entry are the draw
+# routine pointer, which is how it was identified.
+
+GOLD_CODE_AT = 0x033593
+GOLD_CODE_WAS = bytes.fromhex('A93E0022FE83C3ABC2307AFA68286BC2307AFA68286B')
+GOLD_CODE_NOW = bytes.fromhex('A91000223A76C3A93E0022FE83C3ABC2307AFA68286B')
+GOLD_DESC_AT = 0x057E88          # descriptor 58, bytes 0-2: X, Y, W
+GOLD_DESC_NOW = bytes([0x01, 0x01, 0x09])
+
+
+def apply_gold(rom):
+    """Restore the gold window. Refuses to run if the ROM is not as expected."""
+    n = len(GOLD_CODE_WAS)
+    if bytes(rom[GOLD_CODE_AT:GOLD_CODE_AT + n]) != GOLD_CODE_WAS:
+        raise SystemExit('gold: code at 0x%06X is not the expected English form'
+                         % GOLD_CODE_AT)
+    rom[GOLD_CODE_AT:GOLD_CODE_AT + len(GOLD_CODE_NOW)] = GOLD_CODE_NOW
+    rom[GOLD_DESC_AT:GOLD_DESC_AT + 3] = GOLD_DESC_NOW
+    return len(GOLD_CODE_NOW) + 3
+
+
 def apply_ips(rom, ips):
     assert ips[:5] == b'PATCH', 'not an IPS file'
     i, n = 5, 0
@@ -187,6 +239,9 @@ def main(src, cand, ips_path, dst):
 
     n = apply_ips(rom, io.open(ips_path, 'rb').read())
     print('crash-fix IPS applied: %d records' % n)
+
+    g = apply_gold(rom)
+    print('gold window restored: %d bytes' % g)
 
     r = Rom(bytes(io.open(src, 'rb').read()))
     msgs = r.decode_all()

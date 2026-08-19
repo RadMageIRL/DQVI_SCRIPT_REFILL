@@ -48,13 +48,48 @@ It also includes both crash fixes from
 the **Info > All** crash and the **Forget** crash. You do not need to apply that
 patch as well. This one contains it.
 
+And it restores the **gold window on the info screen**, which the translation
+lost. See below.
+
+## The gold window
+
+Open the info screen in the Japanese game and your gold is in the top right.
+Open it in the English translation and it is not there at all.
+
+**What happened.** English stat labels are wider than Japanese ones, so the
+status window was widened to fit them. That left the gold window with nowhere to
+sit:
+
+```
+Japanese   status cols 10-21   gold cols 22-30    side by side
+English    status cols 10-24   gold cols 16-23    gold underneath the status window
+```
+
+Having no room for it, the translation deleted the call that draws the gold
+figure - seven bytes - and padded the gap so the surrounding code still lined
+up. The same technique appears four bytes earlier in the deletion that causes
+the Info > All crash, so the two were almost certainly done in the same sitting.
+
+**What this patch does.** It moves the gold window to the top left, where the
+English layout has room, and puts the draw call back. The window draws the same
+one-byte `G` string that the translation's *other* gold window already uses -
+their own substitution, applied to the one place they did not apply it.
+
+Nothing else moves. Only the gold window's own descriptor changes; the status
+window, the command menu and every other window are byte-identical to the ones
+NoPrgress shipped.
+
+**This restores original behaviour rather than adding anything.** The gold
+window is the game's, not ours. It was in Dragon Quest VI in 1995 and it is
+back.
+
 ## Applying it
 
 Patch a **headerless** NoPrgress-translated ROM.
 
 ```
 source   CRC32 B545C548
-result   CRC32 6D941CBF   SHA-1 bbae5bfae769aba8a3c2edd9c6eeda9a47f55f6d
+result   CRC32 A707CBA2   SHA-1 0d409dcf3208e8f3f7c5cd978d02703ea66cf5c6
 ```
 
 `DQ6-SFC-NoPrgress-RM-ScriptRefill.bps` is preferred. The `.ips` is provided for
