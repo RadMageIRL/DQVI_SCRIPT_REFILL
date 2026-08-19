@@ -53,6 +53,18 @@ It also includes both crash fixes from
 the **Info > All** crash and the **Forget** crash. You do not need to apply that
 patch as well. This one contains it.
 
+- **Info > All** hangs if you back out before the screen finishes drawing. A
+  three-byte `STA $3AC2` was deleted from `$C3:3538`, so the party-slot loop
+  bound keeps a stale `$FF` sentinel and the loop runs past the end of the
+  party. Fixed by restoring 87 bytes from the Japanese ROM.
+- **Forget** crashes because of a memory allocation collision, not a logic bug:
+  the translation put word-wrap state inside a block the original game clears
+  wholesale. Fixed by relocating three variables across 19 sites, operands
+  only. **Keep savestates the first time you use Forget.**
+
+[`docs/CRASH-FIXES.md`](docs/CRASH-FIXES.md) has the detail, including what
+these fixes deliberately do not do.
+
 And it restores the **gold window on the info screen**, which the translation
 lost. See below.
 
@@ -100,6 +112,25 @@ result   CRC32 11EB96A4   SHA-1 d0dd3fc5a87bc31412af983ae335a3fb8b80c696
 `DQ6-SFC-NoPrgress-RM-ScriptRefill.bps` is preferred. The `.ips` is provided for
 tools that cannot read BPS. Use [Flips](https://www.romhacking.net/utilities/1040/)
 or any equivalent.
+
+## Building it yourself
+
+The patch is reproducible. `build.py` performs every step - the crash fixes,
+the gold window, the name table and the message script - so the files in this
+repository reproduce the released ROM byte for byte from a stock NoPrgress ROM.
+It is standard-library Python only, no dependencies.
+
+```
+python build.py DQ6-NoPrgress.sfc candidates-en.txt                 dqvi-noprgress-menufix-v2.ips                 nametable-en.txt DQ6-Refill.sfc
+```
+
+![The build script running: it reports the source ROM CRC32 B545C548, applies 21 crash-fix records, restores the gold window, writes 178 name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM as CRC32 11EB96A4](screenshots/build-run.png)
+
+If your output does not match `11EB96A4`, the input ROM is not the one this
+targets. Check its CRC32 before anything else.
+
+The crash-fix IPS is the v2 patch from
+[DQVI_NOPRGRESS_MENU_FIX](https://github.com/RadMageIRL/DQVI_NOPRGRESS_MENU_FIX).
 
 ## How the 421 messages and 178 names were written
 
@@ -185,11 +216,17 @@ exactly how a translation acquires errors that nobody can later trace.
 
 ## What else this does not do
 
-- **It does not fix the unbounded word-wrap fill** the translation carries. That
-  is documented in the menu-fix repository and remains an open defect.
-- **It does not claim to be complete or correct.** 421 messages were authored by
-  someone who is not a professional translator, checked against a corpus rather
-  than against a native speaker. Errors are mine. Reports are welcome.
+- **It does not fix the unbounded word-wrap fill** the translation carries. The
+  Forget fix moves that buffer out of harm's way and gives it 200 bytes of
+  headroom against a 136-byte worst case, but it does not bound the fill. That
+  remains an open defect. See [`docs/CRASH-FIXES.md`](docs/CRASH-FIXES.md).
+- **It does not touch a word of NoPrgress's own text.** Every one of their 6,539
+  messages is byte-identical to what they shipped, and that is verified on every
+  build rather than asserted.
+- **It does not claim to be complete or correct.** 421 messages and 178 names
+  were authored by someone who is not a professional translator, checked against
+  a corpus rather than against a native speaker. Errors are mine. Reports are
+  welcome.
 
 ## Credits
 
