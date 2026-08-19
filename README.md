@@ -6,7 +6,7 @@ and folds in two crash fixes.
 
 ---
 
-## This is somebody else's work, and almost all of it
+## Most of this is someone else's work
 
 **NoPrgress translated this game.** 6,539 of the 6,960 messages in the main
 script are theirs. Every character voice, every place name, every item and
