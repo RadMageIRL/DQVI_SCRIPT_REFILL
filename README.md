@@ -78,13 +78,42 @@ instance, is reproduced at the rate they use it and in the places they use it.
 parts that went wrong, and is written so it can be followed for a different SNES
 translation.
 
-## What this does not do
+## Scope: what is complete and what is not
+
+**The message script is complete.** All 421 untranslated messages are written,
+which is every one in the 6,960-message dialogue system. That is verified on the
+built ROM rather than asserted: it is decoded back out and checked for both
+known placeholder forms, and the result is zero of each.
+
+**The name table is not, and this patch does not touch it.** Item, spell,
+monster, place and menu names are a separate system: byte-encoded rather than
+Huffman-coded, stored in different tables, reached a different way. It was
+censused for the first time in this project, and **298 of its 1,779 entries are
+untranslated**. They display as the game's own internal identifiers, so a place
+name can read `M194` where a location name belongs. **46 of those sit in the
+place-name block**, beside towns you will visit.
+
+Two things are worth knowing about that:
+
+- **None of it can display as Japanese.** The English character table remaps
+  every kana slot to a blank, and no entry carries one anyway. There is no path
+  by which a Japanese item or place name reaches the screen.
+- **It predates this patch entirely.** All 298 were untranslated before the
+  refill and are untouched by it. Nothing here made it worse.
+
+Whether a given one is ever reachable on screen is not established. Many map
+slots are interiors that never display a name at all, so the visible count may
+be well below 46.
+
+Finishing them is a possible second phase and a harder job than the 421 in one
+respect: most have no parallel English anywhere in the ROM to mine for the
+translators' vocabulary, and place names have to agree with the geography rather
+than just read well.
+
+## What else this does not do
 
 - **It does not fix the unbounded word-wrap fill** the translation carries. That
   is documented in the menu-fix repository and remains an open defect.
-- **It does not touch item, spell, monster, place or menu strings.** Those are a
-  separate system and were not censused. Anything untranslated there is
-  untouched.
 - **It does not claim to be complete or correct.** 421 messages were authored by
   someone who is not a professional translator, checked against a corpus rather
   than against a native speaker. Errors are mine. Reports are welcome.
