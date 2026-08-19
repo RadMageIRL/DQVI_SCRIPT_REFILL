@@ -5,11 +5,14 @@ Build the DQ6 Script Refill ROM from a stock NoPrgress ROM.
 This is the script that produced the released patch. It is published so the
 build is reproducible and so anyone can see exactly what is written where.
 
-  usage:  build.py <noprgress.sfc> <candidates-en.txt> <crashfix-v2.ips>
-          <nametable-en.txt> <out.sfc>
+  usage:  build.py <noprgress.sfc> <candidates-en.txt> <nametable-en.txt> <out.sfc>
+
+Everything it needs is either in this repository or in this file, so a stock
+NoPrgress ROM plus the two text files reproduces the released ROM. Nothing is
+fetched from anywhere else.
 
 It does six things:
-  1. applies the v2 crash-fix IPS (Info > All, and Forget)
+  1. applies both crash fixes, Info > All and Forget (see apply_crash_fixes)
   2. restores the gold window on the info screen (see apply_gold below)
   3. writes the 178 authored name-table entries (see apply_names below)
   4. decodes all 6,960 messages from the unmodified payload
@@ -154,6 +157,95 @@ GOLD_CODE_WAS = bytes.fromhex('A93E0022FE83C3ABC2307AFA68286BC2307AFA68286B')
 GOLD_CODE_NOW = bytes.fromhex('A91000223A76C3A93E0022FE83C3ABC2307AFA68286B')
 GOLD_DESC_AT = 0x057E88          # descriptor 58, bytes 0-2: X, Y, W
 GOLD_DESC_NOW = bytes([0x01, 0x01, 0x09])
+
+
+
+# ---------------------------------------------------------------------------
+# The two crash fixes
+#
+# Both are the same kind of accident: bytes removed to make room, with the
+# surrounding code shuffled so that addresses still lined up. Neither is a
+# design decision.
+#
+# INFO > ALL. A three-byte STA $3AC2 was deleted from $C3:3538. It writes the
+# party-slot loop bound; without it the bound keeps a $FF sentinel from the
+# previous screen, the loop walks past the end of the party, and the game trips
+# an assertion at $C4:560F. The deleted bytes were absorbed by shifting the
+# following three back, so nothing after the deletion moved - which is exactly
+# what makes it invisible in a byte diff.
+#
+# The fix restores the 87-byte span, which is the Japanese original for that
+# span. It is embedded here rather than copied from a Japanese ROM at build
+# time, so no second ROM is needed.
+#
+# FORGET. Not a logic bug. Every instruction on the fault path is byte-identical
+# to the Japanese original; the defect is in WHERE the translation put its data.
+# Word-wrap state was placed at $7E:379E / $37A0 / $37A2, inside a 112-byte
+# block the original game clears wholesale, so the state is wiped mid-use.
+#
+# The fix relocates that state to $7E:55BE / $55C0 / $55C2, a region established
+# as unused. 19 sites, operands only - no opcode changes and no instruction
+# length changes - plus two branch conditions.
+#
+# Residual risk, stated plainly: the destination was chosen from emulator code
+# and data logs, two RAM snapshots, and traces covering field movement,
+# dialogue, shops, menus and battle. No logged session covers every context in
+# the game, and code that has never executed cannot be ruled out.
+#
+# Full analysis: docs/CRASH-FIXES.md, and the DQVI_NOPRGRESS_MENU_FIX repo.
+
+CF_SPAN = 0x033538                  # $C3:3538
+CF_BEFORE = bytes.fromhex(
+    "22257bc3a9870022fe83c3a9260022fe83c3a92c0022fe83c322f975c3a92d00"
+    "22fe83c322f975c3a92e0022fe83c322f975c3a92f0022fe83c322f975c3a930"
+    "0022fe83c3a98a0022fe83c3abc2307afa68286b68286b")
+CF_AFTER = bytes.fromhex(
+    "8dc23a22257bc3a9870022fe83c3a9260022fe83c3a92c0022fe83c322f975c3"
+    "a92d0022fe83c322f975c3a92e0022fe83c322f975c3a92f0022fe83c322f975"
+    "c3a9300022fe83c3a98a0022fe83c3abc2307afa68286b")
+
+CF_WIDTH, CF_LENGTH, CF_BUFFER = 0x55BE, 0x55C0, 0x55C2   # were $379E/$37A0/$37A2
+
+# (file offset of the opcode, opcode, old operand, new operand)
+CF_RELOCATIONS = (
+    (0x00FDD5, 0x9C, 0x37A0, CF_LENGTH), (0x00FDE0, 0xAE, 0x37A0, CF_LENGTH),
+    (0x00FDE8, 0x8E, 0x37A0, CF_LENGTH), (0x00FDFE, 0x8E, 0x37A0, CF_LENGTH),
+    (0x00FE24, 0xEC, 0x37A0, CF_LENGTH), (0x00FF03, 0x8E, 0x37A0, CF_LENGTH),
+    (0x00FF1A, 0xEC, 0x37A0, CF_LENGTH), (0x00FF1F, 0x9C, 0x37A0, CF_LENGTH),
+    (0x00FDE3, 0x9D, 0x37A2, CF_BUFFER), (0x00FE29, 0xBD, 0x37A2, CF_BUFFER),
+    (0x00FE69, 0xBD, 0x37A2, CF_BUFFER), (0x00FEF2, 0x9D, 0x37A2, CF_BUFFER),
+    (0x00FF22, 0xBD, 0x37A2, CF_BUFFER), (0x00FF34, 0xBD, 0x37A2, CF_BUFFER),
+    (0x00FE81, 0x8D, 0x379E, CF_WIDTH),  (0x00FE85, 0xCD, 0x379E, CF_WIDTH),
+    (0x00FE8B, 0xED, 0x379E, CF_WIDTH),  (0x00FEA2, 0x8D, 0x379E, CF_WIDTH),
+    (0x00FEA7, 0x6D, 0x379E, CF_WIDTH),
+)
+
+# (file offset, old opcode, new opcode)
+CF_BRANCHES = ((0x00FE27, 0xF0, 0xB0), (0x00FF1D, 0xD0, 0x90))
+
+
+def apply_crash_fixes(rom):
+    """Info > All and Forget. Refuses to write if the ROM is not as expected."""
+    found = bytes(rom[CF_SPAN:CF_SPAN + len(CF_BEFORE)])
+    if found != CF_BEFORE:
+        raise SystemExit(
+            'crash fix: the span at 0x%06X is not the expected pre-fix bytes.\n'
+            '  expected %s\n  found    %s\n  Refusing to write.'
+            % (CF_SPAN, CF_BEFORE.hex(), found.hex()))
+    for off, opcode, old, _new in CF_RELOCATIONS:
+        if rom[off] != opcode or (rom[off + 1] | rom[off + 2] << 8) != old:
+            raise SystemExit('crash fix: site 0x%06X is not as expected' % off)
+    for off, old, _new in CF_BRANCHES:
+        if rom[off] != old:
+            raise SystemExit('crash fix: branch 0x%06X is not as expected' % off)
+
+    rom[CF_SPAN:CF_SPAN + len(CF_AFTER)] = CF_AFTER
+    for off, _opcode, _old, new in CF_RELOCATIONS:
+        rom[off + 1] = new & 0xFF
+        rom[off + 2] = (new >> 8) & 0xFF
+    for off, _old, new in CF_BRANCHES:
+        rom[off] = new
+    return len(CF_RELOCATIONS) + len(CF_BRANCHES)
 
 
 def apply_gold(rom):
@@ -330,20 +422,6 @@ def apply_names(rom, table):
     return len(table)
 
 
-def apply_ips(rom, ips):
-    assert ips[:5] == b'PATCH', 'not an IPS file'
-    i, n = 5, 0
-    while ips[i:i + 3] != b'EOF':
-        off = int.from_bytes(ips[i:i + 3], 'big'); i += 3
-        ln = int.from_bytes(ips[i:i + 2], 'big'); i += 2
-        if ln:
-            rom[off:off + ln] = ips[i:i + ln]; i += ln
-        else:
-            rl = int.from_bytes(ips[i:i + 2], 'big'); i += 2
-            rom[off:off + rl] = bytes([ips[i]]) * rl; i += 1
-        n += 1
-    return n
-
 
 REC = re.compile(r'^---- (\d+)$')
 TOKEN = re.compile(r'\{([0-9A-Z]{2,4})\}')
@@ -397,13 +475,13 @@ def read_candidates(path):
     return out
 
 
-def main(src, cand, ips_path, names_path, dst):
+def main(src, cand, names_path, dst):
     rom = bytearray(io.open(src, 'rb').read())
     src_crc = zlib.crc32(bytes(rom)) & 0xFFFFFFFF
     print('source ROM: %d bytes, CRC32 %08X' % (len(rom), src_crc))
 
-    n = apply_ips(rom, io.open(ips_path, 'rb').read())
-    print('crash-fix IPS applied: %d records' % n)
+    n = apply_crash_fixes(rom)
+    print('crash fixes applied: Info > All, and Forget across %d sites' % n)
 
     g = apply_gold(rom)
     print('gold window restored: %d bytes' % g)
@@ -493,7 +571,7 @@ def main(src, cand, ips_path, names_path, dst):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 6:
+    if len(sys.argv) != 5:
         print(__doc__.strip().split('\n\n')[1])
         sys.exit(2)
     main(*sys.argv[1:])

@@ -115,22 +115,25 @@ or any equivalent.
 
 ## Building it yourself
 
-The patch is reproducible. `build.py` performs every step - the crash fixes,
-the gold window, the name table and the message script - so the files in this
-repository reproduce the released ROM byte for byte from a stock NoPrgress ROM.
-It is standard-library Python only, no dependencies.
+The patch is reproducible from this repository alone. `build.py` performs every
+step - both crash fixes, the gold window, the name table and the message script
+- so a stock NoPrgress ROM plus the two text files here reproduces the released
+ROM byte for byte. Standard-library Python, no dependencies, and nothing is
+fetched from anywhere else.
 
 ```
-python build.py DQ6-NoPrgress.sfc candidates-en.txt                 dqvi-noprgress-menufix-v2.ips                 nametable-en.txt DQ6-Refill.sfc
+python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt DQ6-Refill.sfc
 ```
 
-![The build script running: it reports the source ROM CRC32 B545C548, applies 21 crash-fix records, restores the gold window, writes 178 name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM as CRC32 11EB96A4](screenshots/build-run.png)
+![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, restores the gold window, writes 178 name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM as CRC32 11EB96A4](screenshots/build-run.png)
 
-If your output does not match `11EB96A4`, the input ROM is not the one this
-targets. Check its CRC32 before anything else.
+If your output is not `11EB96A4`, the input ROM is not the one this targets.
+Check its CRC32 before anything else.
 
-The crash-fix IPS is the v2 patch from
-[DQVI_NOPRGRESS_MENU_FIX](https://github.com/RadMageIRL/DQVI_NOPRGRESS_MENU_FIX).
+The script refuses to write if the ROM is not what it expects. Every fix checks
+its own site first - the crash-fix span, all 21 Forget relocation sites, and the
+gold routine - so pointing it at the wrong ROM fails loudly rather than
+producing something broken.
 
 ## How the 421 messages and 178 names were written
 

@@ -2,8 +2,13 @@
 
 This patch contains both crash fixes from
 [DQVI_NOPRGRESS_MENU_FIX](https://github.com/RadMageIRL/DQVI_NOPRGRESS_MENU_FIX),
-so you do not need to apply that patch as well. They are summarised here so
-this repository is self-contained; that repository has the full analysis.
+so you do not need to apply that patch as well.
+
+**`build.py` applies them itself.** It does not consume a patch file from that
+repository, and it does not need a Japanese ROM as a donor - the 87-byte
+restoration and all 21 Forget sites are embedded in the script, with each site
+checked before anything is written. That repository has the full analysis; this
+one is self-contained.
 
 Neither is a design decision by the translators. Both are the same kind of
 accident: bytes removed to make room, with the surrounding code padded so
