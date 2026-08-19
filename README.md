@@ -102,6 +102,8 @@ back.
 
 ## Applying it
 
+**This is what you want if you just want to play.** One step, no Python.
+
 Patch a **headerless** NoPrgress-translated ROM.
 
 ```
@@ -109,11 +111,21 @@ source   CRC32 B545C548
 result   CRC32 11EB96A4   SHA-1 d0dd3fc5a87bc31412af983ae335a3fb8b80c696
 ```
 
-`DQ6-SFC-NoPrgress-RM-ScriptRefill.bps` is preferred. The `.ips` is provided for
-tools that cannot read BPS. Use [Flips](https://www.romhacking.net/utilities/1040/)
-or any equivalent.
+`DQ6-SFC-NoPrgress-RM-ScriptRefill.bps` is preferred. The `.ips` is the same
+patch in an older format, for tools that cannot read BPS - prefer the BPS,
+because it records its expected source and so refuses a wrong ROM instead of
+producing a broken one. IPS cannot check its input at all. Use
+[Flips](https://www.romhacking.net/utilities/1040/) or any equivalent.
 
 ## Building it yourself
+
+**You do not need this to play.** It is here so the patch does not have to be
+taken on trust: `build.py` rebuilds the released ROM from the English text in
+this repository, so anyone can check that what the patch writes is what these
+files say it writes, and get the same hash.
+
+That is also why `candidates-en.txt` and `nametable-en.txt` are published. Every
+authored line is readable text rather than something buried in a binary diff.
 
 The patch is reproducible from this repository alone. `build.py` performs every
 step - both crash fixes, the gold window, the name table and the message script
