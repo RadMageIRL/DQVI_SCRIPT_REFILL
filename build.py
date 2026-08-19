@@ -5,14 +5,16 @@ Build the DQ6 Script Refill ROM from a stock NoPrgress ROM.
 This is the script that produced the released patch. It is published so the
 build is reproducible and so anyone can see exactly what is written where.
 
-  usage:  build.py <noprgress.sfc> <candidates-en.txt> <crashfix-v2.ips> <out.sfc>
+  usage:  build.py <noprgress.sfc> <candidates-en.txt> <crashfix-v2.ips>
+          <nametable-en.txt> <out.sfc>
 
-It does five things:
+It does six things:
   1. applies the v2 crash-fix IPS (Info > All, and Forget)
   2. restores the gold window on the info screen (see apply_gold below)
-  3. decodes all 6,960 messages from the unmodified payload
-  4. substitutes the 421 authored English messages
-  5. re-encodes every message with the ROM'S EXISTING Huffman trees, rebuilds
+  3. writes the 178 authored name-table entries (see apply_names below)
+  4. decodes all 6,960 messages from the unmodified payload
+  5. substitutes the 421 authored English messages
+  6. re-encodes every message with the ROM'S EXISTING Huffman trees, rebuilds
      the 870-entry pointer table, and recomputes the internal checksum
 
 The trees are never modified. Every symbol already has exactly one code path in
@@ -165,6 +167,169 @@ def apply_gold(rom):
     return len(GOLD_CODE_NOW) + 3
 
 
+
+# ---------------------------------------------------------------------------
+# The name table
+#
+# Item, spell, skill, place, monster-action and menu strings live in a second
+# system entirely separate from the Huffman message script: byte-encoded,
+# $AC-terminated, packed end to end from $FB:8703.
+#
+# It is addressed indirectly. The routine at $C0:315E splits a string ID as
+#
+#     group = ID >> 4          low = ID & 0x0F
+#
+# reads a 24-bit offset from the group table at $C1:65E7 (3 bytes per group),
+# adds $FB8703 with carry, then walks `low` $AC terminators forward. Entries
+# within a group are therefore found POSITIONALLY, so changing the length of
+# any entry moves every entry after it.
+#
+# This repacks the whole table and regenerates all 157 group offsets, which is
+# what allows the authored entries to be longer than the identifiers they
+# replace. 28 groups deliberately share a base with the group before them -
+# collapsed ranges of unused IDs - and that aliasing is preserved exactly.
+#
+# Two things about the byte encoding are not obvious and both produced bugs:
+#
+#   - Bytes $0C-$0F SHADOW the ordinary letters H, M, P and G in the
+#     byte-to-symbol table, but they are renderer control codes rather than
+#     glyphs; $0D draws a tilde. Encoding "M" as $0D yields "~adante 2".
+#     H, M, P and G must use $17, $1C, $1F and $16.
+#   - A line break is 0x90 plus the length of the line before it. Verified
+#     against every multi-line entry in the stock table: Ice/Breath $93,
+#     Slime/Behemoth $95, Octopus/Jar Boy $97, Scorching/Breath $99,
+#     Metal King/Slime $9A, Moon Folding/Fan $9C, Spotted Slime/Boss $9D.
+
+NT_PTR = 0x0165E7          # $C1:65E7, 3 bytes per group of 16 IDs
+NT_BASE = 0x3B8703         # string ID 0
+NT_END = 0x3BC712          # end of the region; past the live table is the
+                           # dead Japanese remnant, byte-identical to the JP ROM
+NT_GROUPS = 157            # groups 0..156, IDs 0..2511
+
+
+def read_nametable(path):
+    """Parse '<hex id>  <english>' rows."""
+    out = {}
+    for line in io.open(path, encoding='utf-8'):
+        m = re.match(r'^([0-9A-Fa-f]{4})\s\s+(\S.*?)\s*$', line)
+        if m:
+            out[int(m.group(1), 16)] = m.group(2)
+    if not out:
+        raise SystemExit('no name-table rows in %s' % path)
+    return out
+
+
+NT_LIGATURES = { 0xC8: 'l', 0xC9: 'a', 0xCA: 'd', 0xCB: 't', 0xCC: 'w',
+    0xCD: 'ac', 0xCE: 'am', 0xCF: 'an', 0xD0: 'ar', 0xD1: 'as', 0xD2: 'at',
+    0xD3: 'ce', 0xD4: 'ch', 0xD5: 'ck', 0xD6: 'e', 0xD7: 'ea', 0xD8: 'ed',
+    0xD9: 'ee', 0xDA: 'er', 0xDB: 'es', 0xDC: 'gh', 0xDD: 'he', 0xDE: 'ic',
+    0xDF: 'in', 0xE0: 'is', 0xE1: 'it', 0xE2: 'le', 0xE3: 'll', 0xE4: 'ly',
+    0xE5: 'nd', 0xE6: 'no', 0xE7: 'nt', 0xE8: 'of', 0xE9: 'oi', 0xEA: 'on',
+    0xEB: 'oo', 0xEC: 'or', 0xED: 'ou', 0xEE: 'ow', 0xEF: 'ra', 0xF0: 're',
+    0xF1: 'ro', 0xF2: 's', 0xF4: 'so', 0xF5: 'st', 0xF6: 'age', 0xF7: 't',
+    0xF8: 'te', 0xF9: 'th', 0xFA: 'us'}
+
+
+def _nt_encoder(rom):
+    inv = {}
+    for i, c in enumerate('0123456789'):
+        inv[c] = 0x02 + i
+    for i, c in enumerate('ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+        inv[c] = 0x10 + i              # NOT $0C-$0F, which shadow H, M, P, G
+    for i, c in enumerate('abcdefghijklmnopqrstuvwxyz'):
+        inv[c] = 0x42 + i
+    inv[' '] = 0x01
+    # Punctuation, read out of the charset table rather than assumed. Note $85
+    # and $80 both draw the label colon (their "Level:", "Sex:", "Max HP:"),
+    # and $7A and $7F both draw a full stop.
+    inv["'"] = 0x77
+    inv['-'] = 0x78
+    inv['?'] = 0x79
+    inv['.'] = 0x7F
+    inv[':'] = 0x85
+    inv['!'] = 0x81
+    inv['*'] = 0x89
+    inv[','] = 0x8B
+    # $0D is a renderer control code that draws a tilde, not a charset index;
+    # it is what their own "~30HP to" and "~80HP to" use.
+    inv['~'] = 0x0D
+    lig = {}
+    for b, t in NT_LIGATURES.items():
+        lig.setdefault(t, b)
+    return inv, lig
+
+
+def _nt_encode(text, inv, lig):
+    out, k, n = [], 0, 0
+    order = sorted(lig, key=len, reverse=True)
+    while k < len(text):
+        if text[k] == '|':
+            if not 1 <= n <= 13:
+                raise SystemExit('line of %d cannot carry a break: %r' % (n, text))
+            out.append(0x90 + n); n = 0; k += 1; continue
+        for t in order:
+            if text.startswith(t, k):
+                out.append(lig[t]); k += len(t); n += len(t); break
+        else:
+            if text[k] not in inv:
+                raise SystemExit('cannot encode %r in %r' % (text[k], text))
+            out.append(inv[text[k]]); k += 1; n += 1
+    return bytes(out)
+
+
+def apply_names(rom, table):
+    """Write the authored entries and regenerate the group offsets."""
+    inv, lig = _nt_encoder(rom)
+    entries, s = [], NT_BASE
+    for i in range(NT_BASE, NT_END):
+        if rom[i] == 0xAC:
+            entries.append(bytes(rom[s:i])); s = i + 1
+    start_of, p = {}, NT_BASE
+    for n, e in enumerate(entries):
+        start_of[p] = n; p += len(e) + 1
+
+    groups = []
+    for g in range(NT_GROUPS):
+        o = NT_PTR + g * 3
+        raw = rom[o] | rom[o + 1] << 8 | rom[o + 2] << 16
+        a = (0xFB8703 + raw) & 0xFFFFFF
+        groups.append(start_of[((a >> 16) & 0x3F) << 16 | (a & 0xFFFF)])
+    live_end = max(groups) + 15
+
+    pos_of = {}
+    for idv in range(NT_GROUPS * 16):
+        pos_of.setdefault(groups[idv >> 4] + (idv & 0x0F), idv)
+    id_pos = {}
+    for pos, idv in pos_of.items():
+        id_pos[idv] = pos
+
+    for idv, text in table.items():
+        if idv not in id_pos:
+            raise SystemExit('string ID $%04X is not reachable' % idv)
+        entries[id_pos[idv]] = _nt_encode(text, inv, lig)
+
+    src_end = NT_BASE
+    for e in entries[:live_end + 1]:
+        src_end += len(e) + 1
+    tail = bytes(rom[src_end:NT_END])
+    packed, new_start = bytearray(), []
+    for e in entries[:live_end + 1]:
+        new_start.append(NT_BASE + len(packed))
+        packed += e + b'\xAC'
+    if NT_BASE + len(packed) + len(tail) > NT_END:
+        raise SystemExit('repacked name table overruns 0x%06X' % NT_END)
+    rom[NT_BASE:NT_BASE + len(packed)] = packed
+    rom[NT_BASE + len(packed):NT_BASE + len(packed) + len(tail)] = tail
+    end = NT_BASE + len(packed) + len(tail)
+    if end < NT_END:
+        rom[end:NT_END] = b'\xFF' * (NT_END - end)
+    for g, pos in enumerate(groups):
+        off = new_start[pos] - NT_BASE
+        o = NT_PTR + g * 3
+        rom[o], rom[o + 1], rom[o + 2] = off & 0xFF, (off >> 8) & 0xFF, (off >> 16) & 0xFF
+    return len(table)
+
+
 def apply_ips(rom, ips):
     assert ips[:5] == b'PATCH', 'not an IPS file'
     i, n = 5, 0
@@ -232,7 +397,7 @@ def read_candidates(path):
     return out
 
 
-def main(src, cand, ips_path, dst):
+def main(src, cand, ips_path, names_path, dst):
     rom = bytearray(io.open(src, 'rb').read())
     src_crc = zlib.crc32(bytes(rom)) & 0xFFFFFFFF
     print('source ROM: %d bytes, CRC32 %08X' % (len(rom), src_crc))
@@ -242,6 +407,9 @@ def main(src, cand, ips_path, dst):
 
     g = apply_gold(rom)
     print('gold window restored: %d bytes' % g)
+
+    n_names = apply_names(rom, read_nametable(names_path))
+    print('name-table entries written: %d' % n_names)
 
     r = Rom(bytes(io.open(src, 'rb').read()))
     msgs = r.decode_all()
@@ -325,7 +493,7 @@ def main(src, cand, ips_path, dst):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 6:
         print(__doc__.strip().split('\n\n')[1])
         sys.exit(2)
     main(*sys.argv[1:])

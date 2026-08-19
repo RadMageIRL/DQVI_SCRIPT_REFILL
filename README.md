@@ -43,6 +43,11 @@ numbers.
 
 This patch writes those 421 messages, in English, from the Japanese original.
 
+It also writes **178 name-table entries** - item, spell, skill, place,
+monster-action and menu names the translation left showing the game's own
+internal identifier, so a location read `M194` and a battle action read `M6BA`.
+See "Scope" below for what was deliberately left alone and why.
+
 It also includes both crash fixes from
 [DQVI_NOPRGRESS_MENU_FIX](https://github.com/RadMageIRL/DQVI_NOPRGRESS_MENU_FIX):
 the **Info > All** crash and the **Forget** crash. You do not need to apply that
@@ -89,14 +94,14 @@ Patch a **headerless** NoPrgress-translated ROM.
 
 ```
 source   CRC32 B545C548
-result   CRC32 A707CBA2   SHA-1 0d409dcf3208e8f3f7c5cd978d02703ea66cf5c6
+result   CRC32 11EB96A4   SHA-1 d0dd3fc5a87bc31412af983ae335a3fb8b80c696
 ```
 
 `DQ6-SFC-NoPrgress-RM-ScriptRefill.bps` is preferred. The `.ips` is provided for
 tools that cannot read BPS. Use [Flips](https://www.romhacking.net/utilities/1040/)
 or any equivalent.
 
-## How the 421 were written
+## How the 421 messages and 178 names were written
 
 From the Japanese script and from NoPrgress's own English, and from nothing
 else. No later official localization was consulted at any point, including for
@@ -109,6 +114,14 @@ measured from their pages rather than guessed, and so was voice: their habit of
 breaking a sentence with an exclamation mark where the Japanese hesitates, for
 instance, is reproduced at the rate they use it and in the places they use it.
 
+The name-table entries were held to the same rule, which repeatedly overrode
+what read better in isolation. `ゆうわくおどり` is `Entice Dance` because that is
+their existing rendering; `かみのふね` is `Ship of the Gods` because their text
+already fixes `神の` as "of the gods"; `てきぜんたい` is `Enemies`, not
+`All Enemies`, because that is how they render it elsewhere. Line lengths were
+measured per region against their own entries rather than assumed - the caps
+differ, from 9 characters a line for battle actions to 19 for place names.
+
 [`docs/METHOD.md`](docs/METHOD.md) describes the approach in full, including the
 parts that went wrong, and is written so it can be followed for a different SNES
 translation.
@@ -120,30 +133,55 @@ which is every one in the 6,960-message dialogue system. That is verified on the
 built ROM rather than asserted: it is decoded back out and checked for both
 known placeholder forms, and the result is zero of each.
 
-**The name table is not, and this patch does not touch it.** Item, spell,
-monster, place and menu names are a separate system: byte-encoded rather than
-Huffman-coded, stored in different tables, reached a different way. It was
-censused for the first time in this project, and **298 of its 1,779 entries are
-untranslated**. They display as the game's own internal identifiers, so a place
-name can read `M194` where a location name belongs. **46 of those sit in the
-place-name block**, beside towns you will visit.
+**The name table is done too.** Item, spell, skill, place, monster-action and
+menu names are a separate system from the message script: byte-encoded rather
+than Huffman-coded, stored in different tables, reached a different way. It had
+never been censused before this project. **370 of its entries were untranslated**
+and displayed the game's own internal identifier, so a location read `M194` and
+a battle action read `M6BA`.
 
-Two things are worth knowing about that:
+**178 of those are now written.** The other 178 are deliberately left alone,
+and 14 are unresolved. That split is the point, so here it is in full:
 
-- **None of it can display as Japanese.** The English character table remaps
-  every kana slot to a blank, and no entry carries one anyway. There is no path
-  by which a Japanese item or place name reaches the screen.
-- **It predates this patch entirely.** All 298 were untranslated before the
-  refill and are untouched by it. Nothing here made it worse.
+| | count | |
+|---|---|---|
+| **written** | **178** | monster actions, Goof-off actions, skill descriptions, place names, menu and status labels |
+| left alone | 178 | see below |
+| unresolved | 14 | see below |
 
-Whether a given one is ever reachable on screen is not established. Many map
-slots are interiors that never display a name at all, so the visible count may
-be well below 46.
+### Why half of it is deliberately untranslated
 
-Finishing them is a possible second phase and a harder job than the 421 in one
-respect: most have no parallel English anywhere in the ROM to mine for the
-translators' vocabulary, and place names have to agree with the geography rather
-than just read well.
+Not one of these 178 can appear on screen:
+
+- **52** are the name-entry rejection list - the words the naming screen
+  refuses. They are compared against what you type and never drawn. Translating
+  them would mean authoring a list of English obscenities into a ROM, which is
+  a content decision rather than a translation, and it would change nothing.
+- **21** are the name-entry kana grid, dead in English because the translation
+  replaced the character set.
+- **105** are map-editor and debug labels left in the ROM: `EDIT`, `RESIZE`,
+  `MOVE`, `OBJ0`-`OBJ3`, `LV0`-`LV3`, `X:`, `Y:`, and map slots carrying
+  internal codes like `C02` and `C01SHIPR`.
+
+Eleven of those debug labels were only identifiable after working out that
+Japanese bytes `$8C`-`$A5` are the full-width Latin alphabet. Before that they
+decoded as unmapped kanji and looked like ordinary text. Without that find they
+would have been translated unnecessarily, and three map slots would have been
+given invented names.
+
+### The 14 that are not settled
+
+Four have an identifier whose prefix is not `M` or `*`, so the ID does not
+resolve and there is no way to read their Japanese at all - `E01`, `D07`,
+`C030`. Three carry an internal map code inside the Japanese itself. Five are
+genuinely ambiguous - `ひき` is either a counter or "draw"; `そうぞう` is either
+"imagine" or "create". One, `がた`, is an honorific pluralising suffix with no
+English equivalent. And one is a single kana that is almost certainly a
+fragment rather than a word.
+
+Every one of them is left showing its identifier. **A gap is better than a
+confident wrong answer**, and inventing a reading for a two-kana entry is
+exactly how a translation acquires errors that nobody can later trace.
 
 ## What else this does not do
 

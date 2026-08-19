@@ -1,0 +1,196 @@
+DQ6 name table - the 178 authored entries
+=========================================
+
+These are item, spell, skill, place, monster-action and menu strings that the
+NoPrgress translation left untranslated. In play they display as the game's own
+internal identifier, so a location reads M194 and a battle action reads M6BA.
+
+Each row is  <string ID in hex>  <English>.  The ID is the game's own: the
+routine at $C0:315E splits it as group = ID >> 4 and low = ID & 0x0F, reads a
+24-bit offset from the group table at $C1:65E7, and walks `low` terminators.
+
+A vertical bar is a line break. The game encodes one as 0x90 plus the length of
+the line before it, so "Entice|Dance" becomes Entice, 0x96, Dance. build.py
+does that conversion; write the bar and nothing else.
+
+Nothing here overwrites NoPrgress's work. Every one of these 178 entries was an
+untranslated identifier before this patch.
+
+00C2  To Whom
+00C7  Command
+00CA  Nature:
+00CE  H:
+00CF  M:
+00D3  Field|Spells
+00D4  Battle|Spells
+00D5  Battle|Skills
+00D6  Field|Skills
+00DF  Att
+00E1  Def
+011D  Everyone
+011E  You
+0142  Small
+0143  Medium
+0144  Large
+0145  Fireball
+0146  1 Ally HP
+0147  Restore
+0148  Slightly
+0149  Greatly
+014A  Fully
+0150  Big Bros
+0151  Missy
+0152  Fellas
+0153  Ladies
+0192  Field
+0193  Lower Field
+0194  Seabed
+0195  The Rift
+0196  Sugoroku
+0197  Earth Hole
+019A  Wild Horse Forest
+019B  Ship of the Gods
+019C  Shipwreck
+01D5  Woodsman House
+01D7  Hidden Well
+01DA  Foothill Shrine
+01DD  Ice Shrine
+01E8  Foothill House
+01E9  Sacred Shrine
+01F9  Islet House
+0322  Item
+0366  Monster
+0368  Classless?
+0369  Falchion
+036A  Dragon
+036B  Beho
+036C  Baki
+036D  Maho
+036E  Toteka
+036F  Cheema
+0370  Sonia
+0371  Petchi
+0372  Gold
+0373  Put in Bag
+0374  Ally
+0376  Continue
+0377  Record
+0378  Last
+0428  Armband of|Sacrifice
+066C  Eerie|Mist
+06BA  New|Echo
+06BB  Burning|Orb
+06BC  Ice|Chunk
+06BD  Psyche|Ball
+06BE  Spike Hit
+06BF  Roar 2
+06C0  Strange|Eye
+06C1  Eagle|Grab 2
+06C2  Dark|Power
+06C3  Madante 2
+06C5  Sing and|Dance
+06C6  Solo Hand|Game
+06C7  Funny|Faces
+06C8  Play and|Sing
+06C9  Bad|Behavior
+06CA  Tap Dance
+06CB  Sword|Dance
+06CC  Kind|Thoughts
+06CD  Word|Chain
+06CE  Cat's|Cradle
+06CF  Naughty|Ideas
+06D0  Carve a|Doll
+06D1  Evening|Drink
+06D2  Awful|Voice
+06D3  Booze|Breath
+06D4  Fix|Makeup
+06D5  Coy|Glance
+06D6  Trim Hair
+06D7  Write a|Letter
+06D8  Entice|Dance
+06D9  Lullaby
+06DA  Tell|Fortunes
+06DB  Queen|Games
+06DC  Mud Play
+06DD  Find Ant|Nests
+06DE  New|Spell
+06DF  Mimic
+06E0  Wild|Dance
+06E1  New|Spell 2
+06E2  Playing|House
+06E3  Flip a|Skirt
+06E4  Entice|Dance 2
+06E5  Bad Games
+06E6  Act|Pitiful
+06E7  Flip the|Hair
+06E8  Sly|Chuckle
+06E9  Coin Toss
+06EA  Smug|Laugh
+06EC  Leaping|Dance
+06ED  Play with|Slime
+06EE  Groom Fur
+06EF  Thinking
+06F0  Spin a|Plate
+06F1  Ball|Balance
+06F2  Run|Around
+06F3  Bungled|Story
+06F4  Roll|Around
+06F5  Play with|Fire
+06F6  Jump Rope
+06F7  Wicked|Offer
+06F8  Fake|Blast
+06F9  Scary|Story
+06FA  Ultimate|Play
+06FB  New|Dance
+06FC  Squish|Squish
+0701  Fierce
+0702  Giant
+0704  Small|Flame
+0728  Magic MP
+0739  A Dragon
+0745  All Allies
+0751  All
+0757  Dodging
+0758  Footwork
+075B  Even Allies
+075F  Enemy
+0761  Repay
+0763  Attacks
+0766  A Barrier
+076E  All Allies
+076F  Restore|~80HP
+0770  For Allies
+0772  A Strange
+0775  Dancing
+0776  Enemy Dance
+0777  Sweet Breath
+0778  To Sleep
+0779  Enemies
+0780  All Magic
+0781  Nullify
+0790  Lightning
+0791  Summon
+0792  To Attack
+07A2  Fire Pillar
+07A8  Destroying
+07B2  Thunder
+07BC  Intently
+07C1  All Or|Nothing
+07C3  One Strike
+07C4  Falcon Like
+07CA  All Enemies
+07CB  Mow Down
+07D5  Curses
+07DB  Tornado
+07DF  Slam In
+07E2  Surpass All
+07E4  Killer Fist
+07E6  Wandering
+07E8  As Allies
+07EE  Cross Over
+07F0  Monsters
+07F8  Know Layout
+07FC  By Magic
+07FE  Discover
+0802  Sneaking
+080F  Enemy Group
