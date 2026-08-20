@@ -11,20 +11,24 @@ Everything it needs is either in this repository or in this file, so a stock
 NoPrgress ROM plus the two text files reproduces the released ROM. Nothing is
 fetched from anywhere else.
 
-It does six things:
+It does seven things:
   1. applies both crash fixes, Info > All and Forget (see apply_crash_fixes)
   2. restores the gold window on the info screen (see apply_gold below)
   3. writes the 178 authored name-table entries (see apply_names below)
   4. decodes all 6,960 messages from the unmodified payload
   5. substitutes the 421 authored English messages
-  6. re-encodes every message with the ROM'S EXISTING Huffman trees, rebuilds
+  6. drops the redundant opening speech marker from 534 message openings
+     (see drop_speech_marker below)
+  7. re-encodes every message with the ROM'S EXISTING Huffman trees, rebuilds
      the 870-entry pointer table, and recomputes the internal checksum
 
 The trees are never modified. Every symbol already has exactly one code path in
-them, so the encode is deterministic and the 6,539 messages that are not
-touched come out byte-identical to the ones NoPrgress shipped. That property is
-worth checking after any change to this script: decode the output and compare
-the untouched messages against the input.
+them, so the encode is deterministic: every message comes out symbol for symbol
+as NoPrgress wrote it, apart from the 421 that were never written and the one
+marker symbol dropped from 534 openings. **Not one word of their writing is
+altered.** That property is worth checking after any change to this script, and
+tools/verify.py checks it: it fails if any symbol other than that marker moves
+in any of their messages.
 
 Message system, decoded from the ROM at $C0:2B69 onward:
   - Pointer table at $C1:5BB5, 870 entries of 3 bytes, indexed by (ID >> 3).

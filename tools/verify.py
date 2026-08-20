@@ -203,9 +203,9 @@ def main(argv):
     theirs = [i for i in range(len(old)) if i not in was_placeholder]
     touched = [i for i in theirs if old[i] != new[i]]
 
-    # Their messages may differ in exactly one way and no other: the opening
-    # speech marker $0559, which has no English glyph, swapped for the plain
-    # asterisk $0247 they already use. Anything else is a word changed.
+    # Their messages may differ in exactly one way and no other: the redundant
+    # opening marker $0559 dropped. It has no English glyph and it sat after a
+    # mark the engine already draws. Anything else is a word changed.
     marker, reworded = [], []
     for i in touched:
         o, n = old[i][0], new[i][0]

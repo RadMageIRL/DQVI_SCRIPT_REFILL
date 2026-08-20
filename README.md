@@ -82,10 +82,14 @@ The engine draws the opening mark on NPC dialogue itself. On a line with no
 speaker tag it emits a star and a bracket before the first word, which is what
 the Japanese original draws too.
 
-NoPrgress then added symbol `$0559` on top of that, on **534 message
-openings**. `$0559` is the one symbol in their script with no English glyph
-behind it, so it drew a stray two-part mark, sitting after a marker the engine
-had already produced. It was redundant as well as broken.
+NoPrgress then added symbol `$0559` on top of that, on 519 message openings.
+`$0559` is the one symbol in their script with no English glyph behind it, so
+it drew a stray two-part mark, sitting after a marker the engine had already
+produced. It was redundant as well as broken.
+
+**534 openings are cleared in total**: their 519, plus 15 of the authored
+messages, which had been given the same marker to match their habit before it
+was understood.
 
 ```
 before   * : <stray>Welcome to Amoru, town of water.

@@ -290,7 +290,7 @@ one pass. In this ROM the translators' English uses:
 | symbol | role | evidence |
 |---|---|---|
 | `$240` | opening quote after a speaker tag | 3,290 uses, 99.8% within 14 symbols of a `{D4}` tag; 1,489 align with JP `「` |
-| `$559` | opening mark for untagged NPC speech | 519 message-initial; no JP counterpart, so it is their addition |
+| `$559` | opening mark for untagged NPC speech | 519 message-initial; no JP counterpart, so it is their addition. **It has no glyph. See below** |
 | `$576`/`$579` | `『 』`, for signs and written text | 38/38 align with JP `『` |
 | `$577`/`$578` | inline quotation pair | 13 uses each, wrapping quoted words |
 
@@ -299,6 +299,11 @@ convention at 12 percent is optional: measure the rate before adopting one.
 `$240` follows 91.9% of speaker tags, so new text that omits it is visibly
 foreign; `$559` opens only 12.6% of NPC lines and varies by region of the script
 (6% to 40% across ID buckets), so omitting it matches the majority everywhere.
+
+That reading of `$559` was correct about the rate and wrong about the thing.
+It turned out to have no glyph and to sit after a mark the engine already
+draws, so the honest answer was not to match its rate but to delete it. The
+measurement was fine; what was missing was ever looking at it on a screen.
 
 Second, and more important:
 
@@ -311,7 +316,8 @@ Enumerate it directly by walking the trees:
 - The music note `$634` is encodable in Japanese and **not** in English. It is a
   hard limit, not an oversight, and no amount of authoring skill recovers it.
 - The tilde slot `$559` *is* encodable, but the translators repurposed it for
-  the NPC speech mark above, so a literal tilde is equally unavailable.
+  the NPC speech mark above, so a literal tilde is equally unavailable. And
+  encodable turned out not to mean drawable: see the next section.
 
 Do this enumeration before authoring, not after. "The glyph does not appear in
 their text" and "the glyph cannot be written" are different claims with
@@ -381,22 +387,20 @@ text that is uniformly cleaner than the original is a tell, and uniformly
 Handle these by deferring them. Author without the mark, flag it, and apply it
 at the end in one scripted pass whose target is measured rather than chosen.
 
-The criterion this project will use for `$559`, the untagged-NPC speech mark:
+This project planned exactly that pass for `$559`, the untagged-NPC speech
+mark, with a measured per-region target rather than a global one, eligibility
+decided structurally, and a re-measurement afterwards to prove it landed inside
+the neighbouring rate. The design was sound and the shape is worth copying.
 
-1. **Trigger:** all 416 lines authored and reviewed. Not before, because the
-   run distribution is not known until then and the pass is worthless applied
-   to a partial corpus.
-2. **Target:** per region, not globally. For each authored run, measure the mark
-   rate among translated messages within plus or minus 40 IDs. It varies from 6
-   percent to 40 percent across the script, and the 3440-3520 neighborhood runs
-   at 2 of 51, so a single global figure would over-mark some regions and
-   under-mark others.
-3. **Eligibility:** only lines that are untagged NPC speech. Lines opening with
-   a `{D4}` speaker tag take the tag quote instead, and system or narration
-   lines take neither. This classification is structural and scriptable.
-4. **Verification:** re-measure after the pass and require the refilled lines to
-   sit inside the neighbor rate for their own region. A pass that cannot be
-   verified by re-measurement has not been done.
+It was also aimed at the wrong symbol. `$559` has no glyph and duplicates a
+mark the engine draws, so the correct action was to remove it from the 534
+openings that carried it, not to spread it across new ones. The pass that
+eventually ran was the opposite of the one planned.
+
+Keep the shape, and add a precondition to it: **before deferring a convention
+to a mechanical pass, confirm the thing you are about to multiply renders
+correctly.** A rate is a property of the source; a glyph is a property of the
+screen, and only one of those is visible in a corpus.
 
 The same shape applies to any minority habit: measure the rate, defer the
 decision, apply mechanically, verify by re-measuring.

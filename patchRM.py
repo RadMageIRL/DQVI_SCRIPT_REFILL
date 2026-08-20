@@ -174,8 +174,9 @@ def main(argv):
         print('  release build (CRC32 %08X).' % EXPECT_DST_CRC)
     print()
     print('  The patch contains everything: 421 messages, 178 name-table')
-    print('  entries, both crash fixes and the gold window. Nothing else to')
-    print('  apply. Your original ROM was not modified.')
+    print('  entries, both crash fixes, the gold window, and the redundant')
+    print('  speech marker dropped. Nothing else to apply. Your original ROM')
+    print('  was not modified.')
     return 0
 
 
