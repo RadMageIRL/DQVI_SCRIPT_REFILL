@@ -17,15 +17,15 @@ It does seven things:
   3. writes the 178 authored name-table entries (see apply_names below)
   4. decodes all 6,960 messages from the unmodified payload
   5. substitutes the 421 authored English messages
-  6. drops the redundant opening speech marker from 534 message openings
-     (see drop_speech_marker below)
+  6. removes the redundant speech marker, all 676 occurrences of a symbol
+     with no English glyph (see drop_speech_marker below)
   7. re-encodes every message with the ROM'S EXISTING Huffman trees, rebuilds
      the 870-entry pointer table, and recomputes the internal checksum
 
 The trees are never modified. Every symbol already has exactly one code path in
 them, so the encode is deterministic: every message comes out symbol for symbol
-as NoPrgress wrote it, apart from the 421 that were never written and the one
-marker symbol dropped from 534 openings. **Not one word of their writing is
+as NoPrgress wrote it, apart from the 421 that were never written and one
+marker symbol removed wherever it appeared. **Not one word of their writing is
 altered.** That property is worth checking after any change to this script, and
 tools/verify.py checks it: it fails if any symbol other than that marker moves
 in any of their messages.
@@ -475,42 +475,50 @@ def apply_names(rom, table):
 
 
 # ---------------------------------------------------------------------------
-# The speech marker on untagged NPC lines
+# The speech marker
 #
-# The engine draws the opening mark itself. On an untagged NPC line it emits a
-# star and a bracket before the first word, which is the same thing the
-# Japanese original draws:
+# The engine draws the opening mark on NPC dialogue itself - a star and a
+# bracket before the first word - and it does so in every box that carries
+# speech, including shop and service windows. That is confirmed on screen, not
+# inferred: an untagged villager and a shop clerk both draw it with nothing in
+# the message data asking for one.
 #
-#     Japanese   a star and a corner bracket, then the text
-#     English    a star and a colon-like mark, then the text
+# NoPrgress additionally wrote symbol $0559 into the script 676 times. $0559 is
+# the one symbol in their script with no English glyph behind it, so everywhere
+# it appears it draws a stray two-part mark, and everywhere it appears the
+# engine has already drawn the real one. It is redundant and broken in every
+# position:
 #
-# NoPrgress then added symbol $0559 on top of it, on 534 message openings.
-# $0559 is the one symbol in their script with no English glyph behind it, so
-# it draws a stray two-part mark, and it sits AFTER a marker the engine has
-# already drawn. It is redundant as well as broken:
+#     519  opening a message
+#     115  after $0240, the opening quote inside a tagged line
+#      25  after a context control code
+#       2  in the trailing filler past the last real message
 #
-#     stock      * : <stray>Welcome to Amoru, town of water.
-#     fixed      * : Welcome to Amoru, town of water.
+# So it is removed outright rather than replaced. What is left is the engine's
+# own marker, which is the Japanese layout.
 #
-# So the fix is to drop it, not to substitute for it. Dropping it leaves the
-# engine's own marker, which is exactly the Japanese layout. Substituting the
-# plain asterisk $0247 was tried first and produced a visible double star,
-# * : * before the text, because the engine's mark was already there.
+# Two readings were tried and discarded on the way here, both recorded in
+# docs/METHOD.md because the wrong ones are the instructive part:
 #
-# ONLY message openings are dropped. $0559 also appears 115 times immediately
-# after $0240, the opening quote inside a TAGGED line, and 22 more times
-# elsewhere. Those are left exactly as they are.
+#   - that $0559 drew the whole mark, so substituting the plain asterisk $0247
+#     would preserve it. It produced a visible double star.
+#   - that the 20 openings whose JAPANESE counterpart carries an explicit
+#     marker pair ($0511 $0577, the shop-clerk block and the authored lines
+#     beside it) needed that mark kept, since the source spells it out there.
+#     They do not. The engine draws it in those boxes too.
+#
+# Both were settled by looking at the game, and neither was settleable without.
 
 MARKER = 0x0559
 
 
 def drop_speech_marker(msgs):
-    """Remove the redundant opening marker where, and only where, it opens."""
+    """Remove the marker everywhere. It draws nothing readable in any position."""
     n = 0
     for i, (syms, term) in enumerate(msgs):
-        if syms and syms[0] == MARKER:
-            msgs[i] = (list(syms[1:]), term)
-            n += 1
+        if MARKER in syms:
+            n += sum(1 for s in syms if s == MARKER)
+            msgs[i] = ([s for s in syms if s != MARKER], term)
     return n
 
 
@@ -624,7 +632,7 @@ def main(src, cand, names_path, dst):
     print('messages substituted: %d' % len(C))
 
     n_marker = drop_speech_marker(msgs)
-    print('redundant speech marker $%04X dropped from %d message openings'
+    print('redundant speech marker $%04X removed: %d occurrences'
           % (MARKER, n_marker))
 
     w = BitWriter()

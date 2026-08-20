@@ -329,11 +329,11 @@ The enumeration above answers "can this be written". It does not answer "does
 anything sensible appear when it is". Those come apart, and this project shipped
 two releases before noticing.
 
-DQ6's untagged NPC lines open on symbol `$0559`, 534 times. It encodes, it round
-trips, it survives every structural check, and the original translators used it
-deliberately and consistently. It also has **no English glyph**: it is a
-full-width Japanese character that was never replaced, so it drew a stray
-two-part mark before the first word of the sentence.
+DQ6's script carries symbol `$0559` 676 times, mostly opening a line of NPC
+speech. It encodes, it round trips, it survives every structural check, and the
+original translators used it deliberately and consistently. It also has **no
+English glyph**: it is a full-width Japanese character that was never replaced,
+so it drew a stray two-part mark before the first word of the sentence.
 
 Nothing in the pipeline could see that. A decoder maps it to a placeholder and
 moves on; a round trip reproduces it perfectly; a length audit counts it as one
@@ -349,31 +349,49 @@ message-initial symbol in the entire script.
 
 ### Establish what a glyph draws before deciding what to do about it
 
-The fix took two attempts, and the wrong one is the more instructive.
+The fix took three attempts. The two wrong ones are the instructive part, and
+they failed in opposite directions.
 
-From the data alone, the marker looked like a single wide glyph: the message
-opened on `$0559` and the next symbol was already the `W` of the first word, so
-everything drawn before that `W` had to come from `$0559`. The screenshot showed
-three marks. One symbol, three marks, therefore one wide glyph. The reasoning is
-valid and the conclusion was wrong.
+**First attempt: substitute.** From the data the marker looked like a single
+wide glyph, because the message opened on `$0559` and the next symbol was
+already the first letter of the first word, so everything drawn before that
+letter had to come from `$0559`. The screenshot showed three marks. One symbol,
+three marks, therefore one wide glyph. The reasoning is valid and the conclusion
+was wrong: **the renderer draws things the message data does not contain.** Two
+of the three marks were the engine's. Substituting the plain asterisk produced a
+visible double star, and that build is what proved the symbol was redundant
+rather than merely ugly.
 
-What it missed is that **the renderer draws things the message data does not
-contain.** The engine emits its own opening mark on NPC dialogue, so two of
-those three marks were never in the message at all. Substituting a plain
-asterisk for `$0559` produced a visible double star, and that build is what
-proved the point: the marker was redundant, not merely ugly, and the answer was
-to delete the symbol rather than replace it.
+**Second attempt: keep some.** Once it was clear the symbol should go, a
+mechanical discriminator appeared: does the *Japanese* message at the same ID
+open with an explicit marker pair rather than relying on the engine? For 20 of
+the openings it does, all shop-clerk lines. That looked decisive, since the
+source spells the mark out there, so those 20 were held back on the reasoning
+that dropping them would leave those boxes unmarked. Also wrong. The engine
+draws the mark in shop windows too, and a shop clerk in the build that had
+already dropped them still showed it. The discriminator was real, well
+measured, and answered a question nobody needed answered.
 
-Two rules follow, and they are cheap.
+**What worked was the same instrument both times.** A villager, then a shop
+clerk. Each took one save file and one conversation, and each settled in seconds
+what a day of reasoning had got backwards.
 
-**A comparison is only as good as its control.** The right test was to render
-one line that uses the symbol against one that does not, and read the
-difference. That was proposed and skipped in favour of an argument from
-structure, which cost a build.
+Three rules, in the order they would have saved time.
 
 **When output has more parts than input, suspect the renderer.** Message data,
-engine-drawn decoration and font composition all reach the same window. Counting
-symbols tells you about one of them.
+engine-drawn decoration and font composition all reach the same window.
+Counting symbols tells you about one of them.
+
+**A measurement can be correct and irrelevant.** The Japanese-explicit-pair
+split was real and reproducible. It was also a fact about the source data that
+had no bearing on what the engine draws, and it was used to justify holding
+back a change. Before acting on a discriminator, say which observable it
+predicts, then check that observable.
+
+**A comparison is only as good as its control.** The right test was always to
+render one line that uses the symbol against one that does not, in each context
+where it appears. It was proposed early and skipped twice in favour of arguments
+from structure, and each skip cost a release.
 
 ### Minority conventions are a final mechanical pass, not a per-line decision
 
@@ -393,9 +411,9 @@ decided structurally, and a re-measurement afterwards to prove it landed inside
 the neighbouring rate. The design was sound and the shape is worth copying.
 
 It was also aimed at the wrong symbol. `$559` has no glyph and duplicates a
-mark the engine draws, so the correct action was to remove it from the 534
-openings that carried it, not to spread it across new ones. The pass that
-eventually ran was the opposite of the one planned.
+mark the engine draws, so the correct action was to remove all 676 of its
+occurrences, not to spread it across new ones. The pass that eventually ran was
+the opposite of the one planned.
 
 Keep the shape, and add a precondition to it: **before deferring a convention
 to a mechanical pass, confirm the thing you are about to multiply renders

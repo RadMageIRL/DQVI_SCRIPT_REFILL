@@ -9,8 +9,8 @@ This is the verification the README claims, run against two files rather than
 quoted. It checks six things:
 
   1. not one word of NoPrgress's own writing is altered. Their messages are
-     allowed to differ in exactly one way, the redundant opening marker being
-     dropped, and the check fails if any other symbol in any of them moves
+     allowed to differ in exactly one way, the redundant marker being removed,
+     and the check fails if any other symbol in any of them moves
   2. no message still displays its own ID
   3. every one of the 2,512 name-table string IDs resolves the way the game
      resolves it, in both ROMs, and the two are compared
@@ -71,9 +71,9 @@ GOLD_DESC_NOW = bytes([0x01, 0x01, 0x09])
 
 HDR = 0x00FFC0
 
-# The redundant opening marker on untagged NPC lines. The engine already draws
-# a marker there; $0559 sat after it, is the one symbol in their script with no
-# English glyph behind it, and is dropped.
+# The redundant speech marker. The engine draws the real mark itself in every
+# box that carries speech; $0559 is the one symbol in their script with no
+# English glyph behind it, and it is removed wherever it appears.
 MARKER = 0x0559
 
 
@@ -204,12 +204,12 @@ def main(argv):
     touched = [i for i in theirs if old[i] != new[i]]
 
     # Their messages may differ in exactly one way and no other: the redundant
-    # opening marker $0559 dropped. It has no English glyph and it sat after a
-    # mark the engine already draws. Anything else is a word changed.
+    # marker $0559 removed. It has no English glyph, and in every position the
+    # engine has already drawn the real mark. Anything else is a word changed.
     marker, reworded = [], []
     for i in touched:
         o, n = old[i][0], new[i][0]
-        if o and o[0] == MARKER and o[1:] == n:
+        if MARKER in o and tuple(s for s in o if s != MARKER) == n:
             marker.append(i)
         else:
             reworded.append(i)
@@ -217,8 +217,12 @@ def main(argv):
                 'not one word of their %d messages is altered' % len(theirs),
                 'reworded: %d' % len(reworded))
     bad += line(True,
-                'the redundant opening marker dropped, and nothing else',
-                '%d messages, symbol $%04X removed' % (len(marker), MARKER))
+                'the redundant marker removed, and nothing else',
+                '%d of their messages, symbol $%04X' % (len(marker), MARKER))
+    left = sum(1 for m in new for s in m[0] if s == MARKER)
+    bad += line(left == 0,
+                'the marker is gone from the whole payload',
+                'occurrences remaining: %d' % left)
     still = [i for i in range(len(new)) if shows_own_id(new, i)]
     bad += line(not still,
                 'no message still displays its own ID',

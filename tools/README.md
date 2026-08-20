@@ -101,10 +101,12 @@ bytes proves nothing. Instead all 2,512 string IDs are resolved the way the
 game resolves them, in both ROMs, and the results are compared.
 
 It also enforces the promise the README makes about NoPrgress's own writing.
-Their messages are allowed to differ in exactly one way, the redundant opening
-marker `$0559` being dropped, and the check fails if any other symbol in any of
-their messages moves. It reports the two separately, so "not one word altered"
-and "how many markers were dropped" are never conflated.
+Their messages are allowed to differ in exactly one way, the redundant marker
+`$0559` being removed, and the check fails if any other symbol in any of their
+messages moves. It reports the two separately, so "not one word altered" and
+"how many markers were removed" are never conflated, and it confirms the symbol
+is gone from the whole payload rather than from the positions someone
+remembered to look at.
 
 ---
 
@@ -155,7 +157,7 @@ python nametable.py DQ6-NoPrgress.sfc --dictionary
 | solving a format against its own consistency | METHOD 7b | `nametable.py --dictionary` |
 | the per-region line caps | NAME-TABLE | `nametable.py --widths` |
 | not one word of their text altered | README | `verify.py` |
-| the redundant marker dropped from 519 of their lines | README | `verify.py` |
+| the redundant marker removed, all 676 of it | README | `verify.py` |
 | the build verification | README | `verify.py` |
 
 ---
