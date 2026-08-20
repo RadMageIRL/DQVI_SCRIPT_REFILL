@@ -46,7 +46,7 @@ numbers.
 
 This patch writes those 421 messages, in English, from the Japanese original.
 
-It also writes **178 name-table entries** - item, spell, skill, place,
+It also writes **179 name-table entries** - item, spell, skill, place,
 monster-action and menu names the translation left showing the game's own
 internal identifier, so a location read `M194` and a battle action read `M6BA`.
 See "Scope" below for what was deliberately left alone and why.
@@ -92,7 +92,7 @@ before   * : <stray>Welcome to Amoru, town of water.
 after    * : Welcome to Amoru, town of water.
 ```
 
-It is removed outright rather than replaced, in every position: 519 opening a
+It is removed outright rather than replaced, in every position: 534 opening a
 message, 115 after the opening quote inside a tagged line, 25 after a context
 control code, and 2 in the trailing filler past the last real message. What is
 left is the engine's own marker.
@@ -136,7 +136,7 @@ back.
 
 **This is what you want if you just want to play.** One step, no Python.
 
-**One patch contains everything** - the 421 messages, the 178 names, both crash
+**One patch contains everything** - the 421 messages, the 179 names, both crash
 fixes and the gold window. There is nothing else to apply and no order to get
 right. Do not apply the menu-fix patch as well; this one already contains it.
 
@@ -158,7 +158,7 @@ your ROM. It writes the patched copy beside it. Your original is not modified.
 flips --apply DQ6-SFC-NoPrgress-RM-ScriptRefill.bps "DQ6 NoPrgress.sfc" "DQ6 Refill.sfc"
 ```
 
-![Applying the patch in an empty directory holding only the ROM and the .bps: flips reports the patch was applied successfully, a new DQ6 Refill.sfc appears, and its SHA-1 is 21b9128ddd3fe864d0fa35cfcc348ed4bac4281c](screenshots/apply-run.png)
+![Applying the patch in an empty directory holding only the ROM and the .bps: flips reports the patch was applied successfully, a new DQ6 Refill.sfc appears, and its SHA-1 is shown](screenshots/apply-run.png)
 
 **Without Flips at all**, if you have Python: `patchRM.py` applies the same
 `.bps` and needs nothing installed. Put it beside the patch and your ROM.
@@ -167,7 +167,7 @@ flips --apply DQ6-SFC-NoPrgress-RM-ScriptRefill.bps "DQ6 NoPrgress.sfc" "DQ6 Ref
 python patchRM.py "DQ6 NoPrgress.sfc"
 ```
 
-![patchRM.py run from a Windows command prompt in a folder holding only the ROM, the .bps and the script: it prints the patch and source CRC32s, writes DQ6 NoPrgress (Script Refill).sfc with CRC32 3BEFB0C6 and SHA-1 21b9128ddd3fe864d0fa35cfcc348ed4bac4281c, and reports all checksums verified](screenshots/patchRM-run.png)
+![patchRM.py run from a Windows command prompt in a folder holding only the ROM, the .bps and the script: it prints the patch and source CRC32s, writes DQ6 NoPrgress (Script Refill).sfc, and reports all checksums verified](screenshots/patchRM-run.png)
 
 It checks the patch's own CRC32, refuses a wrong or already-patched ROM, and
 verifies the output before telling you it worked. Standard-library Python 3, no
@@ -176,10 +176,10 @@ dependencies.
 Check what you get, whichever route you used:
 
 ```
-result   CRC32 3BEFB0C6   SHA-1 21b9128ddd3fe864d0fa35cfcc348ed4bac4281c
+result   CRC32 1C535999   SHA-1 cfd082c2db827f52305fdf98d915e7b86d5fda52
 ```
 
-That is the whole thing. **You are done** - the 421 messages, the 178 names,
+That is the whole thing. **You are done** - the 421 messages, the 179 names,
 both crash fixes and the gold window are all in that one output file.
 
 If the CRC32 does not match, your source ROM is not the one this targets. BPS
@@ -210,9 +210,9 @@ fetched from anywhere else.
 python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt DQ6-Refill.sfc
 ```
 
-![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, restores the gold window, writes 178 name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM as CRC32 3BEFB0C6](screenshots/build-run.png)
+![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, restores the gold window, writes the name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
 
-If your output is not `3BEFB0C6`, the input ROM is not the one this targets.
+If your output is not `1C535999`, the input ROM is not the one this targets.
 Check its CRC32 before anything else.
 
 The script refuses to write if the ROM is not what it expects. Every fix checks
@@ -220,7 +220,7 @@ its own site first - the crash-fix span, all 21 Forget relocation sites, and the
 gold routine - so pointing it at the wrong ROM fails loudly rather than
 producing something broken.
 
-## How the 421 messages and 178 names were written
+## How the 421 messages and 179 names were written
 
 From the Japanese script and from NoPrgress's own English, and from nothing
 else. No later official localization was consulted at any point, including for
@@ -273,48 +273,82 @@ known placeholder forms, and the result is zero of each.
 **The name table is done too.** Item, spell, skill, place, monster-action and
 menu names are a separate system from the message script: byte-encoded rather
 than Huffman-coded, stored in different tables, reached a different way. It had
-never been censused before this project. **370 of its entries were untranslated**
-and displayed the game's own internal identifier, so a location read `M194` and
-a battle action read `M6BA`.
+never been censused before this project.
 
-**178 of those are now written.** The other 178 are deliberately left alone,
-and 14 are unresolved. That split is the point, so here it is in full:
+**In the stock ROM, 394 entries displayed the game's own internal identifier**,
+so a location read `M194` and a battle action read `M6BA`. **179 are now
+written, leaving 215 in the release build.** Every figure here was measured
+against a ROM, and each says which ROM it describes:
+
+| | stock `B545C548` | release `1C535999` |
+|---|---|---|
+| entries displaying an identifier | **394** | **215** |
+| written by this patch | - | **179** |
+
+`tools/nametable.py --untranslated` reports 393 and 214. It matches a
+single-letter prefix only, so it does not count `ID001`-`ID010` or `DS29`. The
+difference between the two ROMs, 179, is the same either way.
+
+### What the remaining 215 are
+
+Established by reading the Japanese behind every one of them, resolved by the
+entry's own string ID out of the Japanese ROM:
 
 | | count | |
 |---|---|---|
-| **written** | **178** | monster actions, Goof-off actions, skill descriptions, place names, menu and status labels |
-| left alone | 178 | see below |
-| unresolved | 14 | see below |
+| naming-screen rejection list | **75** | compared against what you type, never drawn |
+| internal labels | **62** | the Japanese is itself a Latin identifier |
+| debug and editor labels | **70** | written in Japanese, unreachable in normal play |
+| **genuinely unresolved** | **8** | see below |
 
-### Why half of it is deliberately untranslated
+**Not one of the first 207 can appear in normal play.**
 
-Not one of these 178 can appear on screen:
+The **75** are the words the naming screen refuses. Translating them would mean
+authoring a list of English obscenities into a ROM, which is a content decision
+rather than a translation, and it would change nothing.
 
-- **52** are the name-entry rejection list - the words the naming screen
-  refuses. They are compared against what you type and never drawn. Translating
-  them would mean authoring a list of English obscenities into a ROM, which is
-  a content decision rather than a translation, and it would change nothing.
-- **21** are the name-entry kana grid, dead in English because the translation
-  replaced the character set.
-- **105** are map-editor and debug labels left in the ROM: `EDIT`, `RESIZE`,
-  `MOVE`, `OBJ0`-`OBJ3`, `LV0`-`LV3`, `X:`, `Y:`, and map slots carrying
-  internal codes like `C02` and `C01SHIPR`.
+The **62** were never translatable text at all, because the Japanese original
+holds the same Latin string: `EDIT`, `RESIZE`, `MOVE`, `MAP`, `OBJ0`-`OBJ3`,
+`LV0`-`LV3`, `X:`, `Y:`, `C01SHIPR`, `HP MP MAX`, and the `E01`, `D07`,
+`S02`-`S45`, `K02`-`K12`, `ID001`-`ID010` slots. Several only read as garbage
+because bytes `$0C`-`$0E` shadow H, M and P.
 
-Eleven of those debug labels were only identifiable after working out that
+The **70** are map-editor and debug-menu labels: map tile attributes, castle map
+slots, a debug menu with cheat-Zoom and a sound test, and a window debug block.
+**These were missed for months because they are written in Japanese**, and the
+search had been for Latin identifiers like `OBJ0`. Internal strings are not
+required to be in the developer's second language.
+
+Eleven of the Latin labels were only identifiable after working out that
 Japanese bytes `$8C`-`$A5` are the full-width Latin alphabet. Before that they
 decoded as unmapped kanji and looked like ordinary text. Without that find they
 would have been translated unnecessarily, and three map slots would have been
 given invented names.
 
-### The 14 that are not settled
+### The 8 that are not settled
 
-Four have an identifier whose prefix is not `M` or `*`, so the ID does not
-resolve and there is no way to read their Japanese at all - `E01`, `D07`,
-`C030`. Three carry an internal map code inside the Japanese itself. Five are
-genuinely ambiguous - `ひき` is either a counter or "draw"; `そうぞう` is either
-"imagine" or "create". One, `がた`, is an honorific pluralising suffix with no
-English equivalent. And one is a single kana that is almost certainly a
-fragment rather than a word.
+Every entry in the table can now be read. An earlier version of this file said
+that four entries whose prefix is not `M` or `*` could not be resolved at all,
+naming `E01`, `D07` and `C030`. That was wrong on all three. `E01` and `D07`
+resolve to the Latin strings `E01` and `D07` in the Japanese ROM and are
+internal labels rather than content. `C030` resolved to a real word and **is now
+written**: it is the `Transform` entry in the monster-name block, matching the
+translation's own rendering of the same Japanese elsewhere in the table. Whether
+any encounter references that slot was not confirmed; writing it costs nothing
+if it is unused.
+
+What remains unresolved is a question of meaning, not of access:
+
+| shows | Japanese | why it is left alone |
+|---|---|---|
+| `M6EB` | `デュランのもと` | "Duran's essence", or base, or ingredient. Which one needs the skill's effect. |
+| `*70A` | `そうぞうを` | "imagine" or "create", plus an object particle. A fragment of a longer line. |
+| `M6FD` | `し` | a single kana, almost certainly not a word on its own. |
+| `M427` | `におうふくろ` | on a block boundary; the reading is not certain. |
+| `M0F5` | `ひき` | a counter for animals, or "draw". |
+| `M14E` | `かみ` | god, hair or paper. |
+| `M14D` | `ばか` | "idiot", in a block that mixes editor labels with forms of address. |
+| `M11C` | `がた` | an honorific pluralizing suffix with no English equivalent. |
 
 Every one of them is left showing its identifier. **A gap is better than a
 confident wrong answer**, and inventing a reading for a two-kana entry is
@@ -330,7 +364,7 @@ exactly how a translation acquires errors that nobody can later trace.
   6,539 messages is what they shipped, apart from a redundant marker symbol
   removed wherever it appeared, which carried no word. The build fails if any
   other symbol in any of their messages moves.
-- **It does not claim to be complete or correct.** 421 messages and 178 names
+- **It does not claim to be complete or correct.** 421 messages and 179 names
   were authored by someone who is not a professional translator, checked against
   a corpus rather than against a native speaker. Errors are mine. Reports are
   welcome.

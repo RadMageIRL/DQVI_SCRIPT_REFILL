@@ -14,7 +14,7 @@ fetched from anywhere else.
 It does seven things:
   1. applies both crash fixes, Info > All and Forget (see apply_crash_fixes)
   2. restores the gold window on the info screen (see apply_gold below)
-  3. writes the 178 authored name-table entries (see apply_names below)
+  3. writes the 179 authored name-table entries (see apply_names below)
   4. decodes all 6,960 messages from the unmodified payload
   5. substitutes the 421 authored English messages
   6. removes the redundant speech marker, all 676 occurrences of a symbol
@@ -489,10 +489,16 @@ def apply_names(rom, table):
 # engine has already drawn the real one. It is redundant and broken in every
 # position:
 #
-#     519  opening a message
+#     534  opening a message
 #     115  after $0240, the opening quote inside a tagged line
 #      25  after a context control code
 #       2  in the trailing filler past the last real message
+#
+# Those are counted here, after the 421 authored messages are substituted in,
+# which is what this function actually sees. Their script alone opens 519
+# messages on it; 3 of those sit in placeholder messages that get replaced, and
+# the authored text supplies 18 openings of its own, so 519 - 3 + 18 = 534.
+# docs/METHOD.md quotes the 519 because it describes their script.
 #
 # So it is removed outright rather than replaced. What is left is the engine's
 # own marker, which is the Japanese layout.

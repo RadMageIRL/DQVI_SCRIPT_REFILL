@@ -2,7 +2,7 @@
 
 Item, spell, skill, place, monster-action and menu strings live in a system
 entirely separate from the Huffman message script. This describes how it works
-and how the 178 authored entries were written into it.
+and how the 179 authored entries were written into it.
 
 No ROM is distributed here and none ever will be.
 
@@ -41,8 +41,21 @@ was meant to carry is whatever string ID `$00C7` resolves to in the Japanese
 ROM: entry 199, `コマンド`. Nothing has to be inferred.
 
 Measured across the whole table, that holds on **348 of 348** with no
-exceptions. `tools/nametable.py` checks it. The entries that do not resolve are
-exactly the 45 whose prefix is not `M` or `*`.
+exceptions, and it was re-verified on the release build at **170 of 170** for
+the entries that still show an identifier. `tools/nametable.py` checks it.
+
+**The rule applies to the `M` and `*` prefixes only.** The 45 entries with some
+other prefix do not follow it: `E01` sits at string ID `$01B1`, not `$0001`.
+That does not make them unreadable, which an earlier version of this document
+claimed. Resolve such an entry by **its own string ID** and the Japanese comes
+out normally - `$01B1` is the Latin string `E01` in the Japanese ROM, so it is
+an internal label rather than untranslated text. `D07`, `S02`-`S45`, `K02`-`K12`
+and `ID001`-`ID010` are all the same. The one exception is `C030` at `$023E`,
+whose Japanese is `へんしん` and which is real content.
+
+The two lookups are easy to confuse and give different answers. Resolving an
+entry by the number inside its displayed identifier, rather than by its own
+string ID, points somewhere unrelated and still returns readable Japanese.
 
 This replaced three earlier theories - a constant `+2`, then `+37`, then a
 "stepping" shift - and it is worth being precise about why they arose, because
@@ -143,7 +156,7 @@ which is why `Entice Dance` is stored as `Entice` + `$96` + `Dance`.
 Because the table is repacked wholesale, the check that matters is not a byte
 diff but a behavioural one: **every one of the 2,512 string IDs is resolved the
 way the game resolves it, in both the before and after ROMs, and compared.**
-178 changed to the intended text, 2,334 were untouched, none were wrong.
+179 changed to the intended text, 2,333 were untouched, none were wrong.
 
 `tools/verify.py <stock> <patched>` runs that comparison, and
 `tools/nametable.py <patched> --check nametable-en.txt` resolves every authored

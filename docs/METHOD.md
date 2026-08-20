@@ -585,3 +585,81 @@ the fault, on a hypothesis that turned out to be wrong, and it survives on the
 distribution match alone. Its cost is recorded honestly: 20 pages now sit above
 the 72-character working target, up from 11, none near the 104 hard cap, which
 is the direct consequence of writing lines as long as theirs.
+
+---
+
+## 10. A wrong pairing method produces plausible readings
+
+Section 7 is about a fallback that produced plausible output, and 7b is the
+answer to it. This is the same failure in a different place, found during the
+completeness pass, and it is worth its own section because the wrong answer was
+not merely plausible. It was interesting.
+
+The name table exists in two ROMs and entries have to be paired across them.
+Three shift theories preceded the ID rule, all measured against entry POSITION.
+The reason a shift keeps looking right is that positions diverge slowly: the two
+tables pack different numbers of bytes, so a shift fitted on a handful of
+anchors holds for a stretch and then stops, and it stops somewhere nobody
+checked.
+
+**What position-based pairing returned.** Resolved by position, the block at
+entries 1931-2005 reads as skill descriptions, split across lines the way this
+table splits everything:
+
+```
+いなずまを / よびよせ        summons lightning
+つるぎの / さみだれ          sword flurry
+ドラゴンの / うろこを / きりさく   cuts through dragon scales
+```
+
+Seventy-five consecutive entries, all coherent, all in the register the block
+should be in, all split at plausible line breaks, and every one of them
+addressable by a live string ID. The conclusion that followed was that seventy-five
+player-facing skill descriptions were still showing `M`-codes in a shipped
+release.
+
+**Resolved by string ID, the same block is the naming-screen obscenity list.**
+Not one word of it is ever drawn.
+
+The reading was not a near miss or a garbled approximation that careful
+attention would have caught. It was fluent, structured and thematically
+consistent, because a wrong offset into a table of natural-language strings
+returns natural-language strings. **Plausibility is not weak evidence here; it
+is the expected output of the failure mode.** A pairing method that returns
+nonsense when wrong is safer than one that returns prose.
+
+So the check cannot be "does the result read correctly". It has to be a property
+the wrong method cannot satisfy. Here it is that the resolver at `$C0:3190` is
+byte-identical in both ROMs, so string ID X **is** the same string in both by
+construction, and no fitting is involved at all. The ID rule then holds 348 of
+348 in the stock ROM and 170 of 170 in the release.
+
+**If a constant shift seems to work, that is the failure mode, not a discovery**
+- and if the output of a shift reads beautifully, that is not reassurance.
+
+## 11. Internal strings are not required to be in a second language
+
+Seventy of the entries still showing an identifier turned out to be map-editor
+and debug-menu labels: tile attributes, castle map slots, a debug menu with a
+cheat-Zoom and a sound test, a window debug block.
+
+They were missed for months, and the reason is a single unexamined assumption.
+The editor labels found earlier were Latin - `EDIT`, `RESIZE`, `OBJ0`, `LV3`,
+`X:`, `Y:` - and finding them depended on working out that Japanese bytes
+`$8C`-`$A5` are the full-width Latin alphabet. That find was real and it worked,
+and it quietly installed the idea that **internal strings look like `OBJ0`**. So
+the search was for Latin identifiers, and everything not matching that shape was
+treated as content awaiting translation.
+
+Enix's developers wrote their debug menu in Japanese, which is the unremarkable
+thing for a Japanese studio to do. `いんちきルーラ` is "cheat Zoom".
+`サウンドテスト` is a sound test. `ほこうテスト` is a walk test. These sat in the
+census as untranslated content, indistinguishable by shape from a real item
+name, for as long as the question being asked was "is this Latin".
+
+**The lesson generalizes past this ROM.** A debug string is identified by what it
+does, not by what alphabet it is in. The discriminator that works is meaning:
+`レベル0` next to `ウインドウデバック` is a debug block whatever script it is
+written in. The discriminator that failed is orthography, and it failed silently,
+because an untranslated debug label and an untranslated item name are the same
+shape in every measurement except reading them.
