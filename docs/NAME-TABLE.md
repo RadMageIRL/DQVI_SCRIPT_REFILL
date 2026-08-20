@@ -51,10 +51,10 @@ entry POSITION rather than the string ID. Those two part company because 464
 string IDs alias onto an earlier entry, so identifier-minus-position spreads
 from -531 to +464 and any shift fitted before the first collapse holds for a
 while and then stops. **If a constant shift seems to work, that is the failure
-mode.** Each of the three had been
-verified on a handful of anchors and then applied everywhere.
+mode.** Each of the three had been verified on a handful of anchors and then
+applied everywhere.
 
-## The encoding, and three things that are not obvious
+## The encoding, and four things that are not obvious
 
 **Bytes `$0C`-`$0F` shadow the letters H, M, P and G** in the byte-to-symbol
 table, but they are renderer control codes rather than glyphs - `$0D` draws a
@@ -72,17 +72,45 @@ the line before it, verified against every multi-line entry in the stock table:
 Three bytes in that range are glyphs rather than breaks: `$85` the label colon,
 `$89` an asterisk, `$8B` a comma.
 
-**Three dictionary codes draw a space.** `$CB` is ` t`, `$F2` is `s `, `$F7`
-is `t `. Read as `t`, `s` and `t` they still produce fluent English, so nothing
-looks wrong: `Mudo'` + `$F2` + `Castle` reads as `Mudo'sCastle` and the missing
-space passes for a packing quirk rather than a decoding error.
+**Seven dictionary codes draw a space**, and the dictionary should be read
+from the ROM rather than reconstructed.
 
-The break codes settle it with no appeal to what the codes look like. Each one
-states the length of the line before it, so each is an equation in the displayed
-lengths of the codes on that line, and enough of them carry a single unknown for
-the whole set to fall out by substitution. Solved that way, 158 equations are
-satisfied and none are left over, and every break code in the table is
-consistent. `tools/nametable.py --ligatures` does it.
+Bytes at or above `$C9` are dictionary codes, each drawing a short fixed
+sequence. Seven of the fifty include a space: `$C9` is ` a`, `$CA` is ` d`,
+`$CB` is ` t`, `$CC` is ` w`, `$D6` is `e `, `$F2` is `s `, `$F7` is `t `.
+
+That matters more than it sounds, because **a code read one character short
+still produces fluent English**. `Mudo'` + `$F2` + `Castle` renders as
+`Mudo'sCastle`, and a missing space passes for a packing quirk rather than a
+decoding error. Nothing looks wrong, so nothing gets questioned. `$F6` is `s.`
+and had been read as `age`; `$C8`, which sits right beside the range, is not a
+dictionary code at all and appears only in four dead name-entry grid slots.
+
+None of this needs deducing. The expander at `$C3:FB23` reads
+
+```
+CMP #$00C9        the lowest dictionary code
+BCC ...           below that, not a dictionary code at all
+SBC #$00C9
+ASL / TAX
+LDA $C3FB50,X     first byte of the pair
+LDA $C3FB51,X     second byte
+```
+
+so the lowest code, the table address and the entry width are all in the
+instructions, and `$FF` terminates the table. `tools/nametable.py --dictionary`
+reads it that way.
+
+It then measures the same thing a second time without looking at the table at
+all. Each break code states the length of the line before it, so each is an
+equation in the displayed widths of the codes on that line, and enough carry a
+single unknown for the whole set to fall out by substitution. 164 equations,
+158 solvable, zero unsatisfied, and **zero disagreements with the table read
+out of the ROM**. Two independent measurements, neither of which asks what the
+output looks like.
+
+The encoder held the short readings during development and was corrected before
+release.
 
 **Japanese bytes `$8C`-`$A5` are the full-width Latin alphabet A-Z.** Without
 this, entries decode as unmapped kanji and read as unknown when they are
@@ -104,7 +132,7 @@ place names        20
 
 Reproduce with `tools/nametable.py <rom> --widths`, which also prints the block
 map those four regions were read off. The last two were quoted as 17 and 19
-until the dictionary codes below were measured properly; a decoder that drops
+until the dictionary codes above were measured properly: a decoder that drops
 their spaces measures every affected line one character short.
 
 Longer names are split across two lines with a break code rather than truncated,
@@ -121,24 +149,3 @@ way the game resolves it, in both the before and after ROMs, and compared.**
 `tools/nametable.py <patched> --check nametable-en.txt` resolves every authored
 entry and reports any that do not display what the data file says.
 
-## A defect in v1.0
-
-That second check is the one v1.0 does not pass, and this is the honest record
-of it rather than a quiet fix.
-
-`build.py` held the shorter readings of the three space-carrying codes above,
-so its encoder reached for `$CB`, `$F2` and `$F7` whenever an authored entry
-needed a bare `t` or `s`. **54 of the 178 authored entries therefore draw a
-spurious space.** `Battle` is stored as `B` + `at` + `$CB` + `le` and draws as
-`Bat tle`; `Restore` draws as `Res tore`; `Monsters` draws with a trailing
-space.
-
-What this is not: it is not a crash, it does not touch NoPrgress's own text,
-and it does not affect the message script, either crash fix, or the gold
-window. Those all verify clean. The entries are correct in `nametable-en.txt`;
-only the encoder is wrong.
-
-The fix is `NT_LIGATURES` carrying the true text for those three codes, plus
-skipping space-carrying codes when encoding so a bare `t` falls through to the
-plain letter byte. Rebuilt that way the check reports 178 of 178, and every
-break code in the table stays consistent.

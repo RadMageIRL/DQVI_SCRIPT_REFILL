@@ -9,8 +9,8 @@
   --id HEX[,HEX..]   resolve specific string IDs, the way the game resolves them
   --widths [LO-HI]   line lengths per region, measured from the ROM's own text
   --breaks           check the break-code rule (code = 0x90 + length of line 1)
-  --ligatures        solve the dictionary codes' displayed lengths from the
-                     break codes alone, and compare against the table below
+  --dictionary       the dictionary codes, read out of the ROM's own expander,
+                     then checked a second way against the break codes
   --check FILE       resolve every string ID in a nametable-en.txt and report
                      which ones do not display what the file says they should
 
@@ -20,6 +20,10 @@ The name table is the second string system in DQ6: item, spell, skill, place,
 monster-action and menu names, byte-encoded rather than Huffman-coded, packed
 end to end and $AC-terminated. docs/NAME-TABLE.md describes it. This tool reads
 it back out so those claims can be checked rather than taken on trust.
+
+Nothing here is reconstructed from what the output looks like. The group table,
+the charset and the dictionary all come out of the ROM, and --dictionary shows
+a second, independent measurement agreeing with the first.
 
 Standard-library Python 3 only. No dependencies, nothing to install.
 """
@@ -35,6 +39,12 @@ NT_END = 0x3BC712          # end of the region
 NT_GROUPS = 157            # groups 0..156, string IDs 0..2511
 TERMINATOR = 0xAC
 
+# The dictionary expander at $C3:FB23. Its CMP #imm gives the lowest
+# dictionary code and its LDA long gives the table, so both are read rather
+# than assumed. $FF terminates the table.
+DICT_CMP = 0x03FB25
+DICT_PTR = 0x03FB30
+
 # Regions used for the per-region caps in docs/NAME-TABLE.md, as entry
 # positions. They were found by reading the table, not assumed: see --widths
 # with no range for the block map they come from.
@@ -43,22 +53,11 @@ REGIONS = (('battle actions', 1088, 1279),
            ('menu / status', 192, 319),
            ('place names', 416, 543))
 
-# Dictionary codes. Three of these carry a SPACE, which is easy to miss because
-# a decoder that drops it still produces readable English. --ligatures derives
-# every length from the break codes and will say so if this table is wrong.
-LIGATURES = {
-    0xC8: 'l',  0xC9: 'a',  0xCA: 'd',  0xCB: ' t', 0xCC: 'w',  0xCD: 'ac',
-    0xCE: 'am', 0xCF: 'an', 0xD0: 'ar', 0xD1: 'as', 0xD2: 'at', 0xD3: 'ce',
-    0xD4: 'ch', 0xD5: 'ck', 0xD6: 'e',  0xD7: 'ea', 0xD8: 'ed', 0xD9: 'ee',
-    0xDA: 'er', 0xDB: 'es', 0xDC: 'gh', 0xDD: 'he', 0xDE: 'ic', 0xDF: 'in',
-    0xE0: 'is', 0xE1: 'it', 0xE2: 'le', 0xE3: 'll', 0xE4: 'ly', 0xE5: 'nd',
-    0xE6: 'no', 0xE7: 'nt', 0xE8: 'of', 0xE9: 'oi', 0xEA: 'on', 0xEB: 'oo',
-    0xEC: 'or', 0xED: 'ou', 0xEE: 'ow', 0xEF: 'ra', 0xF0: 're', 0xF1: 'ro',
-    0xF2: 's ', 0xF4: 'so', 0xF5: 'st', 0xF6: 'age', 0xF7: 't ', 0xF8: 'te',
-    0xF9: 'th', 0xFA: 'us'}
-
-# Single glyphs that sit inside the $82-$9D range and are NOT break codes.
-GLYPHS = {0x82: '/', 0x85: ':', 0x88: '-', 0x89: '*', 0x8B: ','}
+# Single-byte glyphs, including the five that sit inside the $82-$9D range and
+# are NOT break codes.
+GLYPHS = {0x01: ' ', 0x0D: '~', 0x77: "'", 0x78: '-', 0x79: '?', 0x7A: '.',
+          0x7F: '.', 0x81: '!', 0x82: '/', 0x85: ':', 0x88: '-', 0x89: '*',
+          0x8B: ','}
 
 BREAK_LO, BREAK_HI = 0x91, 0x9D          # 0x90 + 1 .. 0x90 + 13
 
@@ -70,39 +69,41 @@ class Fail(Exception):
     pass
 
 
-def decode(raw):
-    """What the game displays for one entry. '|' marks a line break."""
-    out = []
-    for x in raw:
-        if x == 0x01:
-            out.append(' ')
-        elif 0x02 <= x <= 0x0B:
-            out.append(chr(48 + x - 0x02))
-        elif 0x10 <= x <= 0x29:
-            out.append(chr(65 + x - 0x10))
-        elif 0x42 <= x <= 0x5B:
-            out.append(chr(97 + x - 0x42))
-        elif x == 0x77:
-            out.append("'")
-        elif x == 0x78:
-            out.append('-')
-        elif x in (0x7A, 0x7F):
-            out.append('.')
-        elif x == 0x79:
-            out.append('?')
-        elif x == 0x81:
-            out.append('!')
-        elif x == 0x0D:
-            out.append('~')            # a control code that draws a tilde
-        elif x in GLYPHS:
-            out.append(GLYPHS[x])
-        elif x in LIGATURES:
-            out.append(LIGATURES[x])
-        elif BREAK_LO <= x <= BREAK_HI:
-            out.append('|')
-        else:
-            out.append('<%02X>' % x)   # loud, never mistakable for content
-    return ''.join(out)
+def base_char(x):
+    """What one ordinary charset byte draws."""
+    if x in GLYPHS:
+        return GLYPHS[x]
+    if 0x02 <= x <= 0x0B:
+        return chr(48 + x - 0x02)
+    if 0x10 <= x <= 0x29:
+        return chr(65 + x - 0x10)
+    if 0x42 <= x <= 0x5B:
+        return chr(97 + x - 0x42)
+    return '<%02X>' % x                  # loud, never mistakable for content
+
+
+def read_dictionary(rom):
+    """code -> the text it draws, read out of the ROM's own expander.
+
+    Do not reconstruct this from decoded output. Ten of the fifty entries are
+    a character longer than they look, because a sequence that begins or ends
+    with a space still reads as fluent English with the space dropped.
+    """
+    first = rom[DICT_CMP] | rom[DICT_CMP + 1] << 8
+    base = (rom[DICT_PTR] | rom[DICT_PTR + 1] << 8
+            | (rom[DICT_PTR + 2] & 0x3F) << 16)
+    if not 0xC0 <= first <= 0xFF or not 0 < base < len(rom) - 128:
+        raise Fail('the dictionary expander at 0x%06X is not what this tool '
+                   'expects.\n  Refusing to guess.' % DICT_CMP)
+    out, i = {}, 0
+    while rom[base + i * 2] != 0xFF:
+        out[first + i] = base_char(rom[base + i * 2]) + \
+            base_char(rom[base + i * 2 + 1])
+        i += 1
+        if i > 64:
+            raise Fail('the dictionary table at 0x%06X does not terminate.'
+                       % base)
+    return first, base, out
 
 
 class Table(object):
@@ -114,6 +115,7 @@ class Table(object):
         if len(self.rom) < NT_END:
             raise Fail('%s is too small to be a DQ6 ROM (%d bytes).'
                        % (os.path.basename(path), len(self.rom)))
+        self.dict_first, self.dict_at, self.dict = read_dictionary(self.rom)
 
         self.entries, start = [], NT_BASE
         for i in range(NT_BASE, NT_END):
@@ -150,15 +152,27 @@ class Table(object):
         for sid in range(NT_GROUPS * 16):
             self.first_id.setdefault(self.position(sid), sid)
 
+    def decode(self, raw):
+        """What the game displays for one entry. '|' marks a line break."""
+        out = []
+        for x in raw:
+            if x in self.dict:
+                out.append(self.dict[x])
+            elif BREAK_LO <= x <= BREAK_HI:
+                out.append('|')
+            else:
+                out.append(base_char(x))
+        return ''.join(out)
+
     def position(self, sid):
         """String ID -> entry position. group = ID >> 4, then walk ID & 15."""
         return self.groups[sid >> 4] + (sid & 0x0F)
 
     def text(self, sid):
-        return decode(self.entries[self.position(sid)])
+        return self.decode(self.entries[self.position(sid)])
 
     def at(self, pos):
-        return decode(self.entries[pos])
+        return self.decode(self.entries[pos])
 
     def crc(self):
         return zlib.crc32(self.rom) & 0xFFFFFFFF
@@ -173,6 +187,22 @@ class Table(object):
                 rows.append((pos, self.first_id[pos], t,
                              m.group(1), int(m.group(2), 16)))
         return rows
+
+    def equations(self):
+        """(bytes of a line, its stated length) for every break code."""
+        out = []
+        for pos in range(self.reachable):
+            run = []
+            for x in self.entries[pos]:
+                if BREAK_LO <= x <= BREAK_HI:
+                    out.append((list(run), x - 0x90))
+                    run = []
+                else:
+                    run.append(x)
+        return out
+
+    def width(self, byte):
+        return len(self.dict[byte]) if byte in self.dict else 1
 
 
 def head(table):
@@ -192,6 +222,8 @@ def report(table):
           % (NT_PTR, NT_GROUPS))
     print('  strings packed from 0x%06X, $%02X-terminated'
           % (NT_BASE, TERMINATOR))
+    print('  dictionary at 0x%06X, %d codes from $%02X'
+          % (table.dict_at, len(table.dict), table.dict_first))
     print()
     print('  %-42s %6d' % ('string IDs addressable', NT_GROUPS * 16))
     print('  %-42s %6d' % ('entries those IDs reach', table.reachable))
@@ -339,68 +371,70 @@ def breaks(table):
     head(table)
     print('  A break code is 0x90 plus the number of characters the game has')
     print('  already drawn on that line. Checked against every break code in')
-    print('  the table:')
+    print('  the table, using the dictionary widths read out of the ROM:')
     print()
     ok, bad = 0, []
-    for pos in range(table.reachable):
-        run = 0
-        for x in table.entries[pos]:
-            if BREAK_LO <= x <= BREAK_HI:
-                if x == 0x90 + run:
-                    ok += 1
-                else:
-                    bad.append((pos, table.at(pos), x, run))
-                run = 0
-            elif x in LIGATURES:
-                run += len(LIGATURES[x])
-            else:
-                run += 1
+    for line, stated in table.equations():
+        drawn = sum(table.width(b) for b in line)
+        if drawn == stated:
+            ok += 1
+        else:
+            bad.append((line, stated, drawn))
     print('  %-42s %6d' % ('break codes consistent with the rule', ok))
     print('  %-42s %6d' % ('break codes that are not', len(bad)))
-    for pos, t, x, run in bad[:20]:
-        print('           %-5d %-30r says $%02X, line is %d long'
-              % (pos, t, x, run))
+    for line, stated, drawn in bad[:20]:
+        print('           %-30r says %d, line draws %d'
+              % (''.join(table.decode(bytes(line))), stated, drawn))
     if len(bad) > 20:
         print('           ... and %d more' % (len(bad) - 20))
     print()
     if bad:
         print('  A failure here is usually not a bad break code. It is a')
-        print('  dictionary code whose length this tool has wrong. Run')
-        print('  --ligatures, which derives the lengths instead of assuming.')
+        print('  width this tool has wrong. Run --dictionary.')
         print()
 
 
-def ligatures(table):
-    """Solve each dictionary code's displayed length from the break codes.
+def dictionary(table):
+    """Show the dictionary, then measure it a second, independent way.
 
     Every break code states how long the line before it is, so each one is an
-    equation in the lengths of the codes on that line. Enough of them have a
-    single unknown that the whole set falls out by substitution, and the
-    remainder then act as a check. This needs no assumption about what any
-    code SAYS, only that the break codes are correct, and it is the check
-    that catches a code whose text quietly carries a space.
+    equation in the displayed widths of the codes on that line. Enough of them
+    carry a single unknown for the whole set to fall out by substitution. That
+    measures widths from the format's own internal consistency, with no appeal
+    to what any code draws, and it agrees with the table read out of the ROM.
     """
     head(table)
-    equations = []
-    for pos in range(table.reachable):
-        run = []
-        for x in table.entries[pos]:
-            if BREAK_LO <= x <= BREAK_HI:
-                equations.append((list(run), x - 0x90))
-                run = []
-            else:
-                run.append(x)
-    print('  %d break codes give %d equations in the dictionary lengths.'
-          % (len(equations), len(equations)))
+    print('  Read out of the expander at $C3:FB23')
+    print()
+    print('  %-42s $%02X' % ('lowest dictionary code', table.dict_first))
+    print('  %-42s 0x%06X' % ('table', table.dict_at))
+    print('  %-42s %6d' % ('codes', len(table.dict)))
+    print()
+    row = []
+    for code in sorted(table.dict):
+        row.append('$%02X %-5r' % (code, table.dict[code]))
+        if len(row) == 6:
+            print('    ' + ' '.join(row))
+            row = []
+    if row:
+        print('    ' + ' '.join(row))
+    print()
+    carriers = [c for c in sorted(table.dict) if ' ' in table.dict[c]]
+    print('  %d of these draw a SPACE as part of the sequence: %s'
+          % (len(carriers), ' '.join('$%02X' % c for c in carriers)))
+    print('  Read a character short they still produce fluent English, so')
+    print('  nothing looks wrong. That is why they are read from the ROM here')
+    print('  rather than reconstructed from what the output looks like.')
     print()
 
+    equations = table.equations()
     known, changed = {}, True
     while changed:
         changed = False
         for line, total in equations:
             rest, missing = total, []
             for b in line:
-                if b >= 0xC8 and b not in known:
+                if b in table.dict and b not in known:
                     missing.append(b)
                 else:
                     rest -= known.get(b, 1)
@@ -408,41 +442,40 @@ def ligatures(table):
                 known[missing[0]] = rest
                 changed = True
 
-    seen = set(b for line, _ in equations for b in line if b >= 0xC8)
-    print('  %-42s %6d' % ('codes appearing in those lines', len(seen)))
-    print('  %-42s %6d' % ('lengths solved', len(known)))
+    print('  Measured a second way, from the break codes alone')
     print()
-    wrong = []
-    for b in sorted(known):
-        assumed = LIGATURES.get(b)
-        if assumed is None:
-            wrong.append((b, known[b], None))
-        elif len(assumed) != known[b]:
-            wrong.append((b, known[b], assumed))
-    if wrong:
-        print('  MISMATCH against the table in this file:')
-        for b, measured, assumed in wrong:
-            print('    $%02X  measured %d characters, table says %r (%d)'
-                  % (b, measured, assumed, len(assumed or '')))
-        print()
-    else:
-        print('  Every solved length matches the table in this file.')
-        print()
-
-    ok, bad = 0, 0
+    print('  %-42s %6d' % ('break codes, so equations', len(equations)))
+    seen = set(b for line, _ in equations for b in line if b in table.dict)
+    print('  %-42s %6d' % ('codes appearing in those lines', len(seen)))
+    print('  %-42s %6d' % ('widths solved by substitution', len(known)))
+    disagree = [(b, known[b], table.dict[b]) for b in sorted(known)
+                if known[b] != len(table.dict[b])]
+    print('  %-42s %6d' % ('solved widths disagreeing with the ROM',
+                           len(disagree)))
+    for b, measured, text in disagree:
+        print('           $%02X  break codes say %d, ROM says %r'
+              % (b, measured, text))
+    print()
+    ok = bad = 0
     for line, total in equations:
-        if any(b >= 0xC8 and b not in known for b in line):
+        if any(b in table.dict and b not in known for b in line):
             continue
         if sum(known.get(b, 1) for b in line) == total:
             ok += 1
         else:
             bad += 1
-    print('  %-42s %6d' % ('equations satisfied by the solution', ok))
-    print('  %-42s %6d' % ('equations left unsatisfied', bad))
+    print('  %-42s %6d' % ('equations satisfied', ok))
+    print('  %-42s %6d' % ('equations unsatisfied', bad))
     print()
+    if not disagree:
+        print('  Two independent measurements agree. One reads the table the')
+        print('  renderer indexes; the other never looks at the table at all')
+        print('  and derives the widths from the format having to be')
+        print('  self-consistent. Neither asks what the output looks like.')
+        print()
     unsolved = sorted(seen - set(known))
     if unsolved:
-        print('  Not solved, because no equation isolated them: %s'
+        print('  Not isolated by any equation, so measured only once: %s'
               % ' '.join('$%02X' % b for b in unsolved))
         print()
 
@@ -472,7 +505,7 @@ def check(table, path):
         print('    $%04X  file %-26r ROM %r' % (sid, w, g))
     if bad:
         print()
-        print('  Run --ligatures before concluding the ROM is wrong.')
+        print('  Run --dictionary before concluding the ROM is wrong.')
     print()
     return 1 if bad else 0
 
@@ -493,8 +526,8 @@ def main(argv):
         widths(table, rest[1] if len(rest) > 1 else None)
     elif rest[0] == '--breaks':
         breaks(table)
-    elif rest[0] == '--ligatures':
-        ligatures(table)
+    elif rest[0] == '--dictionary':
+        dictionary(table)
     elif rest[0] == '--check' and len(rest) > 1:
         return check(table, rest[1])
     else:

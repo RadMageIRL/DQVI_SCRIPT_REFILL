@@ -349,6 +349,59 @@ The criterion this project will use for `$559`, the untagged-NPC speech mark:
 The same shape applies to any minority habit: measure the rate, defer the
 decision, apply mechanically, verify by re-measuring.
 
+## 7b. Solve the format against itself, and stop asking what the output looks like
+
+Section 7 is about a fallback that produced plausible output. This is the
+answer to it, and it arrived last, after seven faults of that shape had each
+been found by accident. Every one of them survived review because the rendered
+text read correctly. **If plausible output is what fools you, stop grading
+output.**
+
+Most binary text formats carry redundancy: a length field, an offset, a count,
+a checksum, a terminator, a pointer that must land where the previous record
+ended. Each of those is an equation relating things you want to know. Enough of
+them and the format tells you its own parameters, whatever the glyphs look like.
+
+The worked example. DQ6's name table breaks a line with a code equal to
+`0x90 + the number of characters already drawn on that line`. So every break
+code in the ROM is one equation in the displayed widths of the codes on that
+line. There are 164 of them. Most contain a single unknown, so the set falls
+out by substitution, and the leftovers become a consistency check: 158
+satisfied, none unsatisfied.
+
+That measurement never looks at a glyph. It cannot be fooled by a sequence that
+reads correctly with a character missing, which is exactly the fault it caught:
+seven dictionary codes draw a trailing or leading space, and a decoder that
+drops it still produces fluent English. `Mudo'` + `$F2` + `Castle` renders as
+`Mudo'sCastle`, which passes for a packing quirk.
+
+Three properties make this worth reaching for first rather than last.
+
+**It is independent of the thing being checked.** A decode and a re-encode with
+the same table agree with each other whatever the table says. An equation
+derived from a length field does not care about the table at all, so the two
+can disagree, and a check that cannot disagree is not a check.
+
+**It scales without judgement.** 164 equations cost nothing to solve and no
+attention to read. Reviewing 2,048 decoded entries by eye costs a day and
+catches less, because the eye is looking for text that reads wrongly and this
+class of fault reads correctly by construction.
+
+**It says when it does not know.** Codes that never appear before a break code
+are unconstrained, and the solver reports them as unsolved rather than assuming
+them. That list is the exposed set, and it is short enough to settle another
+way.
+
+The general move: before trusting any table you reconstructed, find a field in
+the format whose value is determined by the thing the table describes, and
+check that the table predicts it. Length fields, offsets and counts are all
+usable this way. If the format has none, the next best thing is what section 1
+does with the pointer table, and the best thing of all is what this project
+should have done from the start with the dictionary: **read the table the
+renderer indexes, rather than reconstructing one.** The expander's own
+instructions carry the address, the entry width and the range. Reconstruction
+can drift; a read cannot.
+
 ## 8. Wordplay: rebuild the joke, do not explain it
 
 Where the source gag is phonetic, a faithful gloss produces a line that is

@@ -311,15 +311,54 @@ def read_nametable(path):
     return out
 
 
-NT_LIGATURES = { 0xC8: 'l', 0xC9: 'a', 0xCA: 'd', 0xCB: 't', 0xCC: 'w',
-    0xCD: 'ac', 0xCE: 'am', 0xCF: 'an', 0xD0: 'ar', 0xD1: 'as', 0xD2: 'at',
-    0xD3: 'ce', 0xD4: 'ch', 0xD5: 'ck', 0xD6: 'e', 0xD7: 'ea', 0xD8: 'ed',
-    0xD9: 'ee', 0xDA: 'er', 0xDB: 'es', 0xDC: 'gh', 0xDD: 'he', 0xDE: 'ic',
-    0xDF: 'in', 0xE0: 'is', 0xE1: 'it', 0xE2: 'le', 0xE3: 'll', 0xE4: 'ly',
-    0xE5: 'nd', 0xE6: 'no', 0xE7: 'nt', 0xE8: 'of', 0xE9: 'oi', 0xEA: 'on',
-    0xEB: 'oo', 0xEC: 'or', 0xED: 'ou', 0xEE: 'ow', 0xEF: 'ra', 0xF0: 're',
-    0xF1: 'ro', 0xF2: 's', 0xF4: 'so', 0xF5: 'st', 0xF6: 'age', 0xF7: 't',
-    0xF8: 'te', 0xF9: 'th', 0xFA: 'us'}
+# ---------------------------------------------------------------------------
+# The dictionary
+#
+# Name-table bytes at or above $C9 are dictionary codes, each drawing a short
+# fixed sequence. v1.0 shipped a table of these reconstructed from decoded
+# output, and ten of the fifty entries were wrong. They were wrong in one
+# direction and for one reason: a sequence that begins or ends with a SPACE
+# still reads as fluent English when the space is dropped. "Mudo'" + $F2 +
+# "Castle" rendered as "Mudo'sCastle", which passes for a packing quirk rather
+# than a decoding error, and so it was never questioned.
+#
+# There is no need to reconstruct any of it. The expander at $C3:FB23 reads:
+#
+#     CMP #$00C9          the lowest dictionary code
+#     BCC ...             below that, not a dictionary code at all
+#     SBC #$00C9
+#     ASL / TAX
+#     LDA $C3FB50,X       first byte of the pair
+#     LDA $C3FB51,X       second byte
+#
+# so the lowest code, the table address and the entry width are all readable
+# out of the instructions, and $FF terminates the table. Read that way the
+# dictionary cannot drift from what the game actually draws. A reconstruction
+# always can, and this one did.
+#
+# $C8 is NOT a dictionary code despite sitting next to them. It occurs in four
+# dead name-entry grid slots and nowhere the game draws.
+
+DICT_CMP = 0x03FB25        # operand of the CMP #imm that bounds the range
+DICT_PTR = 0x03FB30        # operand of the LDA long that indexes the table
+
+
+def read_dictionary(rom):
+    """code -> the text it draws, read out of the ROM's own expander."""
+    first = rom[DICT_CMP] | rom[DICT_CMP + 1] << 8
+    base = (rom[DICT_PTR] | rom[DICT_PTR + 1] << 8
+            | (rom[DICT_PTR + 2] & 0x3F) << 16)
+    if not 0xC0 <= first <= 0xFF or not 0 < base < len(rom) - 128:
+        raise SystemExit('the dictionary expander at 0x%06X is not what this '
+                         'build expects.\n  Refusing to guess.' % DICT_CMP)
+    out, i = {}, 0
+    while rom[base + i * 2] != 0xFF:
+        out[first + i] = (rom[base + i * 2], rom[base + i * 2 + 1])
+        i += 1
+        if i > 64:
+            raise SystemExit('the dictionary table at 0x%06X does not '
+                             'terminate.' % base)
+    return out
 
 
 def _nt_encoder(rom):
@@ -345,9 +384,17 @@ def _nt_encoder(rom):
     # $0D is a renderer control code that draws a tilde, not a charset index;
     # it is what their own "~30HP to" and "~80HP to" use.
     inv['~'] = 0x0D
+    # The dictionary, read out of the ROM. Every code expands to two bytes
+    # that are themselves ordinary charset indices, so naming them uses the
+    # same map as everything else and nothing here is reconstructed.
+    letter = dict((b, c) for c, b in inv.items())
+    letter[0x7A] = '.'                 # $7A and $7F both draw a full stop
     lig = {}
-    for b, t in NT_LIGATURES.items():
-        lig.setdefault(t, b)
+    for code, (a, b) in sorted(read_dictionary(rom).items()):
+        if a not in letter or b not in letter:
+            raise SystemExit('dictionary code $%02X expands to bytes this '
+                             'build cannot name (%02X %02X).' % (code, a, b))
+        lig.setdefault(letter[a] + letter[b], code)
     return inv, lig
 
 

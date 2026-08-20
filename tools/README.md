@@ -70,16 +70,25 @@ table.
 | `--id HEX[,HEX..]` | resolve specific string IDs, the way the game does |
 | `--widths [LO-HI]` | line lengths per region, measured from the ROM's own text |
 | `--breaks` | check the break-code rule |
-| `--ligatures` | solve the dictionary codes' lengths from the break codes alone |
+| `--dictionary` | the dictionary codes, read out of the ROM, then measured again from the break codes |
 | `--check FILE` | resolve every ID in a `nametable-en.txt` and compare |
 
-`--ligatures` is the interesting one. Every break code states how long the line
-before it is, so each break code is an equation in the displayed lengths of the
-dictionary codes on that line. Enough of them have a single unknown that the
-whole set falls out by substitution, and the rest then act as a check. It needs
-no assumption about what any code *says*. It is the check that catches a
-dictionary code whose text quietly carries a space, and it found one here (see
-below).
+`--dictionary` is the interesting one, because it measures the same thing
+twice by unrelated routes. First it reads the dictionary out of the expander at
+`$C3:FB23`, whose instructions carry the lowest code, the table address and the
+entry width. Then it throws that away and derives the widths again from the
+break codes alone: each break code states how long the line before it is, so
+each is an equation in the widths of the codes on that line, and enough carry a
+single unknown for the set to fall out by substitution. 164 equations, zero
+unsatisfied, zero disagreements between the two.
+
+Neither measurement asks what the output looks like, which is the point. Seven
+of the fifty codes draw a space as part of the sequence, and a code read one
+character short still produces fluent English, so reading decoded text can
+never find them.
+
+`--check` is the end-to-end one: it resolves every entry a data file names and
+reports any that do not display what the file says. Use it on any build.
 
 ## verify.py
 
@@ -118,6 +127,7 @@ python census.py    DQ6-NoPrgress.sfc --breaks
 python charset.py   DQ6-NoPrgress.sfc
 python nametable.py DQ6-NoPrgress.sfc
 python nametable.py DQ6-NoPrgress.sfc --widths
+python nametable.py DQ6-NoPrgress.sfc --dictionary
 ```
 
 | claim | where | how to check |
@@ -135,6 +145,8 @@ python nametable.py DQ6-NoPrgress.sfc --widths
 | 28 groups share a base with the one before | NAME-TABLE | `nametable.py` |
 | the ID rule | NAME-TABLE | `nametable.py` |
 | the break-code rule | NAME-TABLE | `nametable.py --breaks` |
+| the seven space-carrying dictionary codes | NAME-TABLE | `nametable.py --dictionary` |
+| solving a format against its own consistency | METHOD 7b | `nametable.py --dictionary` |
 | the per-region line caps | NAME-TABLE | `nametable.py --widths` |
 | the build verification | README | `verify.py` |
 
@@ -145,7 +157,7 @@ python nametable.py DQ6-NoPrgress.sfc --widths
 Writing them was worth it twice over, which is the argument for shipping them
 rather than describing what they would have said.
 
-**The ID rule is simpler than `docs/NAME-TABLE.md` says, and it is exact.** An
+**The ID rule is simpler than it was first written up, and it is exact.** An
 untranslated entry's identifier is not merely *related to* the Japanese table
 index. It **is that entry's own string ID**, in hex, on 348 of 348 with no
 exceptions. `nametable.py` checks it. The three shift theories that preceded
@@ -153,23 +165,23 @@ the rule all came from measuring the identifier against the entry POSITION
 instead, where the same numbers spread from 0 to 464 because 464 string IDs
 alias onto an earlier entry.
 
-**Three dictionary codes draw a space that a decoder can easily drop.** `$CB`
-is ` t`, `$F2` is `s `, `$F7` is `t `, and a decoder that reads them as `t`,
-`s` and `t` still produces fluent English, so nothing looks wrong. The break
-codes settle it without any appeal to what the codes look like: run
-`nametable.py --ligatures`.
+**The dictionary should be read from the ROM, not reconstructed.** Seven of the
+fifty codes draw a space as part of their sequence: `$C9` is ` a`, `$CA` is
+` d`, `$CB` is ` t`, `$CC` is ` w`, `$D6` is `e `, `$F2` is `s `, `$F7` is
+`t `. A decoder that reads any of them a character short still produces fluent
+English, so nothing looks wrong and nothing gets questioned: `Mudo'` + `$F2` +
+`Castle` renders as `Mudo'sCastle` and the missing space passes for a packing
+quirk. `$F6` is `s.`, and `$C8` is not a dictionary code at all despite sitting
+beside the range.
 
-That correction has a consequence, and it is recorded rather than quietly
-fixed. **The v1.0 patch encodes 54 of its 178 name-table entries with a
-spurious space**, because `build.py` held the shorter readings. `Battle` is
-stored as `B` + `at` + `$CB` + `le` and draws as `Bat tle`. Run:
+The expander's own instructions carry the lowest code, the table address and
+the entry width, so none of it has to be inferred. `--dictionary` reads it that
+way and then confirms it against the break codes. The encoder held short
+readings for several of these during development and was corrected before
+release; the two documented line-length caps that moved, 17 to 18 and 19 to 20,
+moved for the same reason.
 
-```
-python nametable.py <patched.sfc> --check nametable-en.txt
-```
-
-The entries are correct in `nametable-en.txt`; only the encoder is wrong, and
-the fix is three characters in `build.py`'s `NT_LIGATURES` plus skipping
-space-carrying codes when encoding. It is a rendering defect, not a crash, and
-nothing else in the patch is affected: the message script, both crash fixes and
-the gold window all verify clean.
+Anyone working on this ROM should take the general lesson rather than the
+specific table: measure a format against its own internal consistency, and read
+the tables the renderer indexes instead of rebuilding them from what the output
+looks like. `docs/METHOD.md` section 7b sets that out.

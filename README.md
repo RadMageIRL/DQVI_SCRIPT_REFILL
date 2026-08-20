@@ -125,7 +125,7 @@ your ROM. It writes the patched copy beside it. Your original is not modified.
 flips --apply DQ6-SFC-NoPrgress-RM-ScriptRefill.bps "DQ6 NoPrgress.sfc" "DQ6 Refill.sfc"
 ```
 
-![Applying the patch in an empty directory holding only the ROM and the .bps: flips reports the patch was applied successfully, a new DQ6 Refill.sfc appears, and its SHA-1 is d0dd3fc5a87bc31412af983ae335a3fb8b80c696](screenshots/apply-run.png)
+![Applying the patch in an empty directory holding only the ROM and the .bps: flips reports the patch was applied successfully, a new DQ6 Refill.sfc appears, and its SHA-1 is 5aa936b52b6c05ed201c269f3f22ba86d9b02327](screenshots/apply-run.png)
 
 **Without Flips at all**, if you have Python: `patchRM.py` applies the same
 `.bps` and needs nothing installed. Put it beside the patch and your ROM.
@@ -134,7 +134,7 @@ flips --apply DQ6-SFC-NoPrgress-RM-ScriptRefill.bps "DQ6 NoPrgress.sfc" "DQ6 Ref
 python patchRM.py "DQ6 NoPrgress.sfc"
 ```
 
-![patchRM.py run from a Windows command prompt in a folder holding only the ROM, the .bps and the script: it prints the patch and source CRC32s, writes DQ6 NoPrgress (Script Refill).sfc with CRC32 11EB96A4 and SHA-1 d0dd3fc5a87bc31412af983ae335a3fb8b80c696, and reports all checksums verified](screenshots/patchRM-run.png)
+![patchRM.py run from a Windows command prompt in a folder holding only the ROM, the .bps and the script: it prints the patch and source CRC32s, writes DQ6 NoPrgress (Script Refill).sfc with CRC32 6BCCDCCD and SHA-1 5aa936b52b6c05ed201c269f3f22ba86d9b02327, and reports all checksums verified](screenshots/patchRM-run.png)
 
 It checks the patch's own CRC32, refuses a wrong or already-patched ROM, and
 verifies the output before telling you it worked. Standard-library Python 3, no
@@ -143,7 +143,7 @@ dependencies.
 Check what you get, whichever route you used:
 
 ```
-result   CRC32 11EB96A4   SHA-1 d0dd3fc5a87bc31412af983ae335a3fb8b80c696
+result   CRC32 6BCCDCCD   SHA-1 5aa936b52b6c05ed201c269f3f22ba86d9b02327
 ```
 
 That is the whole thing. **You are done** - the 421 messages, the 178 names,
@@ -177,9 +177,9 @@ fetched from anywhere else.
 python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt DQ6-Refill.sfc
 ```
 
-![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, restores the gold window, writes 178 name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM as CRC32 11EB96A4](screenshots/build-run.png)
+![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, restores the gold window, writes 178 name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM as CRC32 6BCCDCCD](screenshots/build-run.png)
 
-If your output is not `11EB96A4`, the input ROM is not the one this targets.
+If your output is not `6BCCDCCD`, the input ROM is not the one this targets.
 Check its CRC32 before anything else.
 
 The script refuses to write if the ROM is not what it expects. Every fix checks
@@ -227,8 +227,8 @@ python tools/verify.py    DQ6-NoPrgress.sfc DQ6-Refill.sfc
 ```
 
 [`tools/README.md`](tools/README.md) maps each documented figure to the command
-that reproduces it. Writing them corrected two things in the documentation, both
-recorded there rather than quietly changed.
+that reproduces it. Writing them corrected two things in the documentation,
+both recorded there.
 
 ## Scope: what is complete and what is not
 
@@ -296,13 +296,6 @@ exactly how a translation acquires errors that nobody can later trace.
 - **It does not touch a word of NoPrgress's own text.** Every one of their 6,539
   messages is byte-identical to what they shipped, and that is verified on every
   build rather than asserted.
-- **54 of the 178 name-table entries draw a spurious space** in v1.0.
-  `Battle` renders as `Bat tle`, `Restore` as `Res tore`. The cause is three
-  dictionary codes whose text carries a space of its own, which `build.py`
-  recorded a character short. It is a rendering defect and nothing else in the
-  patch is affected. Check any build with
-  `python tools/nametable.py <rom> --check nametable-en.txt`, and see the last
-  section of [`docs/NAME-TABLE.md`](docs/NAME-TABLE.md).
 - **It does not claim to be complete or correct.** 421 messages and 178 names
   were authored by someone who is not a professional translator, checked against
   a corpus rather than against a native speaker. Errors are mine. Reports are
