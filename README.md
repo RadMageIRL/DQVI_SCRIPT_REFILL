@@ -100,9 +100,11 @@ So the symbol is dropped rather than replaced. What is left is the engine's own
 marker, which is the Japanese layout exactly. **No wording changes**: the
 symbol carried no word, and every other symbol in those messages is untouched.
 
-Only message openings are dropped. `$0559` also appears 115 times immediately
-after the opening quote inside a *tagged* line, and 22 more times elsewhere.
-Those are left exactly as they are.
+Only message openings are dropped in this release. `$0559` also appears 142
+more times inside messages: 115 immediately after the opening quote in a
+*tagged* line, 25 after a context control code, and 2 in the trailing filler
+past the last real message. Those are still there, and **they draw the same
+stray mark**. See "Known issue" below.
 
 ## The gold window
 
@@ -326,6 +328,12 @@ exactly how a translation acquires errors that nobody can later trace.
 
 ## What else this does not do
 
+- **142 interior uses of the marker are still present**, and they draw the same
+  stray mark this release removes from message openings. A separate check found
+  that 20 openings should NOT have been dropped, because the Japanese carries a
+  real marker there rather than relying on the engine. Both are being fixed
+  together; see `docs/METHOD.md` and the handoff notes. Neither affects
+  wording, either way.
 - **It does not fix the unbounded word-wrap fill** the translation carries. The
   Forget fix moves that buffer out of harm's way and gives it 200 bytes of
   headroom against a 136-byte worst case, but it does not bound the fill. That
