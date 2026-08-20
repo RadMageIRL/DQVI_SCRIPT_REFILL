@@ -209,8 +209,10 @@ nothing in this method requires touching the ROM until authoring is reviewed.
 
 ---
 
-*Companion tooling: `dq6_extract_placeholders.py` (the glyph map with per-entry
-evidence), `dq6_roundtrip.py` (the gate), `dq6_script_census.py` (the census).*
+*Companion tooling, in `tools/`: `census.py` (the census, and `--roundtrip` is
+the gate), `charset.py` (the trees and the byte table), `nametable.py` (the
+second string system), `verify.py` (a build against its source). Each reads a
+ROM you supply and prints; none of them writes anything.*
 
 ## 6. Style rules measured, not felt (added after the pilot review)
 

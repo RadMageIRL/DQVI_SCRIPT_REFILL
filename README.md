@@ -206,11 +206,29 @@ their existing rendering; `かみのふね` is `Ship of the Gods` because their 
 already fixes `神の` as "of the gods"; `てきぜんたい` is `Enemies`, not
 `All Enemies`, because that is how they render it elsewhere. Line lengths were
 measured per region against their own entries rather than assumed - the caps
-differ, from 9 characters a line for battle actions to 19 for place names.
+differ, from 9 characters a line for battle actions to 20 for place names.
 
 [`docs/METHOD.md`](docs/METHOD.md) describes the approach in full, including the
 parts that went wrong, and is written so it can be followed for a different SNES
 translation.
+
+## Checking any of this
+
+The claims above are measurements, so [`tools/`](tools/) holds the programs that
+produce them. Each reads a ROM you supply and prints; none of them writes
+anything, and there are no dependencies.
+
+```
+python tools/census.py    DQ6-NoPrgress.sfc            # 870 x 8 = 6,960 messages, 421 unwritten
+python tools/census.py    DQ6-NoPrgress.sfc --roundtrip  # the byte-exact re-encode gate
+python tools/charset.py   DQ6-NoPrgress.sfc            # the trees, and what can be written at all
+python tools/nametable.py DQ6-NoPrgress.sfc            # the name table and the ID rule
+python tools/verify.py    DQ6-NoPrgress.sfc DQ6-Refill.sfc
+```
+
+[`tools/README.md`](tools/README.md) maps each documented figure to the command
+that reproduces it. Writing them corrected two things in the documentation, both
+recorded there rather than quietly changed.
 
 ## Scope: what is complete and what is not
 
@@ -278,6 +296,13 @@ exactly how a translation acquires errors that nobody can later trace.
 - **It does not touch a word of NoPrgress's own text.** Every one of their 6,539
   messages is byte-identical to what they shipped, and that is verified on every
   build rather than asserted.
+- **54 of the 178 name-table entries draw a spurious space** in v1.0.
+  `Battle` renders as `Bat tle`, `Restore` as `Res tore`. The cause is three
+  dictionary codes whose text carries a space of its own, which `build.py`
+  recorded a character short. It is a rendering defect and nothing else in the
+  patch is affected. Check any build with
+  `python tools/nametable.py <rom> --check nametable-en.txt`, and see the last
+  section of [`docs/NAME-TABLE.md`](docs/NAME-TABLE.md).
 - **It does not claim to be complete or correct.** 421 messages and 178 names
   were authored by someone who is not a professional translator, checked against
   a corpus rather than against a native speaker. Errors are mine. Reports are
