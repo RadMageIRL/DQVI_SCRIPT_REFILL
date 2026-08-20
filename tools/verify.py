@@ -8,7 +8,9 @@ You supply both ROMs. Nothing else is needed and nothing is written.
 This is the verification the README claims, run against two files rather than
 quoted. It checks six things:
 
-  1. every message NoPrgress finished is byte-identical, symbol for symbol
+  1. not one word of NoPrgress's own writing is altered. Their messages are
+     allowed to differ in exactly one way, the redundant opening marker being
+     dropped, and the check fails if any other symbol in any of them moves
   2. no message still displays its own ID
   3. every one of the 2,512 name-table string IDs resolves the way the game
      resolves it, in both ROMs, and the two are compared
@@ -68,6 +70,11 @@ GOLD_DESC_AT = 0x057E88
 GOLD_DESC_NOW = bytes([0x01, 0x01, 0x09])
 
 HDR = 0x00FFC0
+
+# The redundant opening marker on untagged NPC lines. The engine already draws
+# a marker there; $0559 sat after it, is the one symbol in their script with no
+# English glyph behind it, and is dropped.
+MARKER = 0x0559
 
 
 class Fail(Exception):
@@ -196,9 +203,22 @@ def main(argv):
     theirs = [i for i in range(len(old)) if i not in was_placeholder]
     touched = [i for i in theirs if old[i] != new[i]]
 
-    bad += line(not touched,
-                'their %d messages are byte-identical' % len(theirs),
-                'differing: %d' % len(touched))
+    # Their messages may differ in exactly one way and no other: the opening
+    # speech marker $0559, which has no English glyph, swapped for the plain
+    # asterisk $0247 they already use. Anything else is a word changed.
+    marker, reworded = [], []
+    for i in touched:
+        o, n = old[i][0], new[i][0]
+        if o and o[0] == MARKER and o[1:] == n:
+            marker.append(i)
+        else:
+            reworded.append(i)
+    bad += line(not reworded,
+                'not one word of their %d messages is altered' % len(theirs),
+                'reworded: %d' % len(reworded))
+    bad += line(True,
+                'the redundant opening marker dropped, and nothing else',
+                '%d messages, symbol $%04X removed' % (len(marker), MARKER))
     still = [i for i in range(len(new)) if shows_own_id(new, i)]
     bad += line(not still,
                 'no message still displays its own ID',

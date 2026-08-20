@@ -470,6 +470,46 @@ def apply_names(rom, table):
 
 
 
+# ---------------------------------------------------------------------------
+# The speech marker on untagged NPC lines
+#
+# The engine draws the opening mark itself. On an untagged NPC line it emits a
+# star and a bracket before the first word, which is the same thing the
+# Japanese original draws:
+#
+#     Japanese   a star and a corner bracket, then the text
+#     English    a star and a colon-like mark, then the text
+#
+# NoPrgress then added symbol $0559 on top of it, on 534 message openings.
+# $0559 is the one symbol in their script with no English glyph behind it, so
+# it draws a stray two-part mark, and it sits AFTER a marker the engine has
+# already drawn. It is redundant as well as broken:
+#
+#     stock      * : <stray>Welcome to Amoru, town of water.
+#     fixed      * : Welcome to Amoru, town of water.
+#
+# So the fix is to drop it, not to substitute for it. Dropping it leaves the
+# engine's own marker, which is exactly the Japanese layout. Substituting the
+# plain asterisk $0247 was tried first and produced a visible double star,
+# * : * before the text, because the engine's mark was already there.
+#
+# ONLY message openings are dropped. $0559 also appears 115 times immediately
+# after $0240, the opening quote inside a TAGGED line, and 22 more times
+# elsewhere. Those are left exactly as they are.
+
+MARKER = 0x0559
+
+
+def drop_speech_marker(msgs):
+    """Remove the redundant opening marker where, and only where, it opens."""
+    n = 0
+    for i, (syms, term) in enumerate(msgs):
+        if syms and syms[0] == MARKER:
+            msgs[i] = (list(syms[1:]), term)
+            n += 1
+    return n
+
+
 REC = re.compile(r'^---- (\d+)$')
 TOKEN = re.compile(r'\{([0-9A-Z]{2,4})\}')
 # notation used in the candidates file for two symbols with no ASCII equivalent
@@ -578,6 +618,10 @@ def main(src, cand, names_path, dst):
     for mid, text in C.items():
         msgs[mid] = (encode(text, mid), msgs[mid][1])
     print('messages substituted: %d' % len(C))
+
+    n_marker = drop_speech_marker(msgs)
+    print('redundant speech marker $%04X dropped from %d message openings'
+          % (MARKER, n_marker))
 
     w = BitWriter()
     starts = []

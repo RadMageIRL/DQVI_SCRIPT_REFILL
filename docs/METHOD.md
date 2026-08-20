@@ -317,6 +317,58 @@ Do this enumeration before authoring, not after. "The glyph does not appear in
 their text" and "the glyph cannot be written" are different claims with
 different consequences, and only the second one is a constraint.
 
+### A symbol can be encodable, used, and still have no glyph
+
+The enumeration above answers "can this be written". It does not answer "does
+anything sensible appear when it is". Those come apart, and this project shipped
+two releases before noticing.
+
+DQ6's untagged NPC lines open on symbol `$0559`, 534 times. It encodes, it round
+trips, it survives every structural check, and the original translators used it
+deliberately and consistently. It also has **no English glyph**: it is a
+full-width Japanese character that was never replaced, so it drew a stray
+two-part mark before the first word of the sentence.
+
+Nothing in the pipeline could see that. A decoder maps it to a placeholder and
+moves on; a round trip reproduces it perfectly; a length audit counts it as one
+glyph. The only instrument that catches it is a screen, and it took a player
+asking "what is this mark" to raise it.
+
+**Keep a list of the symbols you have never seen drawn.** The glyph map here
+recorded `$0559` as an unresolved box for months. That box was the finding, and
+it sat in the data being treated as a rendering detail rather than as an open
+question. Anything the map cannot name should be counted, ranked by how often
+the script uses it, and worked from the top. `$0559` was the fourth most common
+message-initial symbol in the entire script.
+
+### Establish what a glyph draws before deciding what to do about it
+
+The fix took two attempts, and the wrong one is the more instructive.
+
+From the data alone, the marker looked like a single wide glyph: the message
+opened on `$0559` and the next symbol was already the `W` of the first word, so
+everything drawn before that `W` had to come from `$0559`. The screenshot showed
+three marks. One symbol, three marks, therefore one wide glyph. The reasoning is
+valid and the conclusion was wrong.
+
+What it missed is that **the renderer draws things the message data does not
+contain.** The engine emits its own opening mark on NPC dialogue, so two of
+those three marks were never in the message at all. Substituting a plain
+asterisk for `$0559` produced a visible double star, and that build is what
+proved the point: the marker was redundant, not merely ugly, and the answer was
+to delete the symbol rather than replace it.
+
+Two rules follow, and they are cheap.
+
+**A comparison is only as good as its control.** The right test was to render
+one line that uses the symbol against one that does not, and read the
+difference. That was proposed and skipped in favour of an argument from
+structure, which cost a build.
+
+**When output has more parts than input, suspect the renderer.** Message data,
+engine-drawn decoration and font composition all reach the same window. Counting
+symbols tells you about one of them.
+
 ### Minority conventions are a final mechanical pass, not a per-line decision
 
 A convention used by 92 percent of the source is a rule you follow while

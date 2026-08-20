@@ -18,9 +18,13 @@ ninety-four.
 of hacks descends from, and their name belongs alongside NoPrgress's whenever
 this translation is discussed.
 
-Nothing here replaces, corrects or improves their translation. Their text is
-untouched: all 6,539 of their messages are byte-identical to the ones they
-shipped, and that is verified on every build. Where their choices differ from
+Nothing here replaces, corrects or improves their translation. **Not one word
+of their writing is altered**, and that is verified on every build rather than
+asserted: every symbol of all 6,539 of their messages is exactly what they
+shipped, with one exception that changes no wording at all. 519 of those
+messages open with a redundant marker symbol that has no English glyph, and it
+is removed. See "The speech marker" below.
+Where their choices differ from
 series convention, **their choices win** and this patch follows them. Luisa
 rather than Ruida. Amoru. Erika. "the castle of the gods" rather than Zenithia.
 The Sword of Ramias, the Shield of Sufida, the Armor of Orgo, the Helm of
@@ -47,6 +51,11 @@ monster-action and menu names the translation left showing the game's own
 internal identifier, so a location read `M194` and a battle action read `M6BA`.
 See "Scope" below for what was deliberately left alone and why.
 
+It also drops a **redundant speech marker** from 534 untagged NPC lines. That
+symbol was the one in their script with no English glyph behind it, and it drew
+a stray shape before the first word, after a marker the engine had already
+drawn. See "The speech marker" below.
+
 It also includes both crash fixes from
 [DQVI_NOPRGRESS_MENU_FIX](https://github.com/RadMageIRL/DQVI_NOPRGRESS_MENU_FIX):
 the **Info > All** crash and the **Forget** crash. You do not need to apply that
@@ -66,6 +75,30 @@ these fixes deliberately do not do.
 
 And it restores the **gold window on the info screen**, which the translation
 lost. See below.
+
+## The speech marker
+
+The engine draws the opening mark on NPC dialogue itself. On a line with no
+speaker tag it emits a star and a bracket before the first word, which is what
+the Japanese original draws too.
+
+NoPrgress then added symbol `$0559` on top of that, on **534 message
+openings**. `$0559` is the one symbol in their script with no English glyph
+behind it, so it drew a stray two-part mark, sitting after a marker the engine
+had already produced. It was redundant as well as broken.
+
+```
+before   * : <stray>Welcome to Amoru, town of water.
+after    * : Welcome to Amoru, town of water.
+```
+
+So the symbol is dropped rather than replaced. What is left is the engine's own
+marker, which is the Japanese layout exactly. **No wording changes**: the
+symbol carried no word, and every other symbol in those messages is untouched.
+
+Only message openings are dropped. `$0559` also appears 115 times immediately
+after the opening quote inside a *tagged* line, and 22 more times elsewhere.
+Those are left exactly as they are.
 
 ## The gold window
 
@@ -125,7 +158,7 @@ your ROM. It writes the patched copy beside it. Your original is not modified.
 flips --apply DQ6-SFC-NoPrgress-RM-ScriptRefill.bps "DQ6 NoPrgress.sfc" "DQ6 Refill.sfc"
 ```
 
-![Applying the patch in an empty directory holding only the ROM and the .bps: flips reports the patch was applied successfully, a new DQ6 Refill.sfc appears, and its SHA-1 is 5aa936b52b6c05ed201c269f3f22ba86d9b02327](screenshots/apply-run.png)
+![Applying the patch in an empty directory holding only the ROM and the .bps: flips reports the patch was applied successfully, a new DQ6 Refill.sfc appears, and its SHA-1 is 5b38989a11dd384b96a979002bed34d0ba57ab70](screenshots/apply-run.png)
 
 **Without Flips at all**, if you have Python: `patchRM.py` applies the same
 `.bps` and needs nothing installed. Put it beside the patch and your ROM.
@@ -134,7 +167,7 @@ flips --apply DQ6-SFC-NoPrgress-RM-ScriptRefill.bps "DQ6 NoPrgress.sfc" "DQ6 Ref
 python patchRM.py "DQ6 NoPrgress.sfc"
 ```
 
-![patchRM.py run from a Windows command prompt in a folder holding only the ROM, the .bps and the script: it prints the patch and source CRC32s, writes DQ6 NoPrgress (Script Refill).sfc with CRC32 6BCCDCCD and SHA-1 5aa936b52b6c05ed201c269f3f22ba86d9b02327, and reports all checksums verified](screenshots/patchRM-run.png)
+![patchRM.py run from a Windows command prompt in a folder holding only the ROM, the .bps and the script: it prints the patch and source CRC32s, writes DQ6 NoPrgress (Script Refill).sfc with CRC32 9505A3B8 and SHA-1 5b38989a11dd384b96a979002bed34d0ba57ab70, and reports all checksums verified](screenshots/patchRM-run.png)
 
 It checks the patch's own CRC32, refuses a wrong or already-patched ROM, and
 verifies the output before telling you it worked. Standard-library Python 3, no
@@ -143,7 +176,7 @@ dependencies.
 Check what you get, whichever route you used:
 
 ```
-result   CRC32 6BCCDCCD   SHA-1 5aa936b52b6c05ed201c269f3f22ba86d9b02327
+result   CRC32 9505A3B8   SHA-1 5b38989a11dd384b96a979002bed34d0ba57ab70
 ```
 
 That is the whole thing. **You are done** - the 421 messages, the 178 names,
@@ -177,9 +210,9 @@ fetched from anywhere else.
 python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt DQ6-Refill.sfc
 ```
 
-![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, restores the gold window, writes 178 name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM as CRC32 6BCCDCCD](screenshots/build-run.png)
+![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, restores the gold window, writes 178 name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM as CRC32 9505A3B8](screenshots/build-run.png)
 
-If your output is not `6BCCDCCD`, the input ROM is not the one this targets.
+If your output is not `9505A3B8`, the input ROM is not the one this targets.
 Check its CRC32 before anything else.
 
 The script refuses to write if the ROM is not what it expects. Every fix checks
@@ -293,9 +326,10 @@ exactly how a translation acquires errors that nobody can later trace.
   Forget fix moves that buffer out of harm's way and gives it 200 bytes of
   headroom against a 136-byte worst case, but it does not bound the fill. That
   remains an open defect. See [`docs/CRASH-FIXES.md`](docs/CRASH-FIXES.md).
-- **It does not touch a word of NoPrgress's own text.** Every one of their 6,539
-  messages is byte-identical to what they shipped, and that is verified on every
-  build rather than asserted.
+- **It does not touch a word of NoPrgress's own text.** Every symbol of their
+  6,539 messages is what they shipped, apart from a redundant opening marker
+  removed from 519 untagged NPC lines, which carried no word. The build fails
+  if any other symbol in any of their messages moves.
 - **It does not claim to be complete or correct.** 421 messages and 178 names
   were authored by someone who is not a professional translator, checked against
   a corpus rather than against a native speaker. Errors are mine. Reports are
