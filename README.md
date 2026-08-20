@@ -26,8 +26,7 @@ rather than Ruida. Amoru. Erika. "the castle of the gods" rather than Zenithia.
 The Sword of Ramias, the Shield of Sufida, the Armor of Orgo, the Helm of
 Cevas. Those are their calls and this patch defers to them everywhere.
 
-If you enjoy playing this game in English, that is their doing. Please go and
-say so to them, not to me.
+If you enjoy playing this game in English, that is largely their doing.
 
 ---
 
