@@ -68,8 +68,9 @@ See "Scope" below for what was deliberately left alone and why.
 
 Cycling in and out of a character's equipment through the Tactics menu locks the
 game. It takes repeated cycling to reach, which is why it went unreported for so
-long, and it affects **every published build** including all earlier versions of
-this patch and all three versions of the crash-fix patch.
+long, and it affected **every published build** at the time it was found,
+including all earlier versions of this patch and v1, v2 and v3 of the crash-fix
+patch. The crash-fix patch now carries the same fix in its own **v4**.
 
 `$C3:1AB1` is a broken duplicate of `$C3:1D0E`. Both answer the same question -
 the cursor is on an entry that cannot be selected, so where should it go - and
