@@ -46,7 +46,7 @@ numbers.
 
 This patch writes those 421 messages, in English, from the Japanese original.
 
-It also writes **181 name-table entries** - item, spell, skill, place,
+It also writes **182 name-table entries** - item, spell, skill, place,
 monster-action and menu names the translation left showing the game's own
 internal identifier, so a location read `M194` and a battle action read `M6BA`.
 See "Scope" below for what was deliberately left alone and why.
@@ -136,7 +136,7 @@ back.
 
 **This is what you want if you just want to play.** One step, no Python.
 
-**One patch contains everything** - the 421 messages, the 181 names, both crash
+**One patch contains everything** - the 421 messages, the 182 names, both crash
 fixes and the gold window. There is nothing else to apply and no order to get
 right. Do not apply the menu-fix patch as well; this one already contains it.
 
@@ -176,10 +176,10 @@ dependencies.
 Check what you get, whichever route you used:
 
 ```
-result   CRC32 617510E0   SHA-1 a9bea5fabad29b8676420b2117a2b4bb80f6f8ea
+result   CRC32 0B83A063   SHA-1 4d2d98cb48c353c54a8d0d5490f114ad9e8ded43
 ```
 
-That is the whole thing. **You are done** - the 421 messages, the 181 names,
+That is the whole thing. **You are done** - the 421 messages, the 182 names,
 both crash fixes and the gold window are all in that one output file.
 
 If the CRC32 does not match, your source ROM is not the one this targets. BPS
@@ -212,7 +212,7 @@ python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt DQ6-Refill.
 
 ![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, restores the gold window, writes the name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
 
-If your output is not `617510E0`, the input ROM is not the one this targets.
+If your output is not `0B83A063`, the input ROM is not the one this targets.
 Check its CRC32 before anything else.
 
 The script refuses to write if the ROM is not what it expects. Every fix checks
@@ -220,7 +220,7 @@ its own site first - the crash-fix span, all 21 Forget relocation sites, and the
 gold routine - so pointing it at the wrong ROM fails loudly rather than
 producing something broken.
 
-## How the 421 messages and 181 names were written
+## How the 421 messages and 182 names were written
 
 From the Japanese script and from NoPrgress's own English, and from nothing
 else. No later official localization was consulted at any point, including for
@@ -276,20 +276,20 @@ than Huffman-coded, stored in different tables, reached a different way. It had
 never been censused before this project.
 
 **In the stock ROM, 394 entries displayed the game's own internal identifier**,
-so a location read `M194` and a battle action read `M6BA`. **181 are now
-written, leaving 213 in the release build.** Every figure here was measured
+so a location read `M194` and a battle action read `M6BA`. **182 are now
+written, leaving 212 in the release build.** Every figure here was measured
 against a ROM, and each says which ROM it describes:
 
-| | stock `B545C548` | release `617510E0` |
+| | stock `B545C548` | release `0B83A063` |
 |---|---|---|
-| entries displaying an identifier | **394** | **213** |
-| written by this patch | - | **181** |
+| entries displaying an identifier | **394** | **212** |
+| written by this patch | - | **182** |
 
-`tools/nametable.py --untranslated` reports 393 and 212. It matches a
+`tools/nametable.py --untranslated` reports 393 and 211. It matches a
 single-letter prefix only, so it does not count `ID001`-`ID010` or `DS29`. The
-difference between the two ROMs, 181, is the same either way.
+difference between the two ROMs, 182, is the same either way.
 
-### What the remaining 213 are
+### What the remaining 212 are
 
 Established by reading the Japanese behind every one of them, resolved by the
 entry's own string ID out of the Japanese ROM:
@@ -299,7 +299,7 @@ entry's own string ID out of the Japanese ROM:
 | naming-screen rejection list | **75** | compared against what you type, never drawn |
 | internal labels | **62** | the Japanese is itself a Latin identifier |
 | debug and editor labels | **70** | written in Japanese, unreachable in normal play |
-| **genuinely unresolved** | **5** | see below |
+| **genuinely unresolved** | **4** | see below |
 
 **Not one of the first 207 can appear in normal play.**
 
@@ -325,7 +325,7 @@ decoded as unmapped kanji and looked like ordinary text. Without that find they
 would have been translated unnecessarily, and three map slots would have been
 given invented names.
 
-### The 5 that are not settled
+### The 4 that are not settled
 
 Every entry in the table can now be read. An earlier version of this file said
 that four entries whose prefix is not `M` or `*` could not be resolved at all,
@@ -341,11 +341,34 @@ What remains unresolved is a question of meaning, not of access:
 
 | shows | Japanese | why it is left alone |
 |---|---|---|
-| `M6EB` | `デュランのもと` | `もと` here is the locative, "at X's side". The table's one apparent precedent does not carry: `あしもとを` is rendered `Feet`, but that translates `あし`, as all six `あし` entries do, and `もと` is the component their gloss never renders. Any wording would be invented. |
 | `*70A` | `そうぞうを` | **the reading is settled**: the next entry is `ぜっする`, and 想像を絶する is fixed, so it is "imagination". The English is what is blocked, because they render `ぜっする` as `Really` and a faithful fragment collides with it. |
 | `M14E` | `かみ` | god, hair or paper. **The table itself uses `かみ` both ways**: 神 four times (`かみのふね`, `かみのいかり`) and 髪 twice (`かみをかきあげる`, `ぎんのかみかざり`). No bare 神 exists anywhere in the table to take a wording from, and this entry sits near none of the seven. |
 | `M14D` | `ばか` | "idiot". The four forms of address two entries away are all kinship terms with `ちゃん`, three with `たち`; this shares none of that, so the group does not claim it. |
 | `M11C` | `がた` | an honorific pluralizing suffix. They spend their one English pluralizer, `s`, on `たち` at `$0118`, and English has no honorific plural. |
+
+**`M6EB デュランのもと` is written as `Off to|Duran`, and it is marked INFERRED.**
+It is the one entry here written without a precedent for its head noun, so the
+reasoning is recorded rather than assumed. `〜のもと` after a proper noun is the
+ordinary locative, the `〜のもとで働く` sense, "at X's side"; the `素` reading,
+which would give something like `Duran Mix`, wants a substance rather than a
+person. It sits in the Goof-off random-action pool at slot 39 of 56, and the
+pool's humour is things that make no situational sense - `Playing House`,
+`Fake Blast`, `Solo Hand Game` - so a Goof-off wandering off to the demon lord
+mid-battle is that joke. The ability table gives it a record at index 390, so it
+IS selectable and a player will see it, which is what decided the trade: an
+identifier on screen is certainly wrong, and a reasoned guess in the right
+register is probably right.
+
+Alternatives considered and recorded: `Duran's Side` (accurate, reads flat),
+`Follow Duran` (good register, but see below), `Duran Mix` (the `素` reading the
+proper noun argues against).
+
+**`Follow Suit` was ruled out and that is worth keeping.** It had been suggested
+that this entry might be the ability a later remake calls Follow Suit. It is
+not. Follow Suit is `まねまね`, which is `$065D` in this table and which the
+translation already renders as `Repeat`. It also sits in the battle-actions
+region rather than the Goof-off pool, because it is a rank-learned ability and
+the 56 are random actions - two different categories.
 
 **`M6FD し` was reclassified, not translated.** It is not a Goof-off action at
 all. The ability table at `0x08C674` holds 25-byte records that each begin with
@@ -391,7 +414,7 @@ exactly how a translation acquires errors that nobody can later trace.
   6,539 messages is what they shipped, apart from a redundant marker symbol
   removed wherever it appeared, which carried no word. The build fails if any
   other symbol in any of their messages moves.
-- **It does not claim to be complete or correct.** 421 messages and 181 names
+- **It does not claim to be complete or correct.** 421 messages and 182 names
   were authored by someone who is not a professional translator, checked against
   a corpus rather than against a native speaker. Errors are mine. Reports are
   welcome.
