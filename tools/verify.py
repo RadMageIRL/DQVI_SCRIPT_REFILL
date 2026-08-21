@@ -69,6 +69,11 @@ GOLD_CODE_NOW = bytes.fromhex('A91000223A76C3A93E0022FE83C3ABC2307AFA68286B')
 GOLD_DESC_AT = 0x057E88
 GOLD_DESC_NOW = bytes([0x01, 0x01, 0x09])
 
+# The animal counter. English has no counter words, so this entry is written
+# empty, which is the translation's own convention: 75 of their entries are
+# blank where the Japanese has content and none of the Japanese ones are.
+COUNTER_ID = 0x00F5
+
 HDR = 0x00FFC0
 
 # The redundant speech marker. The engine draws the real mark itself in every
@@ -247,6 +252,17 @@ def main(argv):
     print('       (the table is repacked wholesale, so this is the only')
     print('       comparison that means anything. A byte diff would show')
     print('       almost the whole region as different and prove nothing.)')
+    print()
+
+    # The animal counter is deliberately EMPTY, following the translation's own
+    # convention for a string English does not express: 75 of their entries are
+    # blank where the Japanese has content. It is asserted here because a blank
+    # cannot be eyeballed in a diff and because the row that produces it is a
+    # sentinel in nametable-en.txt - if that sentinel ever stops being
+    # recognised the entry silently reverts to displaying its identifier.
+    bad += line(nn[COUNTER_ID] == b'',      # names() yields raw bytes
+                'the animal counter is blank, not an identifier',
+                '$%04X' % COUNTER_ID)
     print()
 
     # 4 --------------------------------------------------------------------

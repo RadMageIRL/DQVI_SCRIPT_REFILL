@@ -2,7 +2,7 @@
 
 Item, spell, skill, place, monster-action and menu strings live in a system
 entirely separate from the Huffman message script. This describes how it works
-and how the 179 authored entries were written into it.
+and how the 181 authored entries were written into it.
 
 No ROM is distributed here and none ever will be.
 
@@ -156,7 +156,7 @@ which is why `Entice Dance` is stored as `Entice` + `$96` + `Dance`.
 Because the table is repacked wholesale, the check that matters is not a byte
 diff but a behavioural one: **every one of the 2,512 string IDs is resolved the
 way the game resolves it, in both the before and after ROMs, and compared.**
-179 changed to the intended text, 2,333 were untouched, none were wrong.
+181 changed to the intended text, 2,331 were untouched, none were wrong.
 
 `tools/verify.py <stock> <patched>` runs that comparison, and
 `tools/nametable.py <patched> --check nametable-en.txt` resolves every authored

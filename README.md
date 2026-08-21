@@ -46,7 +46,7 @@ numbers.
 
 This patch writes those 421 messages, in English, from the Japanese original.
 
-It also writes **179 name-table entries** - item, spell, skill, place,
+It also writes **181 name-table entries** - item, spell, skill, place,
 monster-action and menu names the translation left showing the game's own
 internal identifier, so a location read `M194` and a battle action read `M6BA`.
 See "Scope" below for what was deliberately left alone and why.
@@ -136,7 +136,7 @@ back.
 
 **This is what you want if you just want to play.** One step, no Python.
 
-**One patch contains everything** - the 421 messages, the 179 names, both crash
+**One patch contains everything** - the 421 messages, the 181 names, both crash
 fixes and the gold window. There is nothing else to apply and no order to get
 right. Do not apply the menu-fix patch as well; this one already contains it.
 
@@ -176,10 +176,10 @@ dependencies.
 Check what you get, whichever route you used:
 
 ```
-result   CRC32 1C535999   SHA-1 cfd082c2db827f52305fdf98d915e7b86d5fda52
+result   CRC32 617510E0   SHA-1 a9bea5fabad29b8676420b2117a2b4bb80f6f8ea
 ```
 
-That is the whole thing. **You are done** - the 421 messages, the 179 names,
+That is the whole thing. **You are done** - the 421 messages, the 181 names,
 both crash fixes and the gold window are all in that one output file.
 
 If the CRC32 does not match, your source ROM is not the one this targets. BPS
@@ -212,7 +212,7 @@ python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt DQ6-Refill.
 
 ![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, restores the gold window, writes the name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
 
-If your output is not `1C535999`, the input ROM is not the one this targets.
+If your output is not `617510E0`, the input ROM is not the one this targets.
 Check its CRC32 before anything else.
 
 The script refuses to write if the ROM is not what it expects. Every fix checks
@@ -220,7 +220,7 @@ its own site first - the crash-fix span, all 21 Forget relocation sites, and the
 gold routine - so pointing it at the wrong ROM fails loudly rather than
 producing something broken.
 
-## How the 421 messages and 179 names were written
+## How the 421 messages and 181 names were written
 
 From the Japanese script and from NoPrgress's own English, and from nothing
 else. No later official localization was consulted at any point, including for
@@ -276,20 +276,20 @@ than Huffman-coded, stored in different tables, reached a different way. It had
 never been censused before this project.
 
 **In the stock ROM, 394 entries displayed the game's own internal identifier**,
-so a location read `M194` and a battle action read `M6BA`. **179 are now
-written, leaving 215 in the release build.** Every figure here was measured
+so a location read `M194` and a battle action read `M6BA`. **181 are now
+written, leaving 213 in the release build.** Every figure here was measured
 against a ROM, and each says which ROM it describes:
 
-| | stock `B545C548` | release `1C535999` |
+| | stock `B545C548` | release `617510E0` |
 |---|---|---|
-| entries displaying an identifier | **394** | **215** |
-| written by this patch | - | **179** |
+| entries displaying an identifier | **394** | **213** |
+| written by this patch | - | **181** |
 
-`tools/nametable.py --untranslated` reports 393 and 214. It matches a
+`tools/nametable.py --untranslated` reports 393 and 212. It matches a
 single-letter prefix only, so it does not count `ID001`-`ID010` or `DS29`. The
-difference between the two ROMs, 179, is the same either way.
+difference between the two ROMs, 181, is the same either way.
 
-### What the remaining 215 are
+### What the remaining 213 are
 
 Established by reading the Japanese behind every one of them, resolved by the
 entry's own string ID out of the Japanese ROM:
@@ -299,7 +299,7 @@ entry's own string ID out of the Japanese ROM:
 | naming-screen rejection list | **75** | compared against what you type, never drawn |
 | internal labels | **62** | the Japanese is itself a Latin identifier |
 | debug and editor labels | **70** | written in Japanese, unreachable in normal play |
-| **genuinely unresolved** | **8** | see below |
+| **genuinely unresolved** | **6** | see below |
 
 **Not one of the first 207 can appear in normal play.**
 
@@ -325,7 +325,7 @@ decoded as unmapped kanji and looked like ordinary text. Without that find they
 would have been translated unnecessarily, and three map slots would have been
 given invented names.
 
-### The 8 that are not settled
+### The 6 that are not settled
 
 Every entry in the table can now be read. An earlier version of this file said
 that four entries whose prefix is not `M` or `*` could not be resolved at all,
@@ -341,14 +341,33 @@ What remains unresolved is a question of meaning, not of access:
 
 | shows | Japanese | why it is left alone |
 |---|---|---|
-| `M6EB` | `デュランのもと` | the block is uniformly Goof-off actions, so a noun does not fit the slot. Their only other `もと` is read as a locative. Naming it would mean supplying a verb absent from the data. |
+| `M6EB` | `デュランのもと` | the only entry in its 50-entry block that is `[X]の[Y]`, and the only one naming a character. Naming it would mean inventing both the reading and the register. |
 | `*70A` | `そうぞうを` | **the reading is settled**: the next entry is `ぜっする`, and 想像を絶する is fixed, so it is "imagination". The English is what is blocked, because they render `ぜっする` as `Really` and a faithful fragment collides with it. |
 | `M6FD` | `し` | a single kana. It is a genuine entry, not the tail of a split line: no entry in the table ends on a break code, so nothing continues across a boundary. |
-| `M427` | `におうふくろ` | `ふくろ` is a bag, but no bag or pouch item exists in the table to match against, and `におう` is read as the guardian 仁王 elsewhere here (`におうだち` is `Protect`). |
-| `M0F5` | `ひき` | a counter for animals, or "draw". |
-| `M14E` | `かみ` | god, hair or paper. |
-| `M14D` | `ばか` | "idiot", in a block that mixes editor labels with forms of address. |
-| `M11C` | `がた` | an honorific pluralizing suffix with no English equivalent. |
+| `M14E` | `かみ` | god, hair or paper. Three homophones, no disambiguating context. |
+| `M14D` | `ばか` | "idiot". The four forms of address two entries away are all kinship terms with `ちゃん`, three with `たち`; this shares none of that, so the group does not claim it. |
+| `M11C` | `がた` | an honorific pluralizing suffix. They spend their one English pluralizer, `s`, on `たち` at `$0118`, and English has no honorific plural. |
+
+**Two were resolved after this list was first written.** `M427`, `におうふくろ`,
+is now `Stink Bag`: it sits immediately past a hard structural boundary - the
+vocation rank ladders run 919 to 1062, exactly 18 groups of 8 - and is paired
+there with `メガンテがかかるうでわ`, the only other modifier-plus-common-noun
+entry nearby. That makes it a descriptive label rather than a name, and "the bag
+that smells" parses as a description where 仁王袋 does not. The `におう` reading
+is inferred.
+
+`M0F5`, `ひき`, is the animal counter, and it is now **blank rather than
+translated**. That is the translation's own convention for a string English does
+not express: 75 of their entries are empty where the Japanese has content, none
+of the Japanese entries are empty, and their `$0324` is the counter for flat
+objects, which they blanked. `tools/verify.py` asserts it stays empty.
+
+One small thing suggests these gaps are not arbitrary. The Goof-off block runs
+50 entries, and the translation wrote 48 of them. The two they left are
+`デュランのもと` and `し` - which are also the only two that break the block's
+construction, the one `[X]の[Y]` naming a character and the one bare kana. Weak
+evidence, and it proves nothing on its own, but whatever stopped them there is
+probably what stops anyone.
 
 Every one of them is left showing its identifier. **A gap is better than a
 confident wrong answer**, and inventing a reading for a two-kana entry is
@@ -364,7 +383,7 @@ exactly how a translation acquires errors that nobody can later trace.
   6,539 messages is what they shipped, apart from a redundant marker symbol
   removed wherever it appeared, which carried no word. The build fails if any
   other symbol in any of their messages moves.
-- **It does not claim to be complete or correct.** 421 messages and 179 names
+- **It does not claim to be complete or correct.** 421 messages and 181 names
   were authored by someone who is not a professional translator, checked against
   a corpus rather than against a native speaker. Errors are mine. Reports are
   welcome.

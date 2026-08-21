@@ -14,7 +14,7 @@ fetched from anywhere else.
 It does seven things:
   1. applies both crash fixes, Info > All and Forget (see apply_crash_fixes)
   2. restores the gold window on the info screen (see apply_gold below)
-  3. writes the 179 authored name-table entries (see apply_names below)
+  3. writes the 181 authored name-table entries (see apply_names below)
   4. decodes all 6,960 messages from the unmodified payload
   5. substitutes the 421 authored English messages
   6. removes the redundant speech marker, all 676 occurrences of a symbol
@@ -303,13 +303,31 @@ NT_END = 0x3BC712          # end of the region; past the live table is the
 NT_GROUPS = 157            # groups 0..156, IDs 0..2511
 
 
+# A deliberately empty entry is written as <blank> rather than as an empty
+# field. Two reasons, both learned the hard way here. The row regex requires a
+# non-space character, so a row with nothing after the ID does not match and is
+# SILENTLY SKIPPED - the build would report the entry written and leave it
+# untouched. And trailing whitespace is invisible and gets stripped by editors,
+# so a format that depends on it cannot survive being edited. "<" has no glyph
+# in this charset and cannot be encoded, so the sentinel can never collide with
+# real text.
+#
+# Blanking is the translation's own convention for a string English does not
+# express: 75 of their entries are empty where the Japanese has content, and no
+# Japanese entry is empty. $00F5 is the animal counter, and their $0324 is the
+# counter for flat objects, which they blanked.
+BLANK = '<blank>'
+
+
 def read_nametable(path):
-    """Parse '<hex id>  <english>' rows."""
+    """Parse '<hex id>  <english>' rows. <blank> means a deliberately empty
+    entry."""
     out = {}
     for line in io.open(path, encoding='utf-8'):
         m = re.match(r'^([0-9A-Fa-f]{4})\s\s+(\S.*?)\s*$', line)
         if m:
-            out[int(m.group(1), 16)] = m.group(2)
+            text = m.group(2)
+            out[int(m.group(1), 16)] = '' if text == BLANK else text
     if not out:
         raise SystemExit('no name-table rows in %s' % path)
     return out

@@ -486,7 +486,11 @@ def check(table, path):
     for line in io.open(path, encoding='utf-8'):
         m = re.match(r'^([0-9A-Fa-f]{4})\s\s+(\S.*?)\s*$', line)
         if m:
-            want[int(m.group(1), 16)] = m.group(2)
+            text = m.group(2)
+            # <blank> is a deliberately empty entry. It is spelled out rather
+            # than left as an empty field because the regex above skips a row
+            # with nothing after the ID, and would skip it silently.
+            want[int(m.group(1), 16)] = '' if text == '<blank>' else text
     if not want:
         raise Fail('no "<hex id>  <text>" rows in %s.' % path)
 
