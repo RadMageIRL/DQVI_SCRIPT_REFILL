@@ -341,10 +341,10 @@ What remains unresolved is a question of meaning, not of access:
 
 | shows | Japanese | why it is left alone |
 |---|---|---|
-| `M6EB` | `デュランのもと` | the only entry in its 50-entry block that is `[X]の[Y]`, and the only one naming a character. Naming it would mean inventing both the reading and the register. |
+| `M6EB` | `デュランのもと` | `もと` here is the locative, "at X's side". The table's one apparent precedent does not carry: `あしもとを` is rendered `Feet`, but that translates `あし`, as all six `あし` entries do, and `もと` is the component their gloss never renders. Any wording would be invented. |
 | `*70A` | `そうぞうを` | **the reading is settled**: the next entry is `ぜっする`, and 想像を絶する is fixed, so it is "imagination". The English is what is blocked, because they render `ぜっする` as `Really` and a faithful fragment collides with it. |
 | `M6FD` | `し` | a single kana. It is a genuine entry, not the tail of a split line: no entry in the table ends on a break code, so nothing continues across a boundary. |
-| `M14E` | `かみ` | god, hair or paper. Three homophones, no disambiguating context. |
+| `M14E` | `かみ` | god, hair or paper. **The table itself uses `かみ` both ways**: 神 four times (`かみのふね`, `かみのいかり`) and 髪 twice (`かみをかきあげる`, `ぎんのかみかざり`). No bare 神 exists anywhere in the table to take a wording from, and this entry sits near none of the seven. |
 | `M14D` | `ばか` | "idiot". The four forms of address two entries away are all kinship terms with `ちゃん`, three with `たち`; this shares none of that, so the group does not claim it. |
 | `M11C` | `がた` | an honorific pluralizing suffix. They spend their one English pluralizer, `s`, on `たち` at `$0118`, and English has no honorific plural. |
 
