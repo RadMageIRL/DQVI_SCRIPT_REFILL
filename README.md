@@ -341,10 +341,10 @@ What remains unresolved is a question of meaning, not of access:
 
 | shows | Japanese | why it is left alone |
 |---|---|---|
-| `M6EB` | `デュランのもと` | "Duran's essence", or base, or ingredient. Which one needs the skill's effect. |
-| `*70A` | `そうぞうを` | "imagine" or "create", plus an object particle. A fragment of a longer line. |
-| `M6FD` | `し` | a single kana, almost certainly not a word on its own. |
-| `M427` | `におうふくろ` | on a block boundary; the reading is not certain. |
+| `M6EB` | `デュランのもと` | the block is uniformly Goof-off actions, so a noun does not fit the slot. Their only other `もと` is read as a locative. Naming it would mean supplying a verb absent from the data. |
+| `*70A` | `そうぞうを` | **the reading is settled**: the next entry is `ぜっする`, and 想像を絶する is fixed, so it is "imagination". The English is what is blocked, because they render `ぜっする` as `Really` and a faithful fragment collides with it. |
+| `M6FD` | `し` | a single kana. It is a genuine entry, not the tail of a split line: no entry in the table ends on a break code, so nothing continues across a boundary. |
+| `M427` | `におうふくろ` | `ふくろ` is a bag, but no bag or pouch item exists in the table to match against, and `におう` is read as the guardian 仁王 elsewhere here (`におうだち` is `Protect`). |
 | `M0F5` | `ひき` | a counter for animals, or "draw". |
 | `M14E` | `かみ` | god, hair or paper. |
 | `M14D` | `ばか` | "idiot", in a block that mixes editor labels with forms of address. |
