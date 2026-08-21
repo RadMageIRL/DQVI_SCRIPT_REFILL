@@ -740,3 +740,51 @@ convention of theirs that has been worked out has explained something later -
 the ID rule gave the Japanese for 348 entries, and the full-width Latin map
 turned eleven apparent kanji into editor labels and stopped three map slots
 being given invented names.
+
+---
+
+## 13. Ask what selects the entry, not what it looks like
+
+`$06FD` held a single kana, `し`, sitting last in the Goof-off block between
+`Squish Squish` and the skill-description fragments. Two readings were argued
+from position and both were wrong.
+
+**First it was read as the tail of a split line**, since a bare kana looks like a
+continuation. That died on a measurement: **zero of 2,048 entries end on a break
+code**, so break codes appear only inside an entry and nothing continues across
+an entry boundary.
+
+**Then it was left as unresolved content** on the grounds that it was a genuine
+addressable slot, which it is. That was also wrong, and the reason is that
+being addressable and being used are different things.
+
+**The question that settled it was what selects it.** Abilities live in a table
+of 25-byte records at `0x08C674`, each beginning with its name's string ID. The
+Goof-off pool is records 351-407, IDs `$06C4`-`$06FC` - the command label `あそび`
+plus **56 actions** - contiguous and bounded by null records at either end.
+
+```
+no record in that table carries $06FD      checked across all 409
+$06FC  has one, index 407
+$06EB  has one, index 390
+```
+
+So `し` is a name-table slot that nothing selects. It is not a translation gap;
+it belongs with the internal entries. And the same measurement cuts the other
+way for `$06EB`, which does have a record, mid-run, so it is a real selectable
+action whose name we still cannot read. The "unused slot" explanation died for
+that one at the same moment it was confirmed for this one.
+
+**One trap worth naming.** Striding blindly past the end of the table produced a
+"record" for `$06FD`, which is what first suggested it was an ability. The table
+stops at record 408 and what follows is a different structure - an index of
+record offsets, `0, 25, 50, 75...`, in multiples of the stride. The bytes that
+looked like an ID were a bare word between the two tables. **A record has a
+shape; check it against a known-good one before believing an entry exists.** A
+real record here carries stat fields, and that address carried an arithmetic
+sequence.
+
+**The general rule:** for any entry whose category is in doubt, the useful
+question is not what its text looks like or what its neighbours are. It is
+which table references it. Adjacency produced two wrong answers here and a
+reference check produced the right one in a single lookup.
