@@ -59,7 +59,7 @@ numbers.
 
 This patch writes those 421 messages, in English, from the Japanese original.
 
-It also writes **185 name-table entries** - item, spell, skill, place,
+It also writes **187 name-table entries** - item, spell, skill, place,
 monster-action and menu names the translation left showing the game's own
 internal identifier, so a location read `M194` and a battle action read `M6BA`.
 See "Scope" below for what was deliberately left alone and why.
@@ -149,7 +149,7 @@ back.
 
 **This is what you want if you just want to play.** One step, no Python.
 
-**One patch contains everything** - the 421 messages, the 185 names, both crash
+**One patch contains everything** - the 421 messages, the 187 names, both crash
 fixes and the gold window. There is nothing else to apply and no order to get
 right. Do not apply the menu-fix patch as well; this one already contains it.
 
@@ -189,10 +189,10 @@ dependencies.
 Check what you get, whichever route you used:
 
 ```
-result   CRC32 A932FAF3   SHA-1 ed3c02ff368a22997fdbd72b0f75b550cb6d78ac
+result   CRC32 D6A59C93   SHA-1 6b6a3d19deb5ec14a457e1d315663ae61d89e78b
 ```
 
-That is the whole thing. **You are done** - the 421 messages, the 185 names,
+That is the whole thing. **You are done** - the 421 messages, the 187 names,
 both crash fixes and the gold window are all in that one output file.
 
 If the CRC32 does not match, your source ROM is not the one this targets. BPS
@@ -225,7 +225,7 @@ python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt DQ6-Refill.
 
 ![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, restores the gold window, writes the name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
 
-If your output is not `A932FAF3`, the input ROM is not the one this targets.
+If your output is not `D6A59C93`, the input ROM is not the one this targets.
 Check its CRC32 before anything else.
 
 The script refuses to write if the ROM is not what it expects. Every fix checks
@@ -233,7 +233,7 @@ its own site first - the crash-fix span, all 21 Forget relocation sites, and the
 gold routine - so pointing it at the wrong ROM fails loudly rather than
 producing something broken.
 
-## How the 421 messages and 185 names were written
+## How the 421 messages and 187 names were written
 
 From the Japanese script and from NoPrgress's own English, and from nothing
 else. No later official localization was consulted at any point, including for
@@ -289,20 +289,20 @@ than Huffman-coded, stored in different tables, reached a different way. It had
 never been censused before this project.
 
 **In the stock ROM, 394 entries displayed the game's own internal identifier**,
-so a location read `M194` and a battle action read `M6BA`. **184 are now
-written, leaving 210 in the release build.** Every figure here was measured
+so a location read `M194` and a battle action read `M6BA`. **186 are now
+written, leaving 208 in the release build.** Every figure here was measured
 against a ROM, and each says which ROM it describes:
 
-| | stock `B545C548` | release `A932FAF3` |
+| | stock `B545C548` | release `D6A59C93` |
 |---|---|---|
-| entries displaying an identifier | **394** | **210** |
-| written by this patch | - | **184** |
+| entries displaying an identifier | **394** | **208** |
+| written by this patch | - | **186** |
 
-`tools/nametable.py --untranslated` reports 393 and 209. It matches a
+`tools/nametable.py --untranslated` reports 393 and 207. It matches a
 single-letter prefix only, so it does not count `ID001`-`ID010` or `DS29`. The
-difference between the two ROMs, 184, is the same either way.
+difference between the two ROMs, 186, is the same either way.
 
-### What the remaining 210 are
+### What the remaining 208 are
 
 Established by reading the Japanese behind every one of them, resolved by the
 entry's own string ID out of the Japanese ROM:
@@ -312,7 +312,7 @@ entry's own string ID out of the Japanese ROM:
 | naming-screen rejection list | **75** | compared against what you type, never drawn |
 | internal labels | **62** | the Japanese is itself a Latin identifier |
 | debug and editor labels | **70** | written in Japanese, unreachable in normal play |
-| **genuinely unresolved** | **2** | see below |
+| **genuinely unresolved** | **0** | all now written; two are inferred, see below |
 
 **Not one of the first 207 can appear in normal play.**
 
@@ -338,40 +338,46 @@ decoded as unmapped kanji and looked like ordinary text. Without that find they
 would have been translated unnecessarily, and three map slots would have been
 given invented names.
 
-### The 2 that are not settled
+### Nothing is left showing an identifier that is content
 
-Every entry in the table can now be read. An earlier version of this file said
-that four entries whose prefix is not `M` or `*` could not be resolved at all,
-naming `E01`, `D07` and `C030`. That was wrong on all three. `E01` and `D07`
-resolve to the Latin strings `E01` and `D07` in the Japanese ROM and are
-internal labels rather than content. `C030` resolved to a real word and **is now
-written**: it is the `Transform` entry in the monster-name block, matching the
-translation's own rendering of the same Japanese elsewhere in the table. Whether
-any encounter references that slot was not confirmed; writing it costs nothing
-if it is unused.
+Every entry classified as untranslated content now has an English rendering.
+What still displays an identifier is 208 entries that are **not** content: the
+naming-screen rejection list, internal labels that are Latin in the Japanese
+original, and the Japanese-written debug and editor menus. The table above says
+which is which.
 
-What remains unresolved is a question of meaning, not of access:
+**Two of those renderings are the weakest calls in this patch, and they are
+marked so.**
 
-| shows | Japanese | why it is left alone |
-|---|---|---|
-| `M14E` | `かみ` | god, hair or paper. **Nothing references it**: see the note below. **The table itself uses `かみ` both ways**: 神 four times (`かみのふね`, `かみのいかり`) and 髪 twice (`かみをかきあげる`, `ぎんのかみかざり`). No bare 神 exists anywhere in the table to take a wording from, and this entry sits near none of the seven. |
-| `M14D` | `ばか` | "idiot". **Nothing references it**: see the note below. The four forms of address two entries away are all kinship terms with `ちゃん`, three with `たち`; this shares none of that, so the group does not claim it. |
+| shows | Japanese | written as | basis |
+|---|---|---|---|
+| `M14D` | `ばか` | **`Fool`** | reading only |
+| `M14E` | `かみ` | **`God`** | reading only |
 
-**The reference check that settled `$06FD` and `$011C` was applied to both of
-these and came back empty.** Neither appears in the ability table. Both
-`LDA #imm` sites for `$014D` feed `$C0:0D0C`, which writes the hardware multiply
-register at `$004202`, so that is the number 333 and not a string ID; `$014E`'s
-two sites write `$5E8E`, a generic parameter slot used 136 times across the ROM.
-Neither is a JSL argument to any string routine.
+`ばか` is 馬鹿 and there is no competing reading; `Fool` is chosen over `Idiot`
+as the shorter word and the better register for this series.
 
-That is a stronger position than "the neighbours are ambiguous", but it is not
-proof of anything: with 612 callers into the main string routine, almost every
-reference in this game is computed rather than literal, so an absent literal
-load carries little weight. There is a data blob at `0x023C71` holding both, in
-an ascending run that excludes the `X:`/`Y:` editor labels - suggestive, and
-deliberately not treated as more than that, because three apparent structures
-dissolved under examination during this work and the caution is worth more than
-the pattern.
+`かみ` has three readings and **`God` is a judgement, not a measurement.** It is
+the strong favourite in a game carrying `かみのふね` (Ship of the Gods) and
+`かみのさばきを` (Judgment), and the table renders 神 four times against 髪
+twice. **The case for `Hair` is recorded so it can be checked rather than taken
+on trust:** the two 髪 uses are `$06E7 かみをかきあげる` (Flip the Hair) and
+`$089E ぎんのかみかざり` (Silver Tiara, a 髪飾り), and `$014F` immediately after
+this entry is `そうしょくひん`, Accessories - ornaments. That adjacency is the
+one thing pointing away from `God`.
+
+**Both are category-unknown, which is what separates them from `がた`.** The
+reference check that settled `$011C` and `$06FD` was run on both and came back
+empty: neither is in the ability table, neither is a JSL argument to any string
+routine, both `$014D` literal loads feed the hardware multiply register at
+`$004202`, and `$014E`'s two write a parameter slot used 136 times elsewhere.
+So these are written on **reading alone, with no positional evidence**, where
+`がた` had code behind it. If any entry in this patch is wrong, it is one of
+these two.
+
+The standing position: a name in the right convention beats an untranslated
+identifier, provided the docs mark it inferred. `M14D` and `M14E` on screen are
+definitely wrong; `Fool` and `God` are probably right.
 
 **`$011C がた` is written as `s`, and this one is MEASURED rather than inferred -
 there is code behind it.** Enumerating every `LDA #imm / JMP $920C` in the ROM
@@ -449,9 +455,19 @@ construction, the one `[X]の[Y]` naming a character and the one bare kana. Weak
 evidence, and it proves nothing on its own, but whatever stopped them there is
 probably what stops anyone.
 
-Every one of them is left showing its identifier. **A gap is better than a
-confident wrong answer**, and inventing a reading for a two-kana entry is
-exactly how a translation acquires errors that nobody can later trace.
+**A gap used to be better than a confident wrong answer here, and for most of
+this work it was.** What changed is that the guesses stopped being untraceable.
+Every inferred entry is named in this file with what it rests on and what the
+competing reading would be, so a disagreement can be checked rather than argued
+about.
+
+**Corrections are welcome, and they are cheap.** Every version from v1.0 to v1.9
+is tagged with its patches attached, so the whole chain is recoverable. The
+published data files are keyed by the game's own string ID, so a correction is a
+one-line edit to `nametable-en.txt` and a rebuild. **If you see one of the
+inferred entries in play and the context demands something else - `God` where it
+should read `Hair`, say - report the string ID and what was on screen.** A wrong
+guess costs a commit. An identifier on screen costs a player.
 
 ## What else this does not do
 
@@ -463,7 +479,7 @@ exactly how a translation acquires errors that nobody can later trace.
   6,539 messages is what they shipped, apart from a redundant marker symbol
   removed wherever it appeared, which carried no word. The build fails if any
   other symbol in any of their messages moves.
-- **It does not claim to be complete or correct.** 421 messages and 185 names
+- **It does not claim to be complete or correct.** 421 messages and 187 names
   were authored by someone who is not a professional translator, checked against
   a corpus rather than against a native speaker. Errors are mine. Reports are
   welcome.

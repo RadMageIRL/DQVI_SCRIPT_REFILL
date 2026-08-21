@@ -16,7 +16,7 @@ Standard-library Python 3 only. No dependencies, nothing to install.
 
 The result is identical to what Flips produces from the same patch:
 
-    CRC32 A932FAF3   SHA-1 ed3c02ff368a22997fdbd72b0f75b550cb6d78ac
+    CRC32 D6A59C93   SHA-1 6b6a3d19deb5ec14a457e1d315663ae61d89e78b
 """
 import glob
 import hashlib
@@ -26,7 +26,7 @@ import sys
 import zlib
 
 EXPECT_SRC_CRC = 0xB545C548
-EXPECT_DST_CRC = 0xA932FAF3
+EXPECT_DST_CRC = 0xD6A59C93
 DEFAULT_PATCH = 'DQ6-SFC-NoPrgress-RM-ScriptRefill.bps'
 
 
@@ -173,7 +173,7 @@ def main(argv):
         print('  WARNING: applied cleanly, but the result is not the expected')
         print('  release build (CRC32 %08X).' % EXPECT_DST_CRC)
     print()
-    print('  The patch contains everything: 421 messages, 185 name-table')
+    print('  The patch contains everything: 421 messages, 187 name-table')
     print('  entries, both crash fixes, the gold window, and the redundant')
     print('  speech marker dropped. Nothing else to apply. Your original ROM')
     print('  was not modified.')

@@ -908,3 +908,47 @@ this work - a "curated list" that was a segmented ascending run, a group of
 eight that could not be told from event bytecode, and a "record" for `$06FD`
 that was an index table past the end of the real one. The caution is worth more
 than the pattern.
+
+---
+
+## 16. When a guess is cheap to correct, the balance moves
+
+Two entries, `$014D ばか` and `$014E かみ`, were written on reading alone. Both
+went through the reference check that settled `$06FD` and `$011C` and both came
+back empty, so there is **no positional evidence for either** - no ability
+record, no JSL argument to a string routine, and their only literal loads feed a
+hardware multiply register and a general parameter slot. They are the weakest
+calls in this patch and the docs say so in those words.
+
+For most of this work the rule was that a gap beats a confident wrong answer,
+and that was right while a wrong answer would have been **untraceable**. The
+thing that changed is not the confidence. It is the cost of being wrong.
+
+**What makes a guess cheap to correct:**
+
+- **The chain is recoverable.** Every version is tagged with its patches
+  attached, so any build can be reproduced and any change can be undone.
+- **The data is keyed by the game's own identifier**, not by position or by
+  order. A correction is one row in `nametable-en.txt` and a rebuild, and it
+  cannot disturb anything else, because the builder repacks the whole table
+  from the file every time.
+- **The basis is written down.** Each inferred entry names what it rests on and
+  what the competing reading is, so someone who disagrees can check the specific
+  thing rather than relitigate the judgement. `かみ` records the case for
+  `Hair` - the two 髪 uses in the table and the `Accessories` adjacency - beside
+  the case for `God`.
+- **The failure is visible.** These render on screen. Anyone playing the scene
+  sees the answer immediately, which is the one form of verification this
+  project has repeatedly found to beat every static check.
+
+Under those four conditions the arithmetic inverts. **A wrong guess costs a
+commit. An identifier on screen costs a player**, every time that scene is
+reached, permanently.
+
+**The conditions are the point, not the conclusion.** Remove any one of them and
+the old rule comes back. If the data were keyed by position, a correction would
+risk moving its neighbours. If the basis were not recorded, a report could not
+be checked and would turn into an argument about taste. If the entry never
+displayed, nobody would ever find the error and the guess would harden into
+fact. **Write the guess when it is cheap to correct and its basis is on record.
+Leave the gap when it is not.**

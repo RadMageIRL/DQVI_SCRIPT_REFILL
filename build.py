@@ -14,7 +14,7 @@ fetched from anywhere else.
 It does seven things:
   1. applies both crash fixes, Info > All and Forget (see apply_crash_fixes)
   2. restores the gold window on the info screen (see apply_gold below)
-  3. writes the 185 name-table entries (see apply_names below)
+  3. writes the 187 name-table entries (see apply_names below)
   4. decodes all 6,960 messages from the unmodified payload
   5. substitutes the 421 authored English messages
   6. removes the redundant speech marker, all 676 occurrences of a symbol
