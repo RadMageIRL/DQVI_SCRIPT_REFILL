@@ -64,15 +64,52 @@ monster-action and menu names the translation left showing the game's own
 internal identifier, so a location read `M194` and a battle action read `M6BA`.
 See "Scope" below for what was deliberately left alone and why.
 
+### The Tactics-equip hang
+
+Cycling in and out of a character's equipment through the Tactics menu locks the
+game. It takes repeated cycling to reach, which is why it went unreported for so
+long, and it affects **every published build** including all earlier versions of
+this patch and all three versions of the crash-fix patch.
+
+`$C3:1AB1` is a broken duplicate of `$C3:1D0E`. Both answer the same question -
+the cursor is on an entry that cannot be selected, so where should it go - and
+`$C3:1D0E` answers it properly: it saves the ordinal, honours the carry that
+`$C3:1B1E` returns, checks the floor, and if nothing is found below it restores
+the ordinal and searches upward against a ceiling.
+
+`$C3:1AB1` does none of that. It steps back once, unconditionally, and commits
+whatever comes back. One step past zero hands `$C3:1B1E` an ordinal it cannot
+satisfy. **`$C3:1B1E` reports that correctly** - it is bounded, and it returns
+with carry set - and the caller never looks. The failure sentinel is then packed
+as though it were a screen position:
+
+```
+linear = (112/2)*16 + 1 = 897      row = 897>>5 = 28      col = 897&31 = 1
+```
+
+The tilemap is `$3068`-`$3767`, exactly 28 rows, so **row 28 is one past the end
+and lands on `$3768` - the cursor bitmap that the same code reads.** It corrupts
+the structure it depends on, which is why the fault sustains itself once it
+starts.
+
+The fix mirrors `$C3:1D0E`'s search into `$C3:1AB1`. The initial check and the
+redraw are untouched, so ordinary cursor movement is byte-identical.
+
+**One visible behavioural change.** The cursor may land on a different entry
+than before in edge cases, because it now searches down to the floor and up to
+the ceiling instead of stepping back once. That is `$C3:1D0E`'s intended
+behaviour and it is what the game does everywhere else, but it is a change you
+can see, not a pure bug fix, so it is stated rather than buried.
+
 It also removes a **redundant speech marker**, all 676 occurrences of the one
 symbol in their script with no English glyph behind it. It drew a stray shape
 wherever it appeared, always after a marker the engine had already drawn. See
 "The speech marker" below.
 
-It also includes both crash fixes from
+It also includes all three hang fixes from
 [DQVI_NOPRGRESS_MENU_FIX](https://github.com/RadMageIRL/DQVI_NOPRGRESS_MENU_FIX):
-the **Info > All** crash and the **Forget** crash. You do not need to apply that
-patch as well. This one contains it.
+the **Info > All** crash, the **Forget** crash, and the **Tactics-equip hang**.
+You do not need to apply that patch as well. This one contains it.
 
 - **Info > All** hangs if you back out before the screen finishes drawing. A
   three-byte `STA $3AC2` was deleted from `$C3:3538`, so the party-slot loop
@@ -189,7 +226,7 @@ dependencies.
 Check what you get, whichever route you used:
 
 ```
-result   CRC32 D6A59C93   SHA-1 6b6a3d19deb5ec14a457e1d315663ae61d89e78b
+result   CRC32 031A7ADD   SHA-1 bf274bcd343ccd7d8d20c58703a9494ed7b3e6c4
 ```
 
 That is the whole thing. **You are done** - the 421 messages, the 187 names,
@@ -225,7 +262,7 @@ python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt DQ6-Refill.
 
 ![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, restores the gold window, writes the name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
 
-If your output is not `D6A59C93`, the input ROM is not the one this targets.
+If your output is not `031A7ADD`, the input ROM is not the one this targets.
 Check its CRC32 before anything else.
 
 The script refuses to write if the ROM is not what it expects. Every fix checks
@@ -293,7 +330,7 @@ so a location read `M194` and a battle action read `M6BA`. **186 are now
 written, leaving 208 in the release build.** Every figure here was measured
 against a ROM, and each says which ROM it describes:
 
-| | stock `B545C548` | release `D6A59C93` |
+| | stock `B545C548` | release `031A7ADD` |
 |---|---|---|
 | entries displaying an identifier | **394** | **208** |
 | written by this patch | - | **186** |

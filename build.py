@@ -257,6 +257,87 @@ def apply_crash_fixes(rom):
     return len(CF_RELOCATIONS) + len(CF_BRANCHES)
 
 
+
+# ---------------------------------------------------------------------------
+# The Tactics-equip hang
+#
+# $C3:1AB1 is a broken duplicate of $C3:1D0E. Both answer the same question -
+# "the cursor is on an entry that is not selectable, so which entry should it
+# move to" - and $C3:1D0E answers it correctly: it saves the ordinal, honours
+# the carry that $C3:1B1E returns, checks the floor with BMI, and if nothing is
+# found below it restores the ordinal and searches upward against a ceiling.
+#
+# $C3:1AB1 does none of that. It decrements once, unconditionally, and packs
+# whatever comes back. So one DEC past zero hands $C3:1B1E an ordinal it cannot
+# satisfy. $C3:1B1E is bounded (CPY #$0070) and reports failure correctly, by
+# returning with carry set and Y = $0070 - and the caller never tests it. That
+# sentinel is then packed as if it were a position:
+#
+#     linear = (112/2)*16 + 1 = 897     row = 897>>5 = 28     col = 897&31 = 1
+#
+# The tilemap is $3068-$3767, exactly 28 rows, so row 28 is one past the end and
+# lands on $3768 - the cursor bitmap that the same code reads. It corrupts the
+# structure it depends on, which is why the fault sustains itself once started
+# and why it needs repeated cycling to reproduce.
+#
+# Four consumers take that value without checking: the bit test at $C3:1AC1, the
+# unbounded scan at $C3:1B6E, and the two packer calls at $C3:1AD4 and $C3:16EE.
+# Four of the eight callers of $C3:1B1E do honour its carry. All the damage came
+# through the four that do not.
+#
+# The fix mirrors $C3:1D0E's search into $C3:1AB1. The initial bit test at
+# $C3:1AC1 and the redraw from $C3:1AD8 are untouched, so the common path is
+# byte-identical and ordinary cursor movement is unaffected.
+#
+# Two deliberate departures from $C3:1D0E:
+#   - its "found nothing in either direction" case is BRA $1D57, a self-loop
+#     asserting the case cannot happen. It has been observed happening, so this
+#     restores the saved ordinal and redraws instead. Answering a hang with a
+#     hang would be no answer.
+#   - $3000 is reused as the save slot because that is what $C3:1D0E uses for
+#     this operation. The two paths are different menus and cannot be live at
+#     the same time.
+
+NL = chr(10)
+EQUIP_HOOK = 0x03FC80          # $C3:FC80, inside the $FF filler at the bank end
+EQUIP_SITE = 0x031ACA          # DEC $3AE4 / LDA $3AE4 / JSL $C31B1E / JSL $C31C35
+EQUIP_BEFORE = bytes([0xCE, 0xE4, 0x3A, 0xAD, 0xE4, 0x3A,
+                      0x22, 0x1E, 0x1B, 0xC3, 0x22, 0x35, 0x1C, 0xC3])
+EQUIP_HOOK_CODE = bytes([
+    0xAD, 0xE4, 0x3A, 0x8D, 0x00, 0x30, 0xAD, 0xE4,
+    0x3A, 0x22, 0x1E, 0x1B, 0xC3, 0x90, 0x35, 0xB9,
+    0x68, 0x37, 0x3F, 0xB0, 0x1B, 0xC3, 0xD0, 0x2C,
+    0xCE, 0xE4, 0x3A, 0x30, 0x02, 0x80, 0xE7, 0xAD,
+    0x00, 0x30, 0x8D, 0xE4, 0x3A, 0xEE, 0xE4, 0x3A,
+    0xAD, 0xE4, 0x3A, 0x22, 0x1E, 0x1B, 0xC3, 0x90,
+    0x13, 0xB9, 0x68, 0x37, 0x3F, 0xB0, 0x1B, 0xC3,
+    0xD0, 0x0A, 0xAD, 0xE4, 0x3A, 0xCD, 0xA6, 0x38,
+    0xB0, 0x09, 0x80, 0xE1, 0x22, 0x35, 0x1C, 0xC3,
+    0x4C, 0xD8, 0x1A, 0xAD, 0x00, 0x30, 0x8D, 0xE4,
+    0x3A, 0x4C, 0xD8, 0x1A,
+])  # taken verbatim from the ROM confirmed in play
+
+
+def apply_equip_fix(rom):
+    """Mirror $C3:1D0E's search into $C3:1AB1. Refuses if the ROM differs."""
+    found = bytes(rom[EQUIP_SITE:EQUIP_SITE + len(EQUIP_BEFORE)])
+    if found != EQUIP_BEFORE:
+        raise SystemExit(
+            'equip fix: the site at 0x%06X is not the expected pre-fix '
+            'bytes.%s  expected %s%s  found    %s%s  Refusing to write.'
+            % (EQUIP_SITE, NL, EQUIP_BEFORE.hex(), NL, found.hex(), NL))
+    n = len(EQUIP_HOOK_CODE)
+    if any(b != 0xFF for b in rom[EQUIP_HOOK:EQUIP_HOOK + n]):
+        raise SystemExit('equip fix: 0x%06X is not free space. Refusing to write.'
+                         % EQUIP_HOOK)
+    rom[EQUIP_SITE:EQUIP_SITE + 3] = bytes([0x4C, EQUIP_HOOK & 0xFF,
+                                            (EQUIP_HOOK >> 8) & 0xFF])
+    for i in range(3, len(EQUIP_BEFORE)):
+        rom[EQUIP_SITE + i] = 0xEA
+    rom[EQUIP_HOOK:EQUIP_HOOK + n] = EQUIP_HOOK_CODE
+    return n
+
+
 def apply_gold(rom):
     """Restore the gold window. Refuses to run if the ROM is not as expected."""
     n = len(GOLD_CODE_WAS)
@@ -611,6 +692,8 @@ def main(src, cand, names_path, dst):
     n = apply_crash_fixes(rom)
     print('crash fixes applied: Info > All, and Forget across %d sites' % n)
 
+    e = apply_equip_fix(rom)
+    print('Tactics-equip hang fixed: %d-byte search mirrored from $C3:1D0E' % e)
     g = apply_gold(rom)
     print('gold window restored: %d bytes' % g)
 

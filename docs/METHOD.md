@@ -952,3 +952,114 @@ be checked and would turn into an argument about taste. If the entry never
 displayed, nobody would ever find the error and the guess would harden into
 fact. **Write the guess when it is cheap to correct and its basis is on record.
 Leave the gap when it is not.**
+
+---
+
+## 17. Compare the two ROMs at the point of divergence
+
+A hang in the Tactics equip menu took four passes down the English trace, each
+finding more mechanism and none finding the cause. **The two-ROM comparison
+found it in one pass.**
+
+The English trace answered "what is the program doing" over and over: an
+unbounded scan, a bitmap that looked empty, a cursor committing an item that is
+not in the set. Every answer was correct and none of them was the cause, because
+the cause is not a property of the English side alone. It is a difference.
+
+The comparison asks a different question - **what does Japanese do here** - and
+the answers are short:
+
+```
+row written to the tilemap      JP max 25          EN reaches 28, 385 times
+Y passed to the packer          JP never $0070     EN $0070, 97 times
+byte at $7E:376B                JP always $0000    EN $0013, 12 times
+```
+
+Three greps. Each one is a single number against a single number, and the third
+is the corrupted byte that makes the cursor offer a phantom item.
+
+**Five times now the cause has been upstream of the symptom** - the deleted
+`STA $3AC2`, the WRAM collision behind Forget, the speech marker, the page-break
+fault, and this. In this case it was four levels upstream: the visible hang is
+an unbounded scan, but the scan is only reached because a renderer wrote out of
+bounds, and the renderer only did that because a caller consumed an error
+sentinel as a coordinate.
+
+**The rule: when the same code behaves differently in two builds, stop tracing
+the broken one.** Diff the two at the point they diverge. Tracing the failing
+side tells you how it fails, which feels like progress and is not the same as
+why.
+
+### The corollary that made this one findable
+
+Both routines in the pair were unmodified Enix code, and **the correct version
+of the broken routine was already in the ROM, 80 bytes earlier**. `$C3:1B1E`
+bounds its scan with `CPY #$0070 / BCC` and reports failure by returning with
+carry set; `$C3:1B6E` is the same routine with the bound missing. Its caller
+never tested the carry the bounded one returns.
+
+That matters for what a fix is allowed to be. **A bound is a guard when you
+invent it and a repair when the codebase already contains it**, and the same is
+true of an error convention nobody honoured. Look for the working twin before
+deciding a defect has no intended behaviour to restore.
+
+---
+
+## 18. One producer that gets it right, four consumers that do not check
+
+The Tactics-equip hang took five failed builds before the cause was found, and
+every failure had the same shape: patch a consumer, watch the symptom move to
+the next one.
+
+`$C3:1B1E` searches a 112-byte structure for the Nth set bit. **It is correct.**
+It bounds with `CPY #$0070`, and when it finds nothing it reports so the way
+this codebase reports failure - it returns with the carry set, leaving `Y` at
+the bound. There is nothing wrong with it.
+
+**Four of its eight callers honour that carry. Four do not.** All the damage came
+through the four that do not:
+
+```
+$C3:1AD4   packs the sentinel as a screen position
+$C3:16EE   same
+$C3:1AC1   uses Y = $0070 as a bitmap index, reading past the end
+$C3:1B6E   scans unbounded for a target that cannot exist
+```
+
+One bad value, four unchecked consumers. Patching `$C3:1AD4` stopped the hang
+and left a cursor drawn over the item text. Patching that moved it again. **The
+symptom kept moving because every consumer was downstream of the same unhandled
+return, and none of them was the defect.**
+
+### The write that was doing two jobs
+
+The reason four builds could not fix the cursor is worth stating on its own.
+Stock's failure path writes `row = 28`, which is one past the tilemap - the
+corruption - **and also nineteen rows below anywhere the cursor legitimately
+goes**, which is how it gets the cursor off the visible list. The hang and the
+cursor-parking are the same write.
+
+So removing it fixed the hang and lost the parking. Substituting an in-bounds
+row could not restore the parking, because the parking only works *because* the
+value is out of bounds. **A bad write can be load-bearing; deleting it is not a
+fix and neither is clamping it.**
+
+### The near-miss
+
+The substitute row was going to be 27: the tilemap has 28 rows, so 27 is the
+last valid one. Measurement said the cursor's real ceiling is **9**. Structure
+size tells you what is addressable, not what is used, and those are different
+questions. That check is the only reason there was not a sixth build.
+
+### What ended it
+
+Looking for the same operation done correctly somewhere else. `$C3:1AB1` turned
+out to be a broken duplicate of `$C3:1D0E`, which saves the ordinal, tests the
+carry, checks the floor, and falls back to searching upward. Every piece that
+had been guessed at across five builds was already written, 700 bytes away.
+
+**Before inventing behaviour for a defect, look for the working twin.** Twice in
+this project the correct implementation was already in the ROM - the bounded
+`$C3:1B1E` beside the unbounded `$C3:1B6E`, and `$C3:1D0E` beside `$C3:1AB1`. A
+fix that restores the codebase's own convention needs no justification. One that
+invents a convention needs a great deal.

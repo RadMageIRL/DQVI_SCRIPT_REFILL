@@ -16,7 +16,7 @@ Standard-library Python 3 only. No dependencies, nothing to install.
 
 The result is identical to what Flips produces from the same patch:
 
-    CRC32 D6A59C93   SHA-1 6b6a3d19deb5ec14a457e1d315663ae61d89e78b
+    CRC32 031A7ADD   SHA-1 bf274bcd343ccd7d8d20c58703a9494ed7b3e6c4
 """
 import glob
 import hashlib
@@ -26,7 +26,7 @@ import sys
 import zlib
 
 EXPECT_SRC_CRC = 0xB545C548
-EXPECT_DST_CRC = 0xD6A59C93
+EXPECT_DST_CRC = 0x031A7ADD
 DEFAULT_PATCH = 'DQ6-SFC-NoPrgress-RM-ScriptRefill.bps'
 
 
