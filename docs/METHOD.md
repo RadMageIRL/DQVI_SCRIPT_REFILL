@@ -663,3 +663,80 @@ does, not by what alphabet it is in. The discriminator that works is meaning:
 written in. The discriminator that failed is orthography, and it failed silently,
 because an untranslated debug label and an untranslated item name are the same
 shape in every measurement except reading them.
+
+---
+
+## 12. They had two placeholder conventions, and the radix proves it
+
+The `M####` rule is established: an untranslated name-table entry displays its
+own string ID in hex. The message script has its own form, bare decimal digits,
+plus a rarer `TEXT####`. Nobody had asked whether these came from the same tool,
+and the answer is measurable.
+
+**They are in different number bases.**
+
+| system | form | radix | count |
+|---|---|---|---|
+| message script | bare digits, `TEXT####` | **decimal** | 421 = 416 + 5 |
+| name table | `M####`, `*###` | **hex** | 348 |
+
+421 of 421 script placeholders match their own message ID in **decimal**, and
+none matches in hex. 348 of 348 name-table placeholders match their own string
+ID in **hex**, and none matches in decimal. Same idea - print the identifier
+rather than the text - implemented twice with different settings.
+
+**The two systems never borrow each other's form.** Zero messages match
+`M####`. Zero name-table entries match `TEXT####`. A clean separation by system
+is what two tools, or two passes, look like.
+
+**But the counter-observation matters and is recorded deliberately.** Within the
+script the two forms interleave rather than sitting in separate stretches:
+
+```
+6289  bare digits
+6290  TEXT6290
+6291  TEXT6291
+6292  bare digits
+```
+
+So `TEXT####` is not a later pass over the script, and not an earlier one. Five
+messages out of 421 took the other form while their immediate neighbours did
+not, which means something about those five, not about when the work was done.
+**A hypothesis that explains the split between the systems does not
+automatically explain the split inside one of them.**
+
+### The full prefix census, so nobody has to guess again
+
+```
+name table   M 313   * 35                          348, all hex == own string ID
+             S 21  K 11  ID 10  E 1  D 1  DS 1  C 1   46, Latin in the Japanese
+script       bare digits 416   TEXT 5              421, all decimal == own ID
+```
+
+No other prefix exists in either system. The 46 are not emitted identifiers at
+all - the Japanese ROM holds the same Latin strings, which is why they do not
+follow the ID rule.
+
+### A second marker with an unidentified trigger
+
+`*` is not a variant spelling of `M`. It is confined to entries 1338-1599, the
+skill-description region, and interleaves with `M` inside that band.
+
+The obvious hypothesis was that `*` marks a mid-sentence continuation fragment,
+since the region is full of them. **Tested and refuted.** Taking the final
+character of each entry's Japanese, in that same band:
+
+```
+ends in a grammatical particle:   *  14 of 35  (40%)
+                                  M   8 of 14  (57%)
+```
+
+`M` entries end in a particle MORE often than `*` ones, so `*` is not marking
+grammatical continuation. It is a real second marker and its trigger is still
+unknown.
+
+That is worth recording as an open question rather than a footnote. Every
+convention of theirs that has been worked out has explained something later -
+the ID rule gave the Japanese for 348 entries, and the full-width Latin map
+turned eleven apparent kanji into editor labels and stopped three map slots
+being given invented names.
