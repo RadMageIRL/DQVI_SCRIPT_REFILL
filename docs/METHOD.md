@@ -788,3 +788,49 @@ sequence.
 question is not what its text looks like or what its neighbours are. It is
 which table references it. Adjacency produced two wrong answers here and a
 reference check produced the right one in a single lookup.
+
+---
+
+## 14. When their rendering blocks ours, and the rule that keeps it narrow
+
+This patch changed one piece of NoPrgress's own text. It is the only one, and
+the circumstances are worth stating exactly, because the reasoning generalizes
+badly if it is loosened even slightly.
+
+`$070A そうぞうを` was untranslated. `$070B ぜっする` was theirs, rendered
+`Really`. The two are the halves of 想像を絶する, "beyond imagination", and the
+first half cannot be written faithfully against the second: any correct English
+for `そうぞうを` reads as nonsense next to `Really`. Their rendering was not
+merely loose, it was **load-bearing on an entry that could not be completed
+around it**.
+
+**The rule, stated so it cannot widen:**
+
+> Their text is changed only where their rendering blocks completing an
+> untranslated entry. Not for clumsiness, not for style, not for accuracy alone.
+
+Every clause is doing work. `Really` for `ぜっする` is inaccurate, and that on
+its own would not have justified touching it - the table is full of loose
+renderings this patch leaves alone, `Spy` for `かみわざ` among them. What
+qualified it is that an unwritten entry sat immediately beside it and could not
+be written while it stood.
+
+**The check that made the cost measurable.** Before changing anything, count the
+other uses. `ぜっする` occurs exactly once in the table and `Really` was used
+exactly once, so the change could not break a second line. **Had it appeared
+twice, this would not have been done**, because fixing one description while
+breaking another is not an improvement and the trade stops being narrow.
+
+**The words sit across the pair rather than glossing each entry.** `$070A`
+became `Beyond` and `$070B` became `Imagining`, so `そうぞうを` no longer
+matches its entry word for word. That is their own practice here, not a
+liberty: `$0717 ちからをあわせ` means "combining power" and they render it
+`Fury of` precisely so that `Fury of` / `The gods` reads in ascending order.
+Fragments are assembled, so what has to read correctly is the assembled line.
+
+**What was NOT claimed afterwards.** The README used to say "not one word of
+their writing is altered". That is no longer true and the sentence was replaced
+rather than qualified into meaninglessness: their **dialogue** is untouched,
+verified symbol by symbol on every build, and exactly one name-table entry of
+theirs is changed, named, with the reason given. A promise that has acquired an
+exception is worth less than an accurate description of what was done.

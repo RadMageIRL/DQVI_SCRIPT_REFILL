@@ -8,9 +8,11 @@ You supply both ROMs. Nothing else is needed and nothing is written.
 This is the verification the README claims, run against two files rather than
 quoted. It checks six things:
 
-  1. not one word of NoPrgress's own writing is altered. Their messages are
-     allowed to differ in exactly one way, the redundant marker being removed,
-     and the check fails if any other symbol in any of them moves
+  1. NoPrgress's dialogue is untouched. Their messages are allowed to differ in
+     exactly one way, the redundant marker being removed, and the check fails if
+     any other symbol in any of them moves. This covers the MESSAGE SCRIPT.
+     Exactly one name-table entry of theirs is deliberately changed, $070B, and
+     check 3 below is what accounts for the name table
   2. no message still displays its own ID
   3. every one of the 2,512 name-table string IDs resolves the way the game
      resolves it, in both ROMs, and the two are compared

@@ -14,7 +14,7 @@ fetched from anywhere else.
 It does seven things:
   1. applies both crash fixes, Info > All and Forget (see apply_crash_fixes)
   2. restores the gold window on the info screen (see apply_gold below)
-  3. writes the 182 authored name-table entries (see apply_names below)
+  3. writes the 184 name-table entries (see apply_names below)
   4. decodes all 6,960 messages from the unmodified payload
   5. substitutes the 421 authored English messages
   6. removes the redundant speech marker, all 676 occurrences of a symbol
@@ -25,10 +25,15 @@ It does seven things:
 The trees are never modified. Every symbol already has exactly one code path in
 them, so the encode is deterministic: every message comes out symbol for symbol
 as NoPrgress wrote it, apart from the 421 that were never written and one
-marker symbol removed wherever it appeared. **Not one word of their writing is
-altered.** That property is worth checking after any change to this script, and
+marker symbol removed wherever it appeared. **Their dialogue is untouched.**
+That property is worth checking after any change to this script, and
 tools/verify.py checks it: it fails if any symbol other than that marker moves
 in any of their messages.
+
+One NAME-TABLE entry of theirs is changed, $070B, and the rule that permits it
+is narrow: their text is changed only where their rendering blocks completing an
+untranslated entry. See the README. It does not apply to the message script,
+where nothing of theirs is altered at all.
 
 Message system, decoded from the ROM at $C0:2B69 onward:
   - Pointer table at $C1:5BB5, 870 entries of 3 bytes, indexed by (ID >> 3).
