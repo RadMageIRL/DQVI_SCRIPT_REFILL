@@ -1,4 +1,4 @@
-DQ6 name table - the 184 entries
+DQ6 name table - the 185 entries
 =========================================
 
 These are item, spell, skill, place, monster-action and menu strings that the
@@ -13,7 +13,7 @@ A vertical bar is a line break. The game encodes one as 0x90 plus the length of
 the line before it, so "Entice|Dance" becomes Entice, 0x96, Dance. build.py
 does that conversion; write the bar and nothing else.
 
-Nothing here overwrites NoPrgress's work. Every one of these 184 entries was an
+Nothing here overwrites NoPrgress's work. Every one of these 185 entries was an
 untranslated identifier before this patch.
 
 00C2  To Whom
@@ -28,6 +28,7 @@ untranslated identifier before this patch.
 00DF  Att
 00E1  Def
 00F5  <blank>
+011C  s
 011D  Everyone
 011E  You
 0142  Small

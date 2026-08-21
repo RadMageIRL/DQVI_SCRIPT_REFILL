@@ -59,7 +59,7 @@ numbers.
 
 This patch writes those 421 messages, in English, from the Japanese original.
 
-It also writes **184 name-table entries** - item, spell, skill, place,
+It also writes **185 name-table entries** - item, spell, skill, place,
 monster-action and menu names the translation left showing the game's own
 internal identifier, so a location read `M194` and a battle action read `M6BA`.
 See "Scope" below for what was deliberately left alone and why.
@@ -149,7 +149,7 @@ back.
 
 **This is what you want if you just want to play.** One step, no Python.
 
-**One patch contains everything** - the 421 messages, the 184 names, both crash
+**One patch contains everything** - the 421 messages, the 185 names, both crash
 fixes and the gold window. There is nothing else to apply and no order to get
 right. Do not apply the menu-fix patch as well; this one already contains it.
 
@@ -189,10 +189,10 @@ dependencies.
 Check what you get, whichever route you used:
 
 ```
-result   CRC32 8E40ADC0   SHA-1 3482f542a03a2caf37acb6b10f1a6dc3572c07fd
+result   CRC32 A932FAF3   SHA-1 ed3c02ff368a22997fdbd72b0f75b550cb6d78ac
 ```
 
-That is the whole thing. **You are done** - the 421 messages, the 184 names,
+That is the whole thing. **You are done** - the 421 messages, the 185 names,
 both crash fixes and the gold window are all in that one output file.
 
 If the CRC32 does not match, your source ROM is not the one this targets. BPS
@@ -225,7 +225,7 @@ python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt DQ6-Refill.
 
 ![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, restores the gold window, writes the name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
 
-If your output is not `8E40ADC0`, the input ROM is not the one this targets.
+If your output is not `A932FAF3`, the input ROM is not the one this targets.
 Check its CRC32 before anything else.
 
 The script refuses to write if the ROM is not what it expects. Every fix checks
@@ -233,7 +233,7 @@ its own site first - the crash-fix span, all 21 Forget relocation sites, and the
 gold routine - so pointing it at the wrong ROM fails loudly rather than
 producing something broken.
 
-## How the 421 messages and 184 names were written
+## How the 421 messages and 185 names were written
 
 From the Japanese script and from NoPrgress's own English, and from nothing
 else. No later official localization was consulted at any point, including for
@@ -289,20 +289,20 @@ than Huffman-coded, stored in different tables, reached a different way. It had
 never been censused before this project.
 
 **In the stock ROM, 394 entries displayed the game's own internal identifier**,
-so a location read `M194` and a battle action read `M6BA`. **183 are now
-written, leaving 211 in the release build.** Every figure here was measured
+so a location read `M194` and a battle action read `M6BA`. **184 are now
+written, leaving 210 in the release build.** Every figure here was measured
 against a ROM, and each says which ROM it describes:
 
-| | stock `B545C548` | release `8E40ADC0` |
+| | stock `B545C548` | release `A932FAF3` |
 |---|---|---|
-| entries displaying an identifier | **394** | **211** |
-| written by this patch | - | **183** |
+| entries displaying an identifier | **394** | **210** |
+| written by this patch | - | **184** |
 
-`tools/nametable.py --untranslated` reports 393 and 210. It matches a
+`tools/nametable.py --untranslated` reports 393 and 209. It matches a
 single-letter prefix only, so it does not count `ID001`-`ID010` or `DS29`. The
-difference between the two ROMs, 183, is the same either way.
+difference between the two ROMs, 184, is the same either way.
 
-### What the remaining 211 are
+### What the remaining 210 are
 
 Established by reading the Japanese behind every one of them, resolved by the
 entry's own string ID out of the Japanese ROM:
@@ -312,7 +312,7 @@ entry's own string ID out of the Japanese ROM:
 | naming-screen rejection list | **75** | compared against what you type, never drawn |
 | internal labels | **62** | the Japanese is itself a Latin identifier |
 | debug and editor labels | **70** | written in Japanese, unreachable in normal play |
-| **genuinely unresolved** | **3** | see below |
+| **genuinely unresolved** | **2** | see below |
 
 **Not one of the first 207 can appear in normal play.**
 
@@ -338,7 +338,7 @@ decoded as unmapped kanji and looked like ordinary text. Without that find they
 would have been translated unnecessarily, and three map slots would have been
 given invented names.
 
-### The 3 that are not settled
+### The 2 that are not settled
 
 Every entry in the table can now be read. An earlier version of this file said
 that four entries whose prefix is not `M` or `*` could not be resolved at all,
@@ -354,9 +354,37 @@ What remains unresolved is a question of meaning, not of access:
 
 | shows | Japanese | why it is left alone |
 |---|---|---|
-| `M14E` | `かみ` | god, hair or paper. **The table itself uses `かみ` both ways**: 神 four times (`かみのふね`, `かみのいかり`) and 髪 twice (`かみをかきあげる`, `ぎんのかみかざり`). No bare 神 exists anywhere in the table to take a wording from, and this entry sits near none of the seven. |
-| `M14D` | `ばか` | "idiot". The four forms of address two entries away are all kinship terms with `ちゃん`, three with `たち`; this shares none of that, so the group does not claim it. |
-| `M11C` | `がた` | an honorific pluralizing suffix. They spend their one English pluralizer, `s`, on `たち` at `$0118`, and English has no honorific plural. |
+| `M14E` | `かみ` | god, hair or paper. **Nothing references it**: see the note below. **The table itself uses `かみ` both ways**: 神 four times (`かみのふね`, `かみのいかり`) and 髪 twice (`かみをかきあげる`, `ぎんのかみかざり`). No bare 神 exists anywhere in the table to take a wording from, and this entry sits near none of the seven. |
+| `M14D` | `ばか` | "idiot". **Nothing references it**: see the note below. The four forms of address two entries away are all kinship terms with `ちゃん`, three with `たち`; this shares none of that, so the group does not claim it. |
+
+**The reference check that settled `$06FD` and `$011C` was applied to both of
+these and came back empty.** Neither appears in the ability table. Both
+`LDA #imm` sites for `$014D` feed `$C0:0D0C`, which writes the hardware multiply
+register at `$004202`, so that is the number 333 and not a string ID; `$014E`'s
+two sites write `$5E8E`, a generic parameter slot used 136 times across the ROM.
+Neither is a JSL argument to any string routine.
+
+That is a stronger position than "the neighbours are ambiguous", but it is not
+proof of anything: with 612 callers into the main string routine, almost every
+reference in this game is computed rather than literal, so an absent literal
+load carries little weight. There is a data blob at `0x023C71` holding both, in
+an ascending run that excludes the `X:`/`Y:` editor labels - suggestive, and
+deliberately not treated as more than that, because three apparent structures
+dissolved under examination during this work and the caution is worth more than
+the pattern.
+
+**`$011C がた` is written as `s`, and this one is MEASURED rather than inferred -
+there is code behind it.** Enumerating every `LDA #imm / JMP $920C` in the ROM
+gives exactly five emit sites, four of them name-table strings: `$0118 たち` as
+`s`, this entry, `$011D みなさん` as `Everyone`, and `$011E あなた` as `You`.
+Three of the handlers are byte-identical apart from the string ID, and each
+calls the same test and emits nothing when it returns 1. **`がた` fires on the
+plural branch exactly as `たち` does**, so it takes the same English plural.
+
+That also disposes of the reading that had it attaching to `あなた` to make
+`あなたがた`: `あなた` is emitted on the *opposite* branch of its handler, the
+singular one, so `がた` and `あなた` are conditioned oppositely and can never
+both fire.
 
 **`*70A そうぞうを` is written, and it is the one case where their own text was
 changed.** It and `$070B ぜっする` are the two halves of 想像を絶する, "beyond
@@ -435,7 +463,7 @@ exactly how a translation acquires errors that nobody can later trace.
   6,539 messages is what they shipped, apart from a redundant marker symbol
   removed wherever it appeared, which carried no word. The build fails if any
   other symbol in any of their messages moves.
-- **It does not claim to be complete or correct.** 421 messages and 184 names
+- **It does not claim to be complete or correct.** 421 messages and 185 names
   were authored by someone who is not a professional translator, checked against
   a corpus rather than against a native speaker. Errors are mine. Reports are
   welcome.

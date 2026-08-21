@@ -834,3 +834,77 @@ rather than qualified into meaninglessness: their **dialogue** is untouched,
 verified symbol by symbol on every build, and exactly one name-table entry of
 theirs is changed, named, with the reason given. A promise that has acquired an
 exception is worth less than an accurate description of what was done.
+
+---
+
+## 15. Enumerate the emit sites, not the entry
+
+`$011C がた` was the last entry settled by measurement rather than argument, and
+it is the cleanest result of the whole effort. It is worth recording as a
+pattern because it is cheap and it is exhaustive.
+
+The entry is a runtime suffix, so the question was what it attaches to. Two
+readings demanded opposite English and picking wrong produced either `Yous` or
+`Slime all`, so nothing could be written until one was eliminated. Neighbours
+could not settle it: `$0118 たち` is `s` two entries away, and `$011E あなた` is
+`You` two entries the other way.
+
+**The measurement was to enumerate every site that can emit a name-table string
+through the message system.** One pattern, `LDA #imm` followed by `JMP $920C`,
+across the whole ROM. It returns **five sites**, four of them name-table
+strings:
+
+```
+$0118  たち      s
+$011C  がた      <- the entry in question
+$011D  みなさん  Everyone
+$011E  あなた    You
+```
+
+That is the complete family, and three of the handlers are **byte-identical
+apart from the string ID**:
+
+```
+JSL $C42B1C      the shared test
+... DEC A
+BEQ -> RTL       emit nothing when the result is 1
+LDA #$0118 / #$011C / #$011D
+JMP $920C        emit
+```
+
+`がた` fires on the plural branch exactly as `たち` does, so it takes the same
+English plural, `s`. And the `あなた` reading dies on the same evidence rather
+than on judgement: `あなた` is emitted on the OPPOSITE branch of its handler,
+the singular one, so `がた` and `あなた` are conditioned oppositely and **can
+never both fire**. `あなたがた` is not constructible from these handlers.
+
+**Why this beats what came before.** Every earlier attempt on this entry reasoned
+from what sits next to it. The emit-site enumeration does not care about
+position at all: it asks which instructions can put this string on screen, and
+there turned out to be one, with two siblings that name its category. **A
+complete enumeration of a small set beats any amount of reasoning about a large
+one.**
+
+### The same check, applied to two entries, returning nothing
+
+`$014D ばか` and `$014E かみ` were put through it and came back empty, which is
+worth recording as a result rather than a silence.
+
+Neither appears in the ability table. Neither is a JSL argument to any string
+routine. Both `LDA #imm` sites for `$014D` feed `$C0:0D0C`, which writes
+`$004202`, the hardware multiply register - so that is the number 333, not a
+string ID. `$014E`'s two sites write `$5E8E`, a general parameter slot used 136
+times across the ROM with all manner of immediates.
+
+**That is a stronger position than "the neighbours are ambiguous", and it is
+still not proof.** With 612 callers into the main string routine, nearly every
+reference in this game is computed rather than literal, so an absent literal
+load carries little weight on its own.
+
+There is a data blob at `0x023C71` containing both, inside an ascending run that
+excludes the `X:` and `Y:` editor labels. It is recorded as **suggestive and
+nothing more**. Three apparent structures dissolved under examination during
+this work - a "curated list" that was a segmented ascending run, a group of
+eight that could not be told from event bytecode, and a "record" for `$06FD`
+that was an index table past the end of the real one. The caution is worth more
+than the pattern.
