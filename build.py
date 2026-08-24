@@ -144,7 +144,7 @@ class BitWriter:
 # put. The same padding trick appears four bytes earlier in the deleted
 # `STA $3AC2` that causes the Info > All crash.
 #
-# This restores the original behaviour rather than adding anything:
+# This restores the original behavior rather than adding anything:
 #
 #   - the draw call is put back, at exact size, over the English 15 bytes plus
 #     the dead duplicate epilogue. No relocation. The write ends at $35A8, one
@@ -336,6 +336,58 @@ def apply_equip_fix(rom):
         rom[EQUIP_SITE + i] = 0xEA
     rom[EQUIP_HOOK:EQUIP_HOOK + n] = EQUIP_HOOK_CODE
     return n
+
+
+# ---------------------------------------------------------------------------
+# The in-battle spell target list
+#
+# CREDIT. This defect and the one-byte fix for it are the work of clymax of
+# ff5central.com. He found it, he wrote the patch, and he gave permission for it
+# to be carried here. It is his fix, not mine. What is mine is the account that
+# follows, which I worked out from the two ROMs after he sent it, and
+# docs/SPELL-TARGET.md has the long form of it.
+#
+# In battle, Fight then a spell that targets an ally offers the whole caravan
+# instead of the four characters actually in the fight.
+#
+# A menu is built by appending entry IDs to a list at $7E:3AC6, and an entry ID
+# is then looked up in two separate Enix tables:
+#
+#     $C5:88FA   3-byte long pointers    how the row is drawn
+#     $C3:A7C8   38 records of 3 bytes   which roster the menu enumerates
+#
+# In the Japanese ROM, $15 and $16 point at the same draw routine, which is what
+# makes $16 look like a spare slot. It is not spare. It has its own record in
+# the enumeration table, and Enix use it in a menu of their own.
+#
+# NoPrgress needed a narrower name field for English, so they repointed $16's
+# draw handler at a half-width routine of their own and swept thirteen menus
+# from $15 onto $16. That was safe, because $15 and $16 both enumerate list
+# kind $02 and only the field width moved. At $C3:49D4 the same substitution
+# landed on an entry that was $38, and $38 enumerates list kind $01:
+#
+#     kind $01   count $3F06, bounded at 4    the party in the battle
+#     kind $02   count $3F07, bounded at 8    everyone travelling, gated on $3F0A
+#
+# So that one menu started offering caravan members as spell targets. Thirteen
+# of the fourteen substitutions were harmless and the fourteenth was not.
+#
+# The byte written here is the byte Enix shipped. Nothing is hooked, no free
+# space is used, and no behavior is added.
+TARGET_SITE = 0x0349D4         # $C3:49D4, operand low byte of LDA #$0016
+TARGET_BEFORE = 0x16           # what the translation has
+TARGET_AFTER = 0x38            # what Enix has, and what clymax restores
+
+
+def apply_target_fix(rom):
+    """Restore Enix's entry ID at $C3:49D4. clymax of ff5central.com's fix."""
+    if rom[TARGET_SITE] != TARGET_BEFORE:
+        raise SystemExit(
+            'spell-target fix: 0x%06X holds 0x%02X, expected 0x%02X.%s'
+            '  Refusing to write.'
+            % (TARGET_SITE, rom[TARGET_SITE], TARGET_BEFORE, NL))
+    rom[TARGET_SITE] = TARGET_AFTER
+    return 1
 
 
 def apply_gold(rom):
@@ -694,6 +746,9 @@ def main(src, cand, names_path, dst):
 
     e = apply_equip_fix(rom)
     print('Tactics-equip hang fixed: %d-byte search mirrored from $C3:1D0E' % e)
+    apply_target_fix(rom)
+    print('in-battle spell target list fixed at $C3:49D4: entry $%02X -> $%02X '
+          '(clymax of ff5central.com)' % (TARGET_BEFORE, TARGET_AFTER))
     g = apply_gold(rom)
     print('gold window restored: %d bytes' % g)
 

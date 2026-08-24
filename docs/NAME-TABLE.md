@@ -154,7 +154,7 @@ which is why `Entice Dance` is stored as `Entice` + `$96` + `Dance`.
 ## Verification
 
 Because the table is repacked wholesale, the check that matters is not a byte
-diff but a behavioural one: **every one of the 2,512 string IDs is resolved the
+diff but a behavioral one: **every one of the 2,512 string IDs is resolved the
 way the game resolves it, in both the before and after ROMs, and compared.**
 187 changed to the intended text, 2,325 were untouched, none were wrong.
 

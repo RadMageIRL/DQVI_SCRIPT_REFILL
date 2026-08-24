@@ -2,7 +2,8 @@
 
 A patch that completes the untranslated messages in the **NoPrgress** English
 translation of *Dragon Quest VI: Maboroshi no Daichi* for the Super Famicom,
-and folds in two crash fixes.
+and folds in the menu fixes: two crashes, the Tactics-equip hang, the gold
+window, and the in-battle spell target list.
 
 ---
 
@@ -17,6 +18,12 @@ ninety-four.
 **DeJap** did the foundational Dragon Quest VI translation work that this line
 of hacks descends from, and their name belongs alongside NoPrgress's whenever
 this translation is discussed.
+
+**clymax of ff5central.com** found and fixed the in-battle spell target defect.
+That fix is his, not mine. He sent me the patch directly and gave permission
+for it to be carried here. I worked out afterwards why the byte he chose is the
+right one, and that account is mine, but the finding and the fix are his. See
+"The in-battle spell target list" below.
 
 Nothing here replaces, corrects or improves their translation. **Their dialogue
 is untouched**, and that is verified on every build rather than asserted: every
@@ -96,10 +103,10 @@ starts.
 The fix mirrors `$C3:1D0E`'s search into `$C3:1AB1`. The initial check and the
 redraw are untouched, so ordinary cursor movement is byte-identical.
 
-**One visible behavioural change.** The cursor may land on a different entry
+**One visible behavioral change.** The cursor may land on a different entry
 than before in edge cases, because it now searches down to the floor and up to
 the ceiling instead of stepping back once. That is `$C3:1D0E`'s intended
-behaviour and it is what the game does everywhere else, but it is a change you
+behavior and it is what the game does everywhere else, but it is a change you
 can see, not a pure bug fix, so it is stated rather than buried.
 
 It also removes a **redundant speech marker**, all 676 occurrences of the one
@@ -126,6 +133,39 @@ these fixes deliberately do not do.
 
 And it restores the **gold window on the info screen**, which the translation
 lost. See below.
+
+### The in-battle spell target list
+
+**This one is clymax of ff5central.com's fix, not mine.** He found the defect,
+he wrote the one-byte patch for it, and he gave permission for it to be carried
+here.
+
+In battle, choosing Fight and then a spell that targets an ally offers the whole
+caravan rather than the four characters actually in the fight. You can point at
+somebody who is not in the battle.
+
+The cause is a substitution made fourteen times, of which thirteen were
+harmless. A menu is built by appending entry IDs to a list, and an entry ID is
+looked up in two separate Enix tables: one decides how the row is drawn, the
+other decides which roster the menu enumerates. In the Japanese ROM, entry `$15`
+and entry `$16` share a draw routine, which makes `$16` look like a spare slot,
+and it is not one.
+
+The translation needed a narrower name field for English, so it repointed
+`$16`'s draw handler at a half-width routine of its own and swept thirteen menus
+from `$15` onto `$16`. Those thirteen were safe, because `$15` and `$16`
+enumerate the same roster and only the field width moved. The fourteenth
+substitution landed on an entry that was `$38`, and `$38` enumerates a different
+roster: the party in the battle rather than everyone travelling. So that one
+menu began listing the caravan.
+
+The fix restores the byte Enix shipped. Nothing is hooked, no free space is
+used, and no behavior is added. It is a revert, and it is one byte.
+
+[`docs/SPELL-TARGET.md`](docs/SPELL-TARGET.md) has the full account, with the
+addresses, the two tables and how the reading was verified against the Japanese
+ROM. There is an HTML copy of it beside it as
+[`docs/SPELL-TARGET.html`](docs/SPELL-TARGET.html).
 
 ## The speech marker
 
@@ -179,8 +219,8 @@ Nothing else moves. Only the gold window's own descriptor changes; the status
 window, the command menu and every other window are byte-identical to the ones
 NoPrgress shipped.
 
-**This restores original behaviour rather than adding anything.** The gold
-window is the game's, not ours. It was in Dragon Quest VI in 1995 and it is
+**This restores original behavior rather than adding anything.** The gold
+window is the game's, not mine. It was in Dragon Quest VI in 1995 and it is
 back.
 
 ## Applying it
@@ -188,8 +228,10 @@ back.
 **This is what you want if you just want to play.** One step, no Python.
 
 **One patch contains everything** - the 421 messages, the 187 names, both crash
-fixes and the gold window. There is nothing else to apply and no order to get
-right. Do not apply the menu-fix patch as well; this one already contains it.
+fixes, the Tactics-equip hang, the gold window and clymax's spell-target fix.
+There is nothing else to apply and no order to get right. Do not apply the
+menu-fix patch as well, and do not apply clymax's patch as well; this one
+already contains both.
 
 You need a **headerless** NoPrgress-translated ROM. Check it first:
 
@@ -227,11 +269,12 @@ dependencies.
 Check what you get, whichever route you used:
 
 ```
-result   CRC32 031A7ADD   SHA-1 bf274bcd343ccd7d8d20c58703a9494ed7b3e6c4
+result   CRC32 5AE41C1D   SHA-1 a56f86582ca1be63ae79c19894516acf2d129380
 ```
 
 That is the whole thing. **You are done** - the 421 messages, the 187 names,
-both crash fixes and the gold window are all in that one output file.
+both crash fixes, the Tactics-equip hang, the gold window and clymax's
+spell-target fix are all in that one output file.
 
 If the CRC32 does not match, your source ROM is not the one this targets. BPS
 records its expected source, so Flips will normally refuse a wrong ROM rather
@@ -263,7 +306,7 @@ python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt DQ6-Refill.
 
 ![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, restores the gold window, writes the name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
 
-If your output is not `031A7ADD`, the input ROM is not the one this targets.
+If your output is not `5AE41C1D`, the input ROM is not the one this targets.
 Check its CRC32 before anything else.
 
 The script refuses to write if the ROM is not what it expects. Every fix checks
@@ -331,7 +374,7 @@ so a location read `M194` and a battle action read `M6BA`. **186 are now
 written, leaving 208 in the release build.** Every figure here was measured
 against a ROM, and each says which ROM it describes:
 
-| | stock `B545C548` | release `031A7ADD` |
+| | stock `B545C548` | release `5AE41C1D` |
 |---|---|---|
 | entries displaying an identifier | **394** | **208** |
 | written by this patch | - | **186** |
@@ -526,11 +569,13 @@ guess costs a commit. An identifier on screen costs a player.
 
 - **NoPrgress** - the English translation. Nearly all of the text you will read.
 - **DeJap** - the foundational Dragon Quest VI translation work this descends from.
+- **clymax of ff5central.com** - found and fixed the in-battle spell target
+  defect. That fix is his work, carried here with his permission.
 - **Enix** - *Dragon Quest VI: Maboroshi no Daichi*, 1995.
 - The **RetroGameTalk** user whose report first established that the missing
   messages were dialogue rather than menu strings, which is what started this.
 
-## Licence
+## License
 
 The tooling and the authored English in this repository are MIT licensed. That
 covers this repository's contents only. It does not extend to the game, to the

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The in-battle spell target list</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --muted: #5a5a5a;
+    --rule: #d8d8d8;
+    --code-bg: #f4f4f4;
+    --accent: #7a3b00;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181a;
+      --fg: #e4e4e4;
+      --muted: #a0a0a0;
+      --rule: #34383c;
+      --code-bg: #1f2225;
+      --accent: #e0a55e;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 17px;
+    line-height: 1.6;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 5rem;
+    max-width: 46rem;
+  }
+  h1, h2, h3 {
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.25;
+    font-weight: 600;
+  }
+  h1 { font-size: 1.7rem; margin: 0 0 .4rem; }
+  h2 {
+    font-size: 1.22rem;
+    margin: 2.6rem 0 .8rem;
+    padding-top: .9rem;
+    border-top: 1px solid var(--rule);
+  }
+  h3 { font-size: 1.02rem; margin: 1.8rem 0 .5rem; }
+  p, li { margin: 0 0 1rem; }
+  ul { padding-left: 1.3rem; }
+  a { color: var(--accent); }
+  code, pre {
+    font-family: Consolas, "DejaVu Sans Mono", Menlo, monospace;
+    font-size: .855em;
+  }
+  code { background: var(--code-bg); padding: .1em .32em; border-radius: 3px; }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: .85rem 1rem;
+    overflow-x: auto;
+    line-height: 1.45;
+  }
+  pre code { background: none; padding: 0; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0 0 1.2rem;
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: .9rem;
+  }
+  th, td {
+    text-align: left;
+    padding: .45rem .6rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  th { font-weight: 600; }
+  .lede {
+    font-size: 1.02rem;
+    border-left: 3px solid var(--accent);
+    padding: .1rem 0 .1rem 1rem;
+    margin: 0 0 1.6rem;
+  }
+  .sub { color: var(--muted); font-size: .92rem; margin: 0 0 2rem; }
+  .note { color: var(--muted); font-size: .93rem; }
+</style>
+</head>
+<body>
+
+<h1>The in-battle spell target list</h1>
+<p class="sub">DQ6 Script Refill, v3.0. Dragon Quest VI: Maboroshi no Daichi,
+NoPrgress English translation.</p>
+
+<p class="lede"><strong>This fix is clymax of ff5central.com's work, not
+mine.</strong> He found the defect and he wrote the one-byte patch for it. He
+sent me the patch directly and gave permission for it to be carried in this
+one.</p>
+
+<p>What follows is my account of why his byte is the right byte, worked out from
+the two ROMs after he sent it. The reading is mine. The finding and the fix are
+his, and this page exists partly because he asked to see the explanation.</p>
+
+<h2>What the player sees</h2>
+
+<p>In battle, choose Fight, then a spell that targets an ally. The list of
+targets offers the whole caravan rather than the four characters who are in the
+fight. You can point the cursor at somebody who is not there.</p>
+
+<p>It only shows with somebody in the caravan. Before the caravan exists, and
+while it is empty, the menu behaves correctly, which is part of why it went
+unnoticed.</p>
+
+<h2>The patch</h2>
+
+<p>One record, one byte.</p>
+
+<pre><code>offset 0x0349D4   size 1   data 38</code></pre>
+
+<p>The ROM is HiROM and headerless, so file offset <code>X</code> is SNES
+<code>$C0:0000 + X</code> and <code>0x0349D4</code> is <code>$C3:49D4</code>.
+That byte is the low half of an immediate operand:</p>
+
+<pre><code>            NoPrgress                        Enix, and after the fix
+$C3:49D3    A9 16 00   LDA #$0016            A9 38 00   LDA #$0038
+$C3:49D6    22 95 7C C3  JSL $C37C95         22 95 7C C3  JSL $C37C95</code></pre>
+
+<p><strong>The value being written is the value the Japanese ROM already
+has</strong>, and the bytes on either side of it are identical in both ROMs.
+This is a revert, not new code. In this build it is applied by
+<code>apply_target_fix</code> in <code>build.py</code>, which refuses to run if
+the site does not hold <code>0x16</code> first.</p>
+
+<h2>What the site is</h2>
+
+<p><code>$C3:7C95</code> appends one byte to a list at <code>$7E:3AC6</code>,
+counted by <code>$7E:3ADA</code>. So <code>LDA #imm : JSL $C37C95</code> means
+"append menu entry <em>imm</em>". There are 402 such calls in the ROM, forming
+76 menus.</p>
+
+<p>The menu here is built at <code>$C3:49BA</code>:</p>
+
+<pre><code>$C3:49BA   JSL $C3736C
+           entries:  $6F  $87  $01  [$38 -&gt; $16]  $22  $8A
+           LDX #$0003
+           JSL $C37854</code></pre>
+
+<p><code>LDX #$0003</code> is an index, not a count. <code>$C3:7854</code>
+stores it at <code>$3ABE</code>, and <code>$C3:7787</code> then reads
+<code>$3AC6,X</code> at that index and hands the result to
+<code>$C3:A6E1</code>. Index 3 is the fourth entry, which is exactly the byte in
+question. Of the six entries in this menu, the one clymax changes is the one the
+game singles out to decide what the menu enumerates.</p>
+
+<h2>Why one substitution out of fourteen broke</h2>
+
+<p>An entry ID is looked up in <strong>two</strong> separate Enix tables:</p>
+
+<table>
+  <thead>
+    <tr><th>Table</th><th>Keyed by</th><th>Decides</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>$C5:88FA</code>, 3-byte long pointers</td><td>entry ID</td><td>how the row is <strong>drawn</strong></td></tr>
+    <tr><td><code>$C3:A7C8</code>, 38 records of 3 bytes</td><td>entry ID</td><td>which roster is <strong>enumerated</strong></td></tr>
+  </tbody>
+</table>
+
+<p>For the three IDs that matter:</p>
+
+<pre><code>              draw ($C5:88FA)                enumerate ($C3:A7C8)
+        Enix           NoPrgress
+$15     $C3:8744       $C3:8744  unchanged   $C3:A83A
+$16     $C3:8744       $C3:99A6  REPOINTED   $C3:A85F
+$38     $C3:87B4       $C3:87B4  unchanged   $C3:A896</code></pre>
+
+<p>In Enix's ROM, <code>$15</code> and <code>$16</code> draw through the same
+routine. That is what makes <code>$16</code> look like a spare slot. It is not
+spare: it has its own record in the enumeration table, and Enix use it in a menu
+of their own at <code>$C3:5D39</code>.</p>
+
+<p><strong>The enumeration table is byte-identical in both ROMs.</strong>
+NoPrgress changed six entries of the draw table, <code>$16</code> among them,
+and none of the enumeration table. That asymmetry is the whole defect. Repointing
+how something draws also changes what it enumerates, because one ID keys
+both.</p>
+
+<p>The reason for repointing <code>$16</code> was reasonable. Their new routine
+differs from Enix's in a single value:</p>
+
+<pre><code>$C3:8744 (EN)   LDX $3AB4 / JSL $C44FA1 : 02 FE FF / LDX #$0008 / JSL $C3FA42
+$C3:99A6 (EN)   LDX $3AB4 / JSL $C44FA1 : 02 FE FF / LDX #$0004 / JSL $C3FA42
+$C3:87B4 (EN)   LDX $3AB4 / JSL $C44FA1 : 01 FE FF / LDX #$0004 / JSL $C3FA42</code></pre>
+
+<p><code>$C3:FA42</code> is their own helper: it resolves the string ID in
+<code>A</code> and draws exactly <code>X</code> characters, padding past the
+terminator. So <code>$8</code> and <code>$4</code> are a field width, and their
+<code>$16</code> is <code>$15</code> at half the width. That is an English
+fitting change and there is nothing wrong with it.</p>
+
+<p>They then swept thirteen menus from <code>$15</code> to <code>$16</code> to
+get the narrower field, and at <code>$C3:49D4</code> applied the same
+<code>$16</code> to an entry that was <code>$38</code>.</p>
+
+<p>The first inline byte to <code>$C4:2B1C</code> is a list kind:</p>
+
+<pre><code>$C3:A83A   ($15)   JSL $C42B1C : 02 FD      kind $02
+$C3:A85F   ($16)   JSL $C42B1C : 02 FF      kind $02
+$C3:A896   ($38)   JSL $C42B1C : 01 FD      kind $01</code></pre>
+
+<p><strong><code>$15</code> and <code>$16</code> are both kind
+<code>$02</code>.</strong> They differ in where the count comes back and in one
+extra filter, not in which roster they walk. So the thirteen <code>$15</code> to
+<code>$16</code> edits moved the field width and left the list alone.</p>
+
+<p><strong><code>$38</code> is kind <code>$01</code>.</strong> The fourteenth
+edit changed the list.</p>
+
+<p><code>$C4:2B1C</code> returns the list length, and the kind selects it in
+<code>$C4:2C6F</code>:</p>
+
+<pre><code>kind $01  -&gt;  $C4:2CEC    count = $3F06,  bounded at 4
+kind $02  -&gt;  $C4:2D09    count = $3F07,  bounded at 8
+                          but only if ($3F0A &amp; 1) and not ($3F0A &amp; 4);
+                          otherwise it falls through to the kind $01 path</code></pre>
+
+<p><code>$3F06</code> and <code>$3F07</code> are incremented together at
+<code>$C4:2F7E</code> and <code>$C4:2F81</code> and decremented separately at
+<code>$C4:3455</code> and <code>$C4:346B</code>. With bounds of 4 and 8 and a
+flag that gates the larger one, <code>$3F06</code> is the party in the battle and
+<code>$3F07</code> is everyone travelling. The behavior on screen confirms it: a
+target list that offers caravan members is those two rosters doing exactly what
+they are read to do here.</p>
+
+<p>That is also why the fault needs a non-empty caravan. <code>$3F0A</code>
+gates kind <code>$02</code>, and with the gate closed it falls through to the
+kind <code>$01</code> path and is correct.</p>
+
+<h2>The window was resized to match</h2>
+
+<p>Worth recording, because it says something about how the change was made.</p>
+
+<pre><code>         p0 p1 p2 p3 ...
+JP       0e 12 0f 03      Enix
+EN       0e 12 12 09      NoPrgress</code></pre>
+
+<p>This menu's record in the table at <code>$C5:7B67</code> was also edited. 107
+of the 249 records were resized for English, so a resize on its own means
+nothing. But of the 36 records whose <code>p3</code> changed, <strong>35 changed
+by exactly one</strong>. This one changed by six, 3 to 9, and it is the only one
+that did.</p>
+
+<p>Read plainly, the list got longer and the window was made taller to fit it.
+So this was a deliberate change with a consequence further down that was not
+foreseen, rather than a careless find and replace. It does not change where the
+defect is.</p>
+
+<h2>What this fix does not do</h2>
+
+<p>It reverts the entry ID and leaves the window resize alone, so the target box
+is still the nine-row one sized for eight, now with at most four names in it.
+Enix themselves pair a <code>$38</code> list with a nine-row window elsewhere in
+the table, at record 122, so the combination is not unprecedented.</p>
+
+<p>I have deliberately not touched that. The fix is clymax's and it does what he
+wrote it to do. Changing somebody else's patch because I have an opinion about
+its edges is not mine to do.</p>
+
+<h2>Whose defect this was</h2>
+
+<p>NoPrgress's. The byte is theirs, the Japanese ROM has Enix's value, and the
+table that gives the value its meaning is untouched in both ROMs.</p>
+
+<p>That distinction matters, because the Tactics-equip hang in this same patch
+looks similar and is not the same thing at all. That one is Enix's code,
+byte-identical in both ROMs, and only English data drives it into failing. This
+one is a straight regression: the English ROM has a different byte and behaves
+differently because of it.</p>
+
+<h2>Checking it</h2>
+
+<pre><code>python build.py "DQ6 NoPrgress.sfc" candidates-en.txt nametable-en.txt out.sfc</code></pre>
+
+<p><code>build.py</code> prints the substitution as it applies it and refuses to
+write if <code>$C3:49D4</code> does not hold <code>0x16</code> going in. The
+finished build is <code>CRC32 5AE41C1D</code>.</p>
+
+<p>On a screen, which is the only check that means anything here: get somebody
+into the caravan, start a battle, choose Fight and a spell that targets an ally,
+and count the names offered. Four, not the caravan.</p>
+
+<p class="note">Markdown copy of this page: <a href="SPELL-TARGET.md">SPELL-TARGET.md</a>.
+The fix described here is the work of clymax of ff5central.com and is carried
+with his permission.</p>
+
+</body>
+</html>

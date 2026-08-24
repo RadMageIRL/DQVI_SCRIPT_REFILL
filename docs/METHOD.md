@@ -1001,7 +1001,7 @@ never tested the carry the bounded one returns.
 That matters for what a fix is allowed to be. **A bound is a guard when you
 invent it and a repair when the codebase already contains it**, and the same is
 true of an error convention nobody honoured. Look for the working twin before
-deciding a defect has no intended behaviour to restore.
+deciding a defect has no intended behavior to restore.
 
 ---
 
@@ -1058,7 +1058,7 @@ out to be a broken duplicate of `$C3:1D0E`, which saves the ordinal, tests the
 carry, checks the floor, and falls back to searching upward. Every piece that
 had been guessed at across five builds was already written, 700 bytes away.
 
-**Before inventing behaviour for a defect, look for the working twin.** Twice in
+**Before inventing behavior for a defect, look for the working twin.** Twice in
 this project the correct implementation was already in the ROM - the bounded
 `$C3:1B1E` beside the unbounded `$C3:1B6E`, and `$C3:1D0E` beside `$C3:1AB1`. A
 fix that restores the codebase's own convention needs no justification. One that

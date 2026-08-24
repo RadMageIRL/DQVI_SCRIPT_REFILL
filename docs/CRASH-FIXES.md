@@ -94,10 +94,10 @@ each moved the fault to the next one.
 free space at `$C3:FC80`. The initial check and the redraw are untouched, so
 ordinary cursor movement is byte-identical.
 
-**The behavioural change, stated plainly.** The cursor may land on a different
+**The behavioral change, stated plainly.** The cursor may land on a different
 entry than before in edge cases, because it now searches down to the floor and
 up to the ceiling instead of stepping back once. That is `$C3:1D0E`'s intended
-behaviour and what the game does everywhere else, but it is a visible change
+behavior and what the game does everywhere else, but it is a visible change
 rather than a pure bug fix.
 
 **Verification.** Confirmed in play, then checked against a trace of the fixed
