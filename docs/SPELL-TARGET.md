@@ -169,12 +169,11 @@ than a careless find and replace. It does not change where the defect is.
 It reverts the entry ID and leaves the window resize alone, so the target box is
 still the nine-row one sized for eight, now with at most four names in it.
 
-What that looks like: the same box as before with fewer names in it and empty
-rows below the last one. The height comes from the record rather than from the
-number of names in the list, which is why the record had to be edited to begin
-with, so reverting the list does not shrink the box back. That is a reading of
-the record and it has not been checked on a screen yet. Enix themselves pair a
-`$38` list with a nine-row window elsewhere in the table, at record 122, so the
+What that looks like: the same box as before with fewer names in it. The height
+comes from the record rather than from the number of names in the list, which is
+why the record had to be edited to begin with, so reverting the list does not
+shrink the box back. It reads correctly in play. Enix themselves pair a `$38`
+list with a nine-row window elsewhere in the table, at record 122, so the
 combination is one the game already ships.
 
 I have deliberately not touched that. The fix is clymax's and it does what he
@@ -204,4 +203,5 @@ python build.py "DQ6 NoPrgress.sfc" candidates-en.txt nametable-en.txt out.sfc
 
 On a screen, which is the only check that means anything here: get somebody into
 the caravan, start a battle, choose Fight and a spell that targets an ally, and
-count the names offered. No caravan members should appear.
+count the names offered. No caravan members appear, and the window reads
+correctly. Confirmed in play.

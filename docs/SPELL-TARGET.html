@@ -266,11 +266,10 @@ defect is.</p>
 <p>It reverts the entry ID and leaves the window resize alone, so the target box
 is still the nine-row one sized for eight, now with at most four names in it.</p>
 
-<p>What that looks like: the same box as before with fewer names in it and empty
-rows below the last one. The height comes from the record rather than from the
-number of names in the list, which is why the record had to be edited to begin
-with, so reverting the list does not shrink the box back. That is a reading of
-the record and it has not been checked on a screen yet. Enix themselves pair a
+<p>What that looks like: the same box as before with fewer names in it. The
+height comes from the record rather than from the number of names in the list,
+which is why the record had to be edited to begin with, so reverting the list
+does not shrink the box back. It reads correctly in play. Enix themselves pair a
 <code>$38</code> list with a nine-row window elsewhere in the table, at record
 122, so the combination is one the game already ships.</p>
 
@@ -299,7 +298,8 @@ finished build is <code>CRC32 5AE41C1D</code>.</p>
 
 <p>On a screen, which is the only check that means anything here: get somebody
 into the caravan, start a battle, choose Fight and a spell that targets an ally,
-and count the names offered. No caravan members should appear.</p>
+and count the names offered. No caravan members appear, and the window reads
+correctly. Confirmed in play.</p>
 
 <p class="note">Markdown copy of this page: <a href="SPELL-TARGET.md">SPELL-TARGET.md</a>.
 The fix described here is the work of clymax of ff5central.com and is carried
