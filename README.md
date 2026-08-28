@@ -303,7 +303,7 @@ fetched from anywhere else.
 python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt DQ6-Refill.sfc
 ```
 
-![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, restores the gold window, writes the name-table entries, decodes 6,960 messages, substitutes 421, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
+![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, fixes the Tactics-equip hang and the in-battle spell target list, restores the gold window, writes the name-table entries, decodes 6,960 messages, substitutes 421, drops the redundant speech marker, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
 
 If your output is not `5AE41C1D`, the input ROM is not the one this targets.
 Check its CRC32 before anything else.
