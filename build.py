@@ -341,14 +341,14 @@ def apply_equip_fix(rom):
 # ---------------------------------------------------------------------------
 # The in-battle spell target list
 #
-# CREDIT. This defect and the one-byte fix for it are the work of clymax of
-# ff5central.com. He found it, he wrote the patch, and he gave permission for it
-# to be carried here. It is his fix, not mine. What is mine is the account that
-# follows, which I worked out from the two ROMs after he sent it, and
+# CREDIT. The one-byte fix for this defect is the work of clymax of
+# ff5central.com. He wrote the patch and he gave permission for it to be carried
+# here. It is his fix, not mine. What is mine is the account that follows, which
+# I worked out from the two ROMs after I received it, and
 # docs/SPELL-TARGET.md has the long form of it.
 #
 # In battle, Fight then a spell that targets an ally offers the whole caravan
-# instead of the four characters actually in the fight.
+# instead of just the character or characters actually in the fight.
 #
 # A menu is built by appending entry IDs to a list at $7E:3AC6, and an entry ID
 # is then looked up in two separate Enix tables:

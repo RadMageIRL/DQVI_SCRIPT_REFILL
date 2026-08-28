@@ -19,10 +19,10 @@ ninety-four.
 of hacks descends from, and their name belongs alongside NoPrgress's whenever
 this translation is discussed.
 
-**clymax of ff5central.com** found and fixed the in-battle spell target defect.
-That fix is his, not mine. He sent me the patch directly and gave permission
-for it to be carried here. I worked out afterwards why the byte he chose is the
-right one, and that account is mine, but the finding and the fix are his. See
+**clymax of ff5central.com** fixed the in-battle spell target defect. That fix
+is his, not mine. He sent me the patch directly and gave permission for it to be
+carried here. I worked out afterwards why the byte he chose is the right one,
+and that account is mine, but the fix is his. See
 "The in-battle spell target list" below.
 
 Nothing here replaces, corrects or improves their translation. **Their dialogue
@@ -136,13 +136,12 @@ lost. See below.
 
 ### The in-battle spell target list
 
-**This one is clymax of ff5central.com's fix, not mine.** He found the defect,
-he wrote the one-byte patch for it, and he gave permission for it to be carried
-here.
+**This one is clymax of ff5central.com's fix, not mine.** He wrote the one-byte
+patch for it and he gave permission for it to be carried here.
 
 In battle, choosing Fight and then a spell that targets an ally offers the whole
-caravan rather than the four characters actually in the fight. You can point at
-somebody who is not in the battle.
+caravan rather than just the character or characters actually in the fight. You
+can point at somebody who is not in the battle.
 
 The cause is a substitution made fourteen times, of which thirteen were
 harmless. A menu is built by appending entry IDs to a list, and an entry ID is
@@ -569,8 +568,8 @@ guess costs a commit. An identifier on screen costs a player.
 
 - **NoPrgress** - the English translation. Nearly all of the text you will read.
 - **DeJap** - the foundational Dragon Quest VI translation work this descends from.
-- **clymax of ff5central.com** - found and fixed the in-battle spell target
-  defect. That fix is his work, carried here with his permission.
+- **clymax of ff5central.com** - fixed the in-battle spell target defect. That
+  fix is his work, carried here with his permission.
 - **Enix** - *Dragon Quest VI: Maboroshi no Daichi*, 1995.
 - The **RetroGameTalk** user whose report first established that the missing
   messages were dialogue rather than menu strings, which is what started this.

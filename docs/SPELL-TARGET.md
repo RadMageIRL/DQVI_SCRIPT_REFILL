@@ -2,20 +2,20 @@
 
 **This fix is clymax of ff5central.com's work, not mine.**
 
-He found the defect and he wrote the one-byte patch for it. He sent me the patch
-directly and gave permission for it to be carried in this one.
+He wrote the one-byte patch for it. He sent me the patch directly and gave
+permission for it to be carried in this one.
 
 What follows is my account of why his byte is the right byte, worked out from
-the two ROMs after he sent it. The reading is mine. The finding and the fix are
-his, and this document exists partly because he asked to see the explanation.
+the two ROMs after I received it. The reading is mine. The fix is his, and this
+document exists partly because he asked to see the explanation.
 
 ---
 
 ## What the player sees
 
 In battle, choose Fight, then a spell that targets an ally. The list of targets
-offers the whole caravan instead of the four characters who are in the fight.
-You can point the cursor at somebody who is not there.
+offers the whole caravan instead of just the character or characters who are in
+the fight. You can point the cursor at somebody who is not there.
 
 It only shows with somebody in the caravan. Before the caravan exists, and while
 it is empty, the menu behaves correctly, which is part of why it went unnoticed.
@@ -156,17 +156,26 @@ records were resized for English, so a resize on its own means nothing. But of
 the 36 records whose `p3` changed, **35 changed by exactly one**. This one
 changed by six, 3 to 9, and it is the only one that did.
 
-Read plainly, the list got longer and the window was made taller to fit it. So
-this was a deliberate change with a consequence further down that was not
-foreseen, rather than a careless find and replace. It does not change where the
-defect is.
+The list got longer in rows, not in width. `$16` enumerates everyone
+travelling, bounded at eight, where `$38` enumerates only those in the fight,
+bounded at four, so a list of at most four names became a list of at most eight
+and the window went from three rows to nine to hold them. Read plainly, they saw
+the list get longer and made the window taller to fit it. So this was a
+deliberate change with a consequence further down that was not foreseen, rather
+than a careless find and replace. It does not change where the defect is.
 
 ## What this fix does not do
 
 It reverts the entry ID and leaves the window resize alone, so the target box is
-still the nine-row one sized for eight, now with at most four names in it. Enix
-themselves pair a `$38` list with a nine-row window elsewhere in the table, at
-record 122, so the combination is not unprecedented.
+still the nine-row one sized for eight, now with at most four names in it.
+
+What that looks like: the same box as before with fewer names in it and empty
+rows below the last one. The height comes from the record rather than from the
+number of names in the list, which is why the record had to be edited to begin
+with, so reverting the list does not shrink the box back. That is a reading of
+the record and it has not been checked on a screen yet. Enix themselves pair a
+`$38` list with a nine-row window elsewhere in the table, at record 122, so the
+combination is one the game already ships.
 
 I have deliberately not touched that. The fix is clymax's and it does what he
 wrote it to do. Changing somebody else's patch because I have an opinion about
@@ -195,4 +204,4 @@ python build.py "DQ6 NoPrgress.sfc" candidates-en.txt nametable-en.txt out.sfc
 
 On a screen, which is the only check that means anything here: get somebody into
 the caravan, start a battle, choose Fight and a spell that targets an ally, and
-count the names offered. Four, not the caravan.
+count the names offered. No caravan members should appear.
