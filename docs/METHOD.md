@@ -232,7 +232,7 @@ ROM you supply and prints; none of them writes anything.*
 ## 7. Read this section first: a plausible fallback will hide a subsystem
 
 This is the most important thing this project learned, and it is a warning
-about your own tooling, not a note about ours. Every reader of this document
+about your own tooling, not a note about mine. Every reader of this document
 has written the line below, or one like it, and it is worth going to look.
 
 The single most damaging line of code in this project was in the analysis
@@ -772,7 +772,7 @@ $06EB  has one, index 390
 So `し` is a name-table slot that nothing selects. It is not a translation gap;
 it belongs with the internal entries. And the same measurement cuts the other
 way for `$06EB`, which does have a record, mid-run, so it is a real selectable
-action whose name we still cannot read. The "unused slot" explanation died for
+action whose name I still cannot read. The "unused slot" explanation died for
 that one at the same moment it was confirmed for this one.
 
 **One trap worth naming.** Striding blindly past the end of the table produced a
@@ -791,7 +791,7 @@ reference check produced the right one in a single lookup.
 
 ---
 
-## 14. When their rendering blocks ours, and the rule that keeps it narrow
+## 14. When their rendering blocks mine, and the rule that keeps it narrow
 
 This patch changed one piece of NoPrgress's own text. It is the only one, and
 the circumstances are worth stating exactly, because the reasoning generalizes
