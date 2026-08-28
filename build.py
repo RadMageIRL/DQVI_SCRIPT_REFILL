@@ -342,9 +342,9 @@ def apply_equip_fix(rom):
 # The in-battle spell target list
 #
 # CREDIT. The one-byte fix for this defect is the work of clymax of
-# ff5central.com. He wrote the patch and he gave permission for it to be carried
-# here. It is his fix, not mine. What is mine is the account that follows, which
-# I worked out from the two ROMs after I received it, and
+# ff5central.com. He wrote the patch, and it is carried here with his
+# permission. It is his fix, not mine. What is mine is the account that follows,
+# which I worked out from the two ROMs afterwards, and
 # docs/SPELL-TARGET.md has the long form of it.
 #
 # In battle, Fight then a spell that targets an ally offers the whole caravan

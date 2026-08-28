@@ -20,9 +20,9 @@ of hacks descends from, and their name belongs alongside NoPrgress's whenever
 this translation is discussed.
 
 **clymax of ff5central.com** fixed the in-battle spell target defect. That fix
-is his, not mine. He sent me the patch directly and gave permission for it to be
-carried here. I worked out afterwards why the byte he chose is the right one,
-and that account is mine, but the fix is his. See
+is his, not mine, and it is carried here with his permission. I worked out
+afterwards why the byte he chose is the right one, and that account is mine, but
+the fix is his. See
 "The in-battle spell target list" below.
 
 Nothing here replaces, corrects or improves their translation. **Their dialogue
@@ -137,7 +137,7 @@ lost. See below.
 ### The in-battle spell target list
 
 **This one is clymax of ff5central.com's fix, not mine.** He wrote the one-byte
-patch for it and he gave permission for it to be carried here.
+patch for it, and it is carried here with his permission.
 
 In battle, choosing Fight and then a spell that targets an ally offers the whole
 caravan rather than just the character or characters actually in the fight. You

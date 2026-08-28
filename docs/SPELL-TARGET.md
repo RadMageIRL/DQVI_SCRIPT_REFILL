@@ -2,12 +2,11 @@
 
 **This fix is clymax of ff5central.com's work, not mine.**
 
-He wrote the one-byte patch for it. He sent me the patch directly and gave
-permission for it to be carried in this one.
+He wrote the one-byte patch for it, and it is carried in this one with his
+permission.
 
 What follows is my account of why his byte is the right byte, worked out from
-the two ROMs after I received it. The reading is mine. The fix is his, and this
-document exists partly because he asked to see the explanation.
+the two ROMs afterwards. The reading is mine. The fix is his.
 
 ---
 
