@@ -232,11 +232,30 @@ There is nothing else to apply and no order to get right. Do not apply the
 menu-fix patch as well, and do not apply clymax's patch as well; this one
 already contains both.
 
-You need a **headerless** NoPrgress-translated ROM. Check it first:
+You need a **headerless** NoPrgress-translated ROM. There are two builds of it
+in circulation and they are the same translation:
 
 ```
-source   CRC32 B545C548
+source   CRC32 B545C548     what this patch targets
+         CRC32 276D9893     what RHDN translation 344 produces
 ```
+
+**They differ in four bytes**, at `0x00FFDC`-`0x00FFDF`, and in nothing else.
+NoPrgress's patch leaves the Japanese ROM's own internal checksum in place
+rather than recomputing it over the patched data, so a freshly patched ROM
+carries `$5E8F`, the Japanese value, while the copy that circulates in ROM sets
+carries `$D17A`, which is correct for the translated data. Measured: RHDN 344
+applied to the Japanese ROM (`33304519`) with a 512-byte header gives
+`8D2AEBD5`, and `276D9893` once the header is removed.
+
+**If yours is `276D9893`, use `patchRM.py` or `build.py`.** Both accept it,
+correct those four bytes in memory and produce the identical released ROM. Your
+file is not modified.
+
+**Flips will refuse it, and that is the format doing its job.** BPS records the
+CRC32 of the ROM it expects and will not apply to anything else. Regenerating
+the patch against the other build would only move the problem onto everyone who
+already has this one.
 
 Then apply `DQ6-SFC-NoPrgress-RM-ScriptRefill.bps` with
 [Flips](https://www.romhacking.net/utilities/1040/) or any equivalent.
@@ -262,8 +281,8 @@ python patchRM.py "DQ6 NoPrgress.sfc"
 ![patchRM.py run from a Windows command prompt in a folder holding only the ROM, the .bps and the script: it prints the patch and source CRC32s, writes DQ6 NoPrgress (Script Refill).sfc, and reports all checksums verified](screenshots/patchRM-run.png)
 
 It checks the patch's own CRC32, refuses a wrong or already-patched ROM, and
-verifies the output before telling you it worked. Standard-library Python 3, no
-dependencies.
+verifies the output before telling you it worked. It accepts either source ROM
+above. Standard-library Python 3, no dependencies.
 
 Check what you get, whichever route you used:
 

@@ -196,6 +196,10 @@ differently because of it.
 python build.py "DQ6 NoPrgress.sfc" candidates-en.txt nametable-en.txt out.sfc
 ```
 
+The source ROM can be either NoPrgress build, `B545C548` or the RHDN
+translation 344 output `276D9893`; they differ only in the internal checksum and
+both produce the same result.
+
 `build.py` prints the substitution as it applies it and refuses to write if
 `$C3:49D4` does not hold `0x16` going in. The finished build is
 `CRC32 5AE41C1D`.

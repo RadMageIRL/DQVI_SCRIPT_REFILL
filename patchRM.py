@@ -12,6 +12,11 @@ CRC32, the source ROM's CRC32 before applying, and the output's CRC32 after. A
 wrong ROM is refused rather than silently producing something broken, which is
 the whole reason to prefer BPS over IPS.
 
+It accepts either of the two NoPrgress ROMs in circulation: CRC32 B545C548,
+and CRC32 276D9893, which is what RHDN translation 344 produces and which is
+the same translation with the Japanese ROM's internal checksum still in it.
+The four bytes are corrected in memory; your file is not modified.
+
 Standard-library Python 3 only. No dependencies, nothing to install.
 
 The result is identical to what Flips produces from the same patch:
@@ -28,6 +33,22 @@ import zlib
 EXPECT_SRC_CRC = 0xB545C548
 EXPECT_DST_CRC = 0x5AE41C1D
 DEFAULT_PATCH = 'DQ6-SFC-NoPrgress-RM-ScriptRefill.bps'
+
+# The ordinary route is RHDN translation 344 applied to a headered Japanese
+# ROM. That produces the same translation as EXPECT_SRC_CRC, byte for byte,
+# except for four bytes: the patch leaves the Japanese ROM's own internal
+# checksum in place rather than recomputing it for the patched data.
+#
+# MEASURED, 2026-08-29: RHDN 344 applied to CRC32 33304519 with a 512-byte
+# header gives CRC32 8D2AEBD5; with the header removed it gives 276D9893, which
+# differs from B545C548 only at 0x00FFDC-0x00FFDF.
+#
+# Both are accepted here. The four bytes are corrected in memory, and the file
+# on disk is never touched.
+RHDN_SRC_CRC = 0x276D9893
+CHECKSUM_AT = 0x00FFDC
+CHECKSUM_STALE = bytes([0x70, 0xA1, 0x8F, 0x5E])   # complement $A170, sum $5E8F
+CHECKSUM_FIXED = bytes([0x85, 0x2E, 0x7A, 0xD1])   # complement $2E85, sum $D17A
 
 
 class Fail(Exception):
@@ -61,6 +82,30 @@ def read_varint(patch, pos):
         value += shift
 
 
+def normalize(src):
+    """Accept the ROM the ordinary RHDN route produces.
+
+    Returns (rom, note). The ROM comes back with the internal checksum
+    corrected if that is all that was different, and note says so. Anything
+    else is returned untouched, so a genuinely wrong ROM still fails the
+    check in apply_bps rather than being quietly adjusted into something.
+    """
+    if crc32(src) != RHDN_SRC_CRC:
+        return src, None
+    if src[CHECKSUM_AT:CHECKSUM_AT + 4] != CHECKSUM_STALE:
+        return src, None
+    out = bytearray(src)
+    out[CHECKSUM_AT:CHECKSUM_AT + 4] = CHECKSUM_FIXED
+    out = bytes(out)
+    if crc32(out) != EXPECT_SRC_CRC:
+        return src, None
+    return out, ('that is the RHDN translation 344 build. It is this same '
+                 'translation with the\n           Japanese ROM\'s internal '
+                 'checksum still in place. Corrected in memory,\n           '
+                 'four bytes at 0x%06X. Your file was not modified.'
+                 % CHECKSUM_AT)
+
+
 def apply_bps(src, patch):
     """Apply a BPS patch, checking every checksum it carries."""
     if patch[:4] != b'BPS1':
@@ -73,13 +118,19 @@ def apply_bps(src, patch):
     want_src = int.from_bytes(patch[-12:-8], 'little')
     want_dst = int.from_bytes(patch[-8:-4], 'little')
     if crc32(src) != want_src:
+        detail = ('\n\n  It needs the NoPrgress-translated ROM, CRC32 %08X, or the\n'
+                  '  RHDN 344 build, CRC32 %08X, which this script corrects for you.'
+                  % (EXPECT_SRC_CRC, RHDN_SRC_CRC))
+        if len(src) == 0x400000 + 512:
+            detail = ('\n\n  That file is 512 bytes larger than a headerless ROM, so it\n'
+                      '  carries a copier header. Remove the header and try again.')
+        elif len(src) != 0x400000:
+            detail = ('\n\n  That file is %s bytes. A headerless SNES DQ6 image is\n'
+                      '  4,194,304.' % '{:,}'.format(len(src)))
         raise Fail(
             'wrong source ROM.\n'
             '  this patch expects  CRC32 %08X\n'
-            '  the ROM you gave is CRC32 %08X\n'
-            '\n'
-            '  It needs a HEADERLESS NoPrgress-translated ROM. A headered copy\n'
-            '  is 512 bytes larger and will not match.' % (want_src, crc32(src)))
+            '  the ROM you gave is CRC32 %08X%s' % (want_src, crc32(src), detail))
 
     pos = 4
     src_size, pos = read_varint(patch, pos)
@@ -159,6 +210,10 @@ def main(argv):
     print(describe('source', rom_path, src))
     if crc32(src) == EXPECT_DST_CRC:
         raise Fail('that ROM is already patched. Start from an unpatched one.')
+
+    src, note = normalize(src)
+    if note:
+        print('  note     %s' % note)
 
     out = apply_bps(src, patch)
 
