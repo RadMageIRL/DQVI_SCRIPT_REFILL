@@ -12,10 +12,11 @@ CRC32, the source ROM's CRC32 before applying, and the output's CRC32 after. A
 wrong ROM is refused rather than silently producing something broken, which is
 the whole reason to prefer BPS over IPS.
 
-It accepts either of the two NoPrgress ROMs in circulation: CRC32 B545C548,
-and CRC32 276D9893, which is what RHDN translation 344 produces and which is
-the same translation with the Japanese ROM's internal checksum still in it.
-The four bytes are corrected in memory; your file is not modified.
+It accepts either of the two NoPrgress ROMs in circulation, paired with either
+patch: CRC32 B545C548, and CRC32 276D9893, which is what RHDN translation 344
+produces and which is the same translation with the Japanese ROM's internal
+checksum still in it. Whichever pairing you have, the four bytes are corrected
+in memory to match the patch. Your file is not modified.
 
 Standard-library Python 3 only. No dependencies, nothing to install.
 
@@ -33,6 +34,7 @@ import zlib
 EXPECT_SRC_CRC = 0xB545C548
 EXPECT_DST_CRC = 0x5AE41C1D
 DEFAULT_PATCH = 'DQ6-SFC-NoPrgress-RM-ScriptRefill.bps'
+NL = chr(10)
 
 # The ordinary route is RHDN translation 344 applied to a headered Japanese
 # ROM. That produces the same translation as EXPECT_SRC_CRC, byte for byte,
@@ -82,28 +84,38 @@ def read_varint(patch, pos):
         value += shift
 
 
-def normalize(src):
-    """Accept the ROM the ordinary RHDN route produces.
+def bps_source_crc(patch):
+    """The CRC32 of the ROM a BPS patch expects, read without applying it."""
+    if len(patch) < 12 or patch[:4] != b'BPS1':
+        return None
+    return int.from_bytes(patch[-12:-8], 'little')
 
-    Returns (rom, note). The ROM comes back with the internal checksum
-    corrected if that is all that was different, and note says so. Anything
-    else is returned untouched, so a genuinely wrong ROM still fails the
-    check in apply_bps rather than being quietly adjusted into something.
+
+def normalize(src, want_src):
+    """Bridge the two NoPrgress builds, which differ only in the checksum.
+
+    Returns (rom, note). If the ROM given is the other build of the same
+    translation, the four checksum bytes are corrected in memory to whatever
+    the patch expects, in either direction. Anything else comes back
+    untouched, so a genuinely wrong ROM still fails the check in apply_bps
+    rather than being quietly adjusted into something.
     """
-    if crc32(src) != RHDN_SRC_CRC:
+    if want_src is None or len(src) != 0x400000 or crc32(src) == want_src:
         return src, None
-    if src[CHECKSUM_AT:CHECKSUM_AT + 4] != CHECKSUM_STALE:
-        return src, None
-    out = bytearray(src)
-    out[CHECKSUM_AT:CHECKSUM_AT + 4] = CHECKSUM_FIXED
-    out = bytes(out)
-    if crc32(out) != EXPECT_SRC_CRC:
-        return src, None
-    return out, ('that is the RHDN translation 344 build. It is this same '
-                 'translation with the\n           Japanese ROM\'s internal '
-                 'checksum still in place. Corrected in memory,\n           '
-                 'four bytes at 0x%06X. Your file was not modified.'
-                 % CHECKSUM_AT)
+    for pair in (CHECKSUM_FIXED, CHECKSUM_STALE):
+        out = bytearray(src)
+        out[CHECKSUM_AT:CHECKSUM_AT + 4] = pair
+        out = bytes(out)
+        if crc32(out) == want_src:
+            note = ('your ROM and this patch are the two builds of the same '
+                    'translation,' + NL +
+                    '           CRC32 %08X and %08X, four bytes apart at '
+                    '0x%06X: the' % (crc32(src), want_src, CHECKSUM_AT) + NL +
+                    '           internal checksum. Corrected in memory to '
+                    'match the patch. Your' + NL +
+                    '           file was not modified.')
+            return out, note
+    return src, None
 
 
 def apply_bps(src, patch):
@@ -211,7 +223,7 @@ def main(argv):
     if crc32(src) == EXPECT_DST_CRC:
         raise Fail('that ROM is already patched. Start from an unpatched one.')
 
-    src, note = normalize(src)
+    src, note = normalize(src, bps_source_crc(patch))
     if note:
         print('  note     %s' % note)
 

@@ -250,12 +250,13 @@ applied to the Japanese ROM (`33304519`) with a 512-byte header gives
 
 **If yours is `276D9893`, use `patchRM.py` or `build.py`.** Both accept it,
 correct those four bytes in memory and produce the identical released ROM. Your
-file is not modified.
+file is not modified. For Flips, take the patch in [`RHDN/`](RHDN/) instead,
+which targets that build and produces the same output.
 
-**Flips will refuse it, and that is the format doing its job.** BPS records the
-CRC32 of the ROM it expects and will not apply to anything else. Regenerating
-the patch against the other build would only move the problem onto everyone who
-already has this one.
+**The root `.bps` will refuse it, and that is the format doing its job.** BPS
+records the CRC32 of the ROM it expects. Rather than regenerating that patch,
+which would move the problem onto everyone holding `B545C548`, there is a
+second copy in [`RHDN/`](RHDN/) built against `276D9893`.
 
 Then apply `DQ6-SFC-NoPrgress-RM-ScriptRefill.bps` with
 [Flips](https://www.romhacking.net/utilities/1040/) or any equivalent.
