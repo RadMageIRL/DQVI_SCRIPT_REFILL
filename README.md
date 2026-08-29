@@ -591,7 +591,7 @@ guess costs a commit. An identifier on screen costs a player.
 - **clymax of ff5central.com** - fixed the in-battle spell target defect. That
   fix is his work, carried here with his permission.
 - **Enix** - *Dragon Quest VI: Maboroshi no Daichi*, 1995.
-- The **RetroGameTalk** user whose report first established that the missing
+- The **RetroGameTalk** user GwardoJones whose report first established that the missing
   messages were dialogue rather than menu strings, which is what started this.
 
 ## License
