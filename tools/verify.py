@@ -6,21 +6,25 @@
 You supply both ROMs. Nothing else is needed and nothing is written.
 
 This is the verification the README claims, run against two files rather than
-quoted. It checks six things:
+quoted. It checks eight things:
 
-  1. NoPrgress's dialogue is untouched. Their messages are allowed to differ in
-     exactly one way, the redundant marker being removed, and the check fails if
-     any other symbol in any of them moves. This covers the MESSAGE SCRIPT.
-     Exactly one name-table entry of theirs is deliberately changed, $070B, and
-     check 3 below is what accounts for the name table
-  2. no message still displays its own ID
-  3. every one of the 2,512 name-table string IDs resolves the way the game
-     resolves it, in both ROMs, and the two are compared
-  4. both crash fixes are present at every site they touch
-  5. the gold window's draw call and descriptor are in place
-  6. the header still says what it said, and the internal checksum agrees
+  1. NoPrgress's wording is unchanged. Their messages are allowed to differ in
+     exactly two ways, the redundant marker being removed and a LISTED
+     misspelling being corrected, and the check fails if any other symbol in
+     any of them moves. This covers the MESSAGE SCRIPT
+  2. the spelling corrections are at the listed sites and nowhere else, split
+     into player-facing and internal
+  3. every tier-A correction is attested in their own text, resolved in the
+     STOCK ROM. This is the spelling rule itself, checked rather than claimed
+  4. no message still displays its own ID
+  5. every one of the 2,512 name-table string IDs resolves the way the game
+     resolves it, in both ROMs, and the two are compared, including the three
+     misspellings corrected there
+  6. both crash fixes are present at every site they touch
+  7. the gold window's draw call and descriptor are in place
+  8. the header still says what it said, and the internal checksum agrees
 
-Point 3 is the one that matters most and the one a byte diff cannot do. The
+Point 5 is the one that matters most and the one a byte diff cannot do. The
 name table is repacked wholesale, so almost every byte in it moves; comparing
 bytes tells you nothing at all. Resolving IDs tells you what changed on screen.
 
@@ -28,6 +32,7 @@ Standard-library Python 3 only. No dependencies, nothing to install.
 """
 import io
 import os
+import re
 import sys
 import zlib
 
@@ -82,6 +87,84 @@ HDR = 0x00FFC0
 # box that carries speech; $0559 is the one symbol in their script with no
 # English glyph behind it, and it is removed wherever it appears.
 MARKER = 0x0559
+
+# --- their spelling ---------------------------------------------------------
+#
+# The 67 corrections, restated here INDEPENDENTLY of build.py. The duplication
+# is deliberate and it is the point: this file and the build state the same
+# claim separately, so if one is edited and the other is not, verification
+# fails rather than agreeing with itself. Do not import the list from build.py.
+#
+# Tier A means the ROM attests the corrected spelling elsewhere in their own
+# writing. That is checked below against the STOCK ROM, not asserted: if an
+# attestation a correction rests on is not there, this fails.
+# Tier B means the shipped form is not an English word and has exactly one
+# English spelling, so there is nothing of theirs to attest and none is
+# required.
+TYPOS = (
+    ('Ths', 'The', 'A', (4675,)), ('yous', 'you', 'A', (1701, 1712)),
+    ('caslte', 'castle', 'A', (6146,)), ('frm', 'from', 'A', (5894,)),
+    ('kow', 'know', 'A', (4648,)), ('relly', 'really', 'A', (6892,)),
+    ("I'l", "I'll", 'A', (658,)), ('yown', 'town', 'A', (3471,)),
+    ('wher', 'where', 'A', (1821,)), ('Riedock', 'Reidock', 'A', (2679, 3528)),
+    ("did't", "didn't", 'A', (1202,)), ('Eveyone', 'Everyone', 'A', (6812,)),
+    ('beatiful', 'beautiful', 'A', (3578,)),
+    ('jounrey', 'journey', 'A', (1440,)), ('stroy', 'story', 'A', (2892,)),
+    ('stange', 'strange', 'A', (3596, 4928)),
+    ('daugher', 'daughter', 'A', (3123,)), ('probaly', 'probably', 'A', (339,)),
+    ('stength', 'strength', 'A', (1779,)), ('Stength', 'Strength', 'A', (31,)),
+    ('tring', 'trying', 'A', (4324,)),
+    ('aquired', 'acquired', 'A', (155, 6076)),
+    ('Mahamen', 'Mahamed', 'A', (296,)), ('bazzar', 'bazaar', 'A', (2986,)),
+    ('botton', 'bottom', 'A', (5304,)),
+    ('somwhere', 'somewhere', 'A', (1549,)),
+    ('splendind', 'splendid', 'A', (4202,)),
+    ('Baptimsal', 'Baptismal', 'A', (5098, 5099)),
+    ('basptism', 'baptism', 'A', (1389,)),
+    ('Congradulations', 'Congratulations', 'A', (2278,)),
+    ('choise', 'choice', 'A', (2820,)), ('Unfiorms', 'Uniforms', 'A', (874,)),
+    ('Tommorow', 'Tomorrow', 'A', (966,)),
+    ('enegergetic', 'energetic', 'A', (2663,)),
+    ('suprise', 'surprise', 'A', (554,)),
+    ('Poseiden', 'Poseidon', 'A', (4583,)),
+    ('forunate', 'fortunate', 'A', (191,)),
+    ('incantaion', 'incantation', 'A', (4950,)),
+    ('Excellect', 'Excellent', 'A', (6930,)),
+    ('amoung', 'among', 'A', (4462,)), ('abscense', 'absence', 'A', (4664,)),
+    ('decendant', 'descendant', 'A', (374,)),
+    ('existance', 'existence', 'A', (6761,)),
+    ('embarrasing', 'embarrassing', 'A', (1228,)),
+    ('wimpering', 'whimpering', 'A', (64, 829)),
+    ('Theather', 'Theatre', 'A', (409,)),
+    ('adpot', 'adopt', 'B', (3152,)), ('convient', 'convenient', 'B', (380,)),
+    ('inconvient', 'inconvenient', 'B', (1606,)),
+    ('devestation', 'devastation', 'B', (1493,)),
+    ('disiplined', 'disciplined', 'B', (5070,)),
+    ('embarassed', 'embarrassed', 'B', (5132,)),
+    ('Foribidden', 'Forbidden', 'B', (2543,)),
+    ('hesistate', 'hesitate', 'B', (4176,)),
+    ('occured', 'occurred', 'B', (1044,)),
+    ('penninsula', 'peninsula', 'B', (239, 248)),
+    ('persistant', 'persistent', 'B', (1258,)),
+    ('porportional', 'proportional', 'B', (361,)),
+    ('refering', 'referring', 'B', (296, 1973)),
+    ('siezed', 'seized', 'B', (1003,)), ('thiefs', 'thieves', 'B', (3651,)),
+    ('alot', 'a lot', 'B', (1093, 3480, 3851, 4719, 6551)),
+    ('in in', 'in', 'B', (393,)), ('the the', 'the', 'B', (1888,)),
+)
+TYPOS_NT = ((0x0328, 'Amatuer', 'Amateur'),
+            (0x0354, 'Congradulations', 'Congratulations'),
+            (0x0355, 'recieved', 'received'))
+
+# Event-flag strings the game never draws. Corrected for consistency, counted
+# apart, and named here so the player-facing figure stays checkable by playing.
+TYPOS_INTERNAL = (6076, 6146)
+
+# The dictionary expander at $C3:FB23: its CMP #imm gives the lowest code and
+# its LDA long gives the table. Both are read, neither is assumed.
+DICT_CMP = 0x03FB25
+DICT_PTR = 0x03FB30
+NT_BREAK_LO, NT_BREAK_HI = 0x90, 0x9D
 
 
 class Fail(Exception):
@@ -139,6 +222,77 @@ class Rom(object):
             o = BYTETBL + (0x02 + i) * 2
             out[self.d[o] | (self.d[o + 1] << 8)] = chr(48 + i)
         return out
+
+    def sym_of(self, b):
+        o = BYTETBL + b * 2
+        return self.d[o] | (self.d[o + 1] << 8)
+
+    def letters(self):
+        """character -> symbol, for the alphabet, the space and the apostrophe.
+
+        Only the ranges the name-entry screen fixes are used, so nothing here
+        depends on a glyph map. That matters: the corrections are letters, and
+        a symbol whose drawn glyph is unsettled must not enter this check.
+        """
+        out = {}
+        for i, c in enumerate('0123456789'):
+            out.setdefault(c, self.sym_of(0x02 + i))
+        for i, c in enumerate('ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+            out.setdefault(c, self.sym_of(0x10 + i))
+        for i, c in enumerate('abcdefghijklmnopqrstuvwxyz'):
+            out.setdefault(c, self.sym_of(0x42 + i))
+        out[' '] = 0x200
+        out["'"] = self.sym_of(0x77)
+        return out
+
+    def words(self, msgs):
+        """Every message as a lower-case letter string, other symbols as '\\n'.
+
+        Word boundaries are what this is for, so anything that is not a letter,
+        a digit, a space or an apostrophe becomes a boundary rather than being
+        named.
+        """
+        back = dict((s, c) for c, s in self.letters().items())
+        out = []
+        for syms, _t in msgs:
+            out.append(''.join(back.get(s, '\n') for s in syms).lower())
+        return out
+
+    def dictionary(self):
+        """name-table code -> the two charset bytes it expands to."""
+        first = self.d[DICT_CMP] | self.d[DICT_CMP + 1] << 8
+        base = (self.d[DICT_PTR] | self.d[DICT_PTR + 1] << 8
+                | (self.d[DICT_PTR + 2] & 0x3F) << 16)
+        if not 0xC0 <= first <= 0xFF:
+            raise Fail('the dictionary expander at 0x%06X is not what this '
+                       'check expects.' % DICT_CMP)
+        out, i = {}, 0
+        while self.d[base + i * 2] != 0xFF and i <= 64:
+            out[first + i] = (self.d[base + i * 2], self.d[base + i * 2 + 1])
+            i += 1
+        return out
+
+    def nt_tokens(self, raw):
+        """A name-table entry as letters, with every other byte as <NN>.
+
+        Dictionary codes are expanded first, so an entry re-encoded with
+        different ligature choices still compares equal. Non-letter bytes are
+        NOT named, for the same reason as words() above.
+        """
+        glyph = {}
+        for i, c in enumerate('0123456789'):
+            glyph.setdefault(0x02 + i, c)
+        for i, c in enumerate('ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+            glyph.setdefault(0x10 + i, c)
+        for i, c in enumerate('abcdefghijklmnopqrstuvwxyz'):
+            glyph.setdefault(0x42 + i, c)
+        glyph[0x01] = ' '
+        glyph[0x77] = "'"
+        dic = self.dictionary()
+        flat = []
+        for b in raw:
+            flat.extend(dic[b] if b in dic else [b])
+        return ''.join(glyph[b] if b in glyph else '<%02X>' % b for b in flat)
 
     def names(self):
         """string ID -> raw entry bytes, resolved the way $C0:315E does."""
@@ -210,19 +364,58 @@ def main(argv):
     theirs = [i for i in range(len(old)) if i not in was_placeholder]
     touched = [i for i in theirs if old[i] != new[i]]
 
-    # Their messages may differ in exactly one way and no other: the redundant
-    # marker $0559 removed. It has no English glyph, and in every position the
-    # engine has already drawn the real mark. Anything else is a word changed.
-    marker, reworded = [], []
+    # Their messages may differ in exactly two ways and no other: the redundant
+    # marker $0559 removed, and a listed misspelling corrected. The marker has
+    # no English glyph and in every position the engine has already drawn the
+    # real mark. Anything else is their wording changed.
+    letters = base.letters()
+    word = set(letters[c] for c in
+               'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
+    word.add(letters["'"])
+
+    def corrected(syms, mid):
+        """Their symbols with every correction listed for this message made."""
+        out = list(syms)
+        for was, now, _tier, ids in TYPOS:
+            if mid not in ids:
+                continue
+            b = [letters[c] for c in was]
+            g = [letters[c] for c in now]
+            at = [k for k in range(len(out) - len(b) + 1)
+                  if out[k:k + len(b)] == b
+                  and (k == 0 or out[k - 1] not in word)
+                  and (k + len(b) == len(out) or out[k + len(b)] not in word)]
+            if len(at) != 1:
+                return None
+            out = out[:at[0]] + g + out[at[0] + len(b):]
+        return out
+
+    listed = set(m for _w, _n, _t, ids in TYPOS for m in ids)
+    marker, spelling, reworded = [], [], []
     for i in touched:
         o, n = old[i][0], new[i][0]
-        if MARKER in o and tuple(s for s in o if s != MARKER) == n:
-            marker.append(i)
+        want = corrected([s for s in o if s != MARKER], i)
+        if want is not None and tuple(want) == n:
+            (spelling if i in listed else marker).append(i)
         else:
             reworded.append(i)
     bad += line(not reworded,
-                'not one word of their %d messages is altered' % len(theirs),
+                'their wording is unchanged in all %d of their messages'
+                % len(theirs),
                 'reworded: %d' % len(reworded))
+    sites = sum(len(ids) for _w, _n, _t, ids in TYPOS)
+    facing = sum(1 for _w, _n, _t, ids in TYPOS
+                 for m in ids if m not in TYPOS_INTERNAL)
+    ok = sorted(spelling) == sorted(listed)
+    bad += line(ok,
+                'their spelling corrected at the %d listed sites, and nowhere '
+                'else' % sites,
+                ('%d messages, %d player-facing sites, %d internal'
+                 % (len(listed), facing, sites - facing)) if ok else
+                ('%d of %d listed messages corrected; missing %s; unlisted %s'
+                 % (len(spelling), len(listed),
+                    sorted(listed - set(spelling))[:8] or 'none',
+                    sorted(set(spelling) - listed)[:8] or 'none')))
     bad += line(True,
                 'the redundant marker removed, and nothing else',
                 '%d of their messages, symbol $%04X' % (len(marker), MARKER))
@@ -241,6 +434,38 @@ def main(argv):
     terms = [i for i in range(len(old)) if old[i][1] != new[i][1]]
     bad += line(not terms, 'every message terminator preserved',
                 'differing: %d' % len(terms))
+    print()
+
+    # The attestation rule, measured rather than asserted. Clause A of the
+    # spelling rule says the ROM itself attests the corrected form somewhere in
+    # their own writing. This resolves every tier-A target in the STOCK ROM and
+    # fails if one of them is not there, which is what stops the rule from
+    # quietly widening into "whatever looks right to me".
+    stock_text = '\n'.join(base.words(old))
+    missing, found = [], {}
+    for was, now, tier, _ids in TYPOS:
+        if tier != 'A':
+            continue
+        n = len(re.findall(r"(?<![a-z0-9'])" + re.escape(now.lower())
+                           + r"(?![a-z0-9'])", stock_text))
+        found[now] = n
+        if n == 0:
+            missing.append('%s -> %s' % (was, now))
+    tier_a = sum(1 for _w, _n, t, _i in TYPOS if t == 'A')
+    tier_b = sum(1 for _w, _n, t, _i in TYPOS if t == 'B')
+    bad += line(not missing,
+                'every tier-A correction is attested in their own text',
+                '%d of %d checked, %d unattested%s'
+                % (tier_a, tier_a + tier_b, len(missing),
+                   (': ' + ', '.join(missing)) if missing else ''))
+    if found:
+        least = min(found, key=lambda k: found[k])
+        print('       thinnest attestation: %r appears %d time%s in the stock '
+              'ROM' % (least, found[least], '' if found[least] == 1 else 's'))
+        print('       (tier B is %d corrections that are not English words and '
+              'have one' % tier_b)
+        print('       English spelling each, so there is nothing of theirs to '
+              'attest)')
     print()
 
     # 3 --------------------------------------------------------------------
@@ -265,6 +490,20 @@ def main(argv):
     bad += line(nn[COUNTER_ID] == b'',      # names() yields raw bytes
                 'the animal counter is blank, not an identifier',
                 '$%04X' % COUNTER_ID)
+
+    # The three misspellings in their name table. Compared as letters with
+    # every other byte left as <NN>, so a re-encoding that picks different
+    # ligatures still compares equal and no claim is made about any glyph.
+    nt_bad = []
+    for sid, was, now in TYPOS_NT:
+        before, after = base.nt_tokens(on[sid]), built.nt_tokens(nn[sid])
+        if was not in before or after != before.replace(was, now, 1):
+            nt_bad.append('$%04X %r -> %r' % (sid, before, after))
+    bad += line(not nt_bad,
+                'the %d misspellings in their name table are corrected, and '
+                'the entries are otherwise identical' % len(TYPOS_NT),
+                '; '.join(nt_bad) if nt_bad else
+                ', '.join('$%04X' % s for s, _w, _n in TYPOS_NT))
     print()
 
     # 4 --------------------------------------------------------------------

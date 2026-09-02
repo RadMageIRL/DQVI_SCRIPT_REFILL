@@ -101,12 +101,20 @@ bytes proves nothing. Instead all 2,512 string IDs are resolved the way the
 game resolves them, in both ROMs, and the results are compared.
 
 It also enforces the promise the README makes about NoPrgress's own writing.
-Their messages are allowed to differ in exactly one way, the redundant marker
-`$0559` being removed, and the check fails if any other symbol in any of their
-messages moves. It reports the two separately, so "not one word altered" and
-"how many markers were removed" are never conflated, and it confirms the symbol
-is gone from the whole payload rather than from the positions someone
+Their messages are allowed to differ in exactly two ways, the redundant marker
+`$0559` being removed and a LISTED misspelling being corrected, and the check
+fails if any other symbol in any of their messages moves. It reports the three
+separately, so "their wording is unchanged", "how many markers were removed" and
+"how many misspellings were corrected" are never conflated, and it confirms the
+marker is gone from the whole payload rather than from the positions someone
 remembered to look at.
+
+And it checks the spelling rule itself rather than taking it on trust. Clause A
+of that rule says the ROM attests the corrected form elsewhere in their own
+writing, so `verify.py` resolves all 46 clause-A targets in the STOCK ROM and
+fails if one of them is not there. That turns "I only corrected what they
+already spell correctly" from a claim into a measurement. See
+`docs/TYPO-CORRECTIONS.md`.
 
 ---
 
@@ -156,8 +164,10 @@ python nametable.py DQ6-NoPrgress.sfc --dictionary
 | the seven space-carrying dictionary codes | NAME-TABLE | `nametable.py --dictionary` |
 | solving a format against its own consistency | METHOD 7b | `nametable.py --dictionary` |
 | the per-region line caps | NAME-TABLE | `nametable.py --widths` |
-| not one word of their text altered | README | `verify.py` |
+| their wording unchanged | README | `verify.py` |
 | the redundant marker removed, all 676 of it | README | `verify.py` |
+| 67 misspellings corrected, and nowhere else | TYPO-CORRECTIONS | `verify.py` |
+| every clause-A correction attested in their own text | METHOD 14a | `verify.py` |
 | the build verification | README | `verify.py` |
 
 ---

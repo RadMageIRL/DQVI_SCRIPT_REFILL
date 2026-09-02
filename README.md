@@ -25,13 +25,38 @@ afterwards why the byte he chose is the right one, and that account is mine, but
 the fix is his. See
 "The in-battle spell target list" below.
 
-Nothing here replaces, corrects or improves their translation. **Their dialogue
-is untouched**, and that is verified on every build rather than asserted: every
-symbol of all 6,539 of their messages is exactly what they shipped, with one
-exception that changes no wording at all - a redundant marker symbol with no
+Nothing here replaces, rewrites or improves their translation. **Their wording
+is unchanged**: not a line of their dialogue is rephrased, no register is
+adjusted, no punctuation is touched, and that is verified on every build rather
+than asserted. Two things do change in their text, both narrow, both listed in
+full, and both checked mechanically.
+
+**67 misspellings are corrected**, across 77 sites you can read in play. `Stength
+Seed` is `Strength Seed`. `Congradulations` is `Congratulations`. `Ths king is
+awake` is `The king is awake`. **Every correction and the reasoning behind it is
+in [docs/TYPO-CORRECTIONS.md](docs/TYPO-CORRECTIONS.md)**, with the shipped text,
+the corrected text and the length of every line before and after.
+
+**The rule, stated so it cannot widen.** Their text is corrected only where one
+of these holds:
+
+> **A.** the ROM itself attests the correct spelling elsewhere in their own
+> writing, or
+> **B.** the shipped form is not an English word and has exactly one English
+> spelling.
+
+Nothing else. No rewording, no register, no grammar, no punctuation, no
+phrasing. Clause A is not a promise, it is a check: `tools/verify.py` resolves
+every clause-A target in the stock ROM and fails the build if the attestation it
+rests on is not there. Thirteen further candidates the audit found are excluded
+because each needs a judgment call somewhere, and they are listed with their
+reasons in the same document.
+
+A third thing changes no wording at all: a redundant marker symbol with no
 English glyph is removed wherever it appeared. See "The speech marker" below.
 
-**One name-table entry of theirs has been changed**, and it is the only one.
+**One name-table entry of theirs has been changed for a different reason**, and
+it is the only one.
 `$070B ぜっする` was rendered `Really`; it is now `Imagining`. This was not done
 for style, or clumsiness, or accuracy on its own. It was done because that
 rendering made an adjacent UNTRANSLATED entry impossible to complete:
@@ -41,10 +66,11 @@ against `Really`. The pair now reads `Beyond` / `Imagining`. `ぜっする` occu
 exactly once in the table and `Really` was used exactly once, so nothing else
 moved.
 
-**The rule this sets, stated so it cannot widen:** their text is changed only
-where their rendering blocks completing an untranslated entry. Not for
-clumsiness, not for style, not for accuracy alone. One entry qualifies so far.
-Where their choices differ from
+**The rule that one sets, stated so it cannot widen:** their text is *reworded*
+only where their rendering blocks completing an untranslated entry. Not for
+clumsiness, not for style, not for accuracy alone. One entry qualifies so far,
+and it is a separate permission from the spelling rule above: that one changes
+letters within a word, this one changes a word. Where their choices differ from
 series convention, **their choices win** and this patch follows them. Luisa
 rather than Ruida. Amoru. Erika. "the castle of the gods" rather than Zenithia.
 The Sword of Ramias, the Shield of Sufida, the Armor of Orgo, the Helm of
@@ -70,6 +96,12 @@ It also writes **187 name-table entries** - item, spell, skill, place,
 monster-action and menu names the translation left showing the game's own
 internal identifier, so a location read `M194` and a battle action read `M6BA`.
 See "Scope" below for what was deliberately left alone and why.
+
+And it corrects **67 misspellings in their own text**, at 77 sites you can read
+in play. That is new in v4.0 and it is the first version of this patch to change
+their spelling at all. The rule that permits it, the whole list, and the
+thirteen candidates it deliberately leaves alone are in
+[`docs/TYPO-CORRECTIONS.md`](docs/TYPO-CORRECTIONS.md).
 
 ### The Tactics-equip hang
 
@@ -226,8 +258,9 @@ back.
 
 **This is what you want if you just want to play.** One step, no Python.
 
-**One patch contains everything** - the 421 messages, the 187 names, both crash
-fixes, the Tactics-equip hang, the gold window and clymax's spell-target fix.
+**One patch contains everything** - the 421 messages, the 187 names, the 67
+corrected misspellings, both crash fixes, the Tactics-equip hang, the gold
+window and clymax's spell-target fix.
 There is nothing else to apply and no order to get right. Do not apply the
 menu-fix patch as well, and do not apply clymax's patch as well; this one
 already contains both.
@@ -288,12 +321,12 @@ above. Standard-library Python 3, no dependencies.
 Check what you get, whichever route you used:
 
 ```
-result   CRC32 5AE41C1D   SHA-1 a56f86582ca1be63ae79c19894516acf2d129380
+result   CRC32 73B4B888   SHA-1 5bdc362472431117a0839ddbd1de8fed2ae4f8e0
 ```
 
 That is the whole thing. **You are done** - the 421 messages, the 187 names,
-both crash fixes, the Tactics-equip hang, the gold window and clymax's
-spell-target fix are all in that one output file.
+the 67 corrected misspellings, both crash fixes, the Tactics-equip hang, the
+gold window and clymax's spell-target fix are all in that one output file.
 
 If the CRC32 does not match, your source ROM is not the one this targets. BPS
 records its expected source, so Flips will normally refuse a wrong ROM rather
@@ -323,9 +356,9 @@ fetched from anywhere else.
 python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt DQ6-Refill.sfc
 ```
 
-![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, fixes the Tactics-equip hang and the in-battle spell target list, restores the gold window, writes the name-table entries, decodes 6,960 messages, substitutes 421, drops the redundant speech marker, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
+![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, fixes the Tactics-equip hang and the in-battle spell target list, restores the gold window, writes the name-table entries and corrects three misspellings in theirs, decodes 6,960 messages, substitutes 421, corrects 76 misspelled sites in their own messages, drops the redundant speech marker, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
 
-If your output is not `5AE41C1D`, the input ROM is not the one this targets.
+If your output is not `73B4B888`, the input ROM is not the one this targets.
 Check its CRC32 before anything else.
 
 The script refuses to write if the ROM is not what it expects. Every fix checks
@@ -393,7 +426,7 @@ so a location read `M194` and a battle action read `M6BA`. **186 are now
 written, leaving 208 in the release build.** Every figure here was measured
 against a ROM, and each says which ROM it describes:
 
-| | stock `B545C548` | release `5AE41C1D` |
+| | stock `B545C548` | release `73B4B888` |
 |---|---|---|
 | entries displaying an identifier | **394** | **208** |
 | written by this patch | - | **186** |
@@ -575,10 +608,13 @@ guess costs a commit. An identifier on screen costs a player.
   Forget fix moves that buffer out of harm's way and gives it 200 bytes of
   headroom against a 136-byte worst case, but it does not bound the fill. That
   remains an open defect. See [`docs/CRASH-FIXES.md`](docs/CRASH-FIXES.md).
-- **It does not touch a word of NoPrgress's own text.** Every symbol of their
+- **It does not reword a line of NoPrgress's own text.** Every symbol of their
   6,539 messages is what they shipped, apart from a redundant marker symbol
-  removed wherever it appeared, which carried no word. The build fails if any
-  other symbol in any of their messages moves.
+  removed wherever it appeared, which carried no word, and 76 corrected
+  misspellings, every one of them listed in
+  [`docs/TYPO-CORRECTIONS.md`](docs/TYPO-CORRECTIONS.md). The build fails if any
+  other symbol in any of their messages moves, and it fails if a correction
+  appears anywhere the list does not name.
 - **It does not claim to be complete or correct.** 421 messages and 187 names
   were authored by someone who is not a professional translator, checked against
   a corpus rather than against a native speaker. Errors are mine. Reports are

@@ -202,7 +202,7 @@ both produce the same result.
 
 `build.py` prints the substitution as it applies it and refuses to write if
 `$C3:49D4` does not hold `0x16` going in. The finished build is
-`CRC32 5AE41C1D`.
+`CRC32 73B4B888`.
 
 On a screen, which is the only check that means anything here: get somebody into
 the caravan, start a battle, choose Fight and a spell that targets an ally, and

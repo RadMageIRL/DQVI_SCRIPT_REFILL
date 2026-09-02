@@ -833,7 +833,92 @@ their writing is altered". That is no longer true and the sentence was replaced
 rather than qualified into meaninglessness: their **dialogue** is untouched,
 verified symbol by symbol on every build, and exactly one name-table entry of
 theirs is changed, named, with the reason given. A promise that has acquired an
-exception is worth less than an accurate description of what was done.
+exception is worth less than an accurate description of what was done. It was
+replaced a second time in v4.0, below, for the same reason.
+
+### 14a. Their spelling, and the second rule
+
+Added in v4.0. The rule above governs REWORDING and it has not moved: one entry
+still qualifies and it is still `$070B`. Spelling is a separate permission with
+its own rule, written separately because the two arguments have nothing in
+common. Rewording asks whether their choice blocks mine. Spelling asks whether a
+word is spelled the way they themselves spell it.
+
+An audit of all 6,539 of their messages and all 1,655 of their reachable
+name-table entries found 67 misspellings, at 77 sites a player can read and 2
+more in internal event strings. **The rule, stated so it cannot widen:**
+
+> Their text is corrected only where one of these holds:
+>
+> **A.** the ROM itself attests the correct spelling elsewhere in their own
+> writing, or
+> **B.** the shipped form is not an English word and has exactly one English
+> spelling.
+>
+> Nothing else. No rewording, no register, no grammar, no punctuation, no
+> phrasing.
+
+**Clause A is the load-bearing one, and the reason is that it is not a
+judgment.** `caslte` becomes `castle` because their own script writes `castle`
+213 times. `Baptimsal` becomes `Baptismal` because their name table holds
+`Baptismal Cave` and two of their own messages spell it that way. The target
+form is measured out of their text rather than supplied by me, so the rule can
+be checked by a machine instead of defended in an argument, and
+`tools/verify.py` does check it: it resolves all 46 clause-A targets in the
+STOCK ROM on every build and fails if one of them is not there. **A rule that
+can be verified mechanically cannot drift. A rule that rests on taste always
+does.**
+
+**Clause B covers the 18 where they never spell the word correctly anywhere**,
+so there is nothing of theirs to appeal to: `occured`, `siezed`, `porportional`,
+`penninsula` and the like. Each is not an English word and has exactly one
+English spelling, so the correction is determined even though the ROM cannot
+attest it.
+
+**Write the rule as two clauses about words, not as "letters only".** The
+tempting short form is "only fix letters inside a word", and it is wrong twice:
+it drops `thiefs` -> `thieves`, which changes three letters, and `alot` ->
+`a lot`, which inserts a space. Both are unarguable, and both fall out of the
+tidier rule. **The shape of the edit is not what is being ruled on. The
+certainty of the intended word is.**
+
+**What the same audit found and did NOT do.** Thirteen further candidates are
+excluded, and the exclusions are what keep the rule narrow: a doubled `the the`
+whose repair needs a word supplied (`send you to the prison`),
+`avante-guarde`, four monster and companion names where a coinage cannot be told
+from a slip, a runtime-assembled fragment whose spacing depends on untraced
+code, a missing apostrophe, and an inconsistency between two of their own forms.
+Every one needs a judgment call somewhere, which is exactly what the rule
+refuses. They are listed with a reason each in `docs/TYPO-CORRECTIONS.md`, so
+nobody has to rediscover them and nobody has to guess why the list stops where
+it does.
+
+**Punctuation is excluded as a class**, and that exclusion does real work rather
+than being a formality: their script uses symbol `$0246` 2,473 times in
+positions where a comma or an ellipsis would be expected. What that symbol draws
+is a separate open question. Not one of them is touched.
+
+**Measure the layout before applying, not after.** All 79 sites were measured
+for length first: 38 lengthen, 24 are neutral, 14 shorten, +20 cells across the
+whole script. Against their own maxima - 80 cells in a segment, 104 in a page,
+both measured from their shipped text rather than assumed - the worst result is
+a 74-cell segment, so no line break had to be added and no page break moved. Had
+that not held, the repair would have been a `{AD}` insertion at the flagged
+sites, and the flagged count belonged in a report before anything was applied
+rather than being quietly handled.
+
+**One defect this produced, and it is the useful part.** The three name-table
+corrections were first applied by re-encoding the corrected entry through the
+build's own encoder. That is the obvious way to do it, and it silently changed a
+byte that had nothing to do with the misspelling: `$0355` ends on byte `$7A` and
+the encoder writes `$7F`. Both draw a full stop, so no screen would ever have
+shown the difference. `tools/verify.py` caught it on the first build, because
+the check compares the entry byte for byte with only the letters of the one word
+allowed to differ. **The rule permits correcting a misspelling. It does not
+permit normalizing their bytes, and the difference is invisible on screen -
+which is exactly why that check has to be mechanical.** The corrections are now
+applied to the bytes of their own entries, leaving punctuation, break codes and
+their choice between two identical-looking full stops as shipped.
 
 ---
 

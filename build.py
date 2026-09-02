@@ -11,29 +11,33 @@ Everything it needs is either in this repository or in this file, so a stock
 NoPrgress ROM plus the two text files reproduces the released ROM. Nothing is
 fetched from anywhere else.
 
-It does seven things:
+It does eight things:
   1. applies both crash fixes, Info > All and Forget (see apply_crash_fixes)
   2. restores the gold window on the info screen (see apply_gold below)
-  3. writes the 187 name-table entries (see apply_names below)
+  3. writes the 187 name-table entries, and corrects 3 misspellings in theirs
+     (see apply_names and TYPOS_NT below)
   4. decodes all 6,960 messages from the unmodified payload
   5. substitutes the 421 authored English messages
-  6. removes the redundant speech marker, all 676 occurrences of a symbol
+  6. corrects 76 misspellings in their own messages (see TYPOS below)
+  7. removes the redundant speech marker, all 676 occurrences of a symbol
      with no English glyph (see drop_speech_marker below)
-  7. re-encodes every message with the ROM'S EXISTING Huffman trees, rebuilds
+  8. re-encodes every message with the ROM'S EXISTING Huffman trees, rebuilds
      the 870-entry pointer table, and recomputes the internal checksum
 
 The trees are never modified. Every symbol already has exactly one code path in
 them, so the encode is deterministic: every message comes out symbol for symbol
-as NoPrgress wrote it, apart from the 421 that were never written and one
-marker symbol removed wherever it appeared. **Their dialogue is untouched.**
-That property is worth checking after any change to this script, and
-tools/verify.py checks it: it fails if any symbol other than that marker moves
-in any of their messages.
+as NoPrgress wrote it, apart from the 421 that were never written, one marker
+symbol removed wherever it appeared, and 76 corrected misspellings.
+**Their wording is unchanged**: no line is rephrased, no register is adjusted,
+no punctuation is touched. tools/verify.py checks that on every build, and it
+fails if any symbol moves in any of their messages beyond the marker and the
+listed corrections.
 
-One NAME-TABLE entry of theirs is changed, $070B, and the rule that permits it
-is narrow: their text is changed only where their rendering blocks completing an
-untranslated entry. See the README. It does not apply to the message script,
-where nothing of theirs is altered at all.
+Two pieces of their text are changed by something other than spelling, both
+in the NAME TABLE and both named. $070B, under the rule that their text is
+changed only where their rendering blocks completing an untranslated entry;
+and three entries corrected for spelling under the rule in TYPOS below. See
+the README and docs/TYPO-CORRECTIONS.md.
 
 Message system, decoded from the ROM at $C0:2B69 onward:
   - Pointer table at $C1:5BB5, 870 entries of 3 bytes, indexed by (ID >> 3).
@@ -576,6 +580,40 @@ def _nt_encode(text, inv, lig):
     return bytes(out)
 
 
+def _nt_correct(raw, was, now, dic, inv, sid):
+    """Replace one misspelled word in a name-table entry, byte for byte.
+
+    Re-encoding the whole entry instead would be simpler and it would be
+    wrong. $0355 ends on $7A and this file's encoder writes $7F; both draw a
+    full stop, so nothing would look different and a byte of theirs would have
+    been changed for no reason. The rule permits correcting a misspelling, not
+    normalizing their bytes. So the dictionary codes are expanded, the letters
+    of the one word are swapped, and everything else - punctuation, the break
+    code, the choice between two full stops - survives exactly as shipped.
+    """
+    flat = []
+    for b in raw:
+        flat.extend(dic[b] if b in dic else (b,))
+    b_was = [inv[c] for c in was]
+    b_now = [inv[c] for c in now]
+    at = [i for i in range(len(flat) - len(b_was) + 1)
+          if flat[i:i + len(b_was)] == b_was]
+    if len(at) != 1:
+        raise SystemExit('name-table entry $%04X: %r occurs %d times, expected '
+                         'exactly once.' % (sid, was, len(at)))
+    flat = flat[:at[0]] + b_now + flat[at[0] + len(b_was):]
+    pair = dict(((a, b), code) for code, (a, b) in dic.items())
+    out, i = [], 0
+    while i < len(flat):
+        if i + 1 < len(flat) and (flat[i], flat[i + 1]) in pair:
+            out.append(pair[(flat[i], flat[i + 1])])
+            i += 2
+        else:
+            out.append(flat[i])
+            i += 1
+    return bytes(out)
+
+
 def apply_names(rom, table):
     """Write the authored entries and regenerate the group offsets."""
     inv, lig = _nt_encoder(rom)
@@ -607,6 +645,20 @@ def apply_names(rom, table):
             raise SystemExit('string ID $%04X is not reachable' % idv)
         entries[id_pos[idv]] = _nt_encode(text, inv, lig)
 
+    # Then the three misspellings of theirs, corrected in the BYTES of their
+    # own entries rather than by re-encoding the text. Kept apart from the
+    # authored entries in the counting too, because 187 written and 3 corrected
+    # are different claims.
+    dic = read_dictionary(rom)
+    for idv, was, now, _tier in TYPOS_NT:
+        if idv in table:
+            raise SystemExit('string ID $%04X is both authored and corrected'
+                             % idv)
+        if idv not in id_pos:
+            raise SystemExit('string ID $%04X is not reachable' % idv)
+        entries[id_pos[idv]] = _nt_correct(entries[id_pos[idv]], was, now,
+                                           dic, inv, idv)
+
     src_end = NT_BASE
     for e in entries[:live_end + 1]:
         src_end += len(e) + 1
@@ -626,7 +678,7 @@ def apply_names(rom, table):
         off = new_start[pos] - NT_BASE
         o = NT_PTR + g * 3
         rom[o], rom[o + 1], rom[o + 2] = off & 0xFF, (off >> 8) & 0xFF, (off >> 16) & 0xFF
-    return len(table)
+    return len(table), len(TYPOS_NT)
 
 
 
@@ -682,6 +734,141 @@ def drop_speech_marker(msgs):
             n += sum(1 for s in syms if s == MARKER)
             msgs[i] = ([s for s in syms if s != MARKER], term)
     return n
+
+
+# ---------------------------------------------------------------------------
+# NoPrgress's own spelling
+#
+# Their script carries 67 misspellings. They are corrected here, and the rule
+# that permits it is narrow and mechanical. A correction qualifies only if one
+# of two clauses holds:
+#
+#   A. the ROM itself attests the correct spelling elsewhere in their own
+#      writing, so the target form is measured out of their text rather than
+#      supplied by me, or
+#   B. the shipped form is not an English word and has exactly one English
+#      spelling.
+#
+# Nothing else. No rewording, no register, no grammar, no punctuation, no
+# phrasing. Thirteen further candidates were found by the same audit and are
+# excluded because each needs a judgment call somewhere; they are listed in
+# docs/TYPO-CORRECTIONS.md and they stay excluded.
+#
+# `thiefs` -> `thieves` and `alot` -> `a lot` are in scope. That is why the
+# rule is written as above and not as "letters only", which would drop both.
+#
+# The tier letter is not decoration: tools/verify.py resolves every tier-A
+# target in the STOCK ROM and fails if the attestation it rests on is not
+# there.
+#
+# Every site was measured for length before any of this was applied: 38
+# lengthen, 24 are neutral, 14 shorten, +20 cells across the whole script. The
+# worst segment after correction is 74 cells against their own maximum of 80,
+# and the worst page 74 against their maximum of 104, so no line break is added
+# and no page break moves. docs/TYPO-CORRECTIONS.md carries the per-site
+# figures.
+
+TYPOS = [
+    ('Ths', 'The', 'A', [4675]), ('yous', 'you', 'A', [1701, 1712]),
+    ('caslte', 'castle', 'A', [6146]), ('frm', 'from', 'A', [5894]),
+    ('kow', 'know', 'A', [4648]), ('relly', 'really', 'A', [6892]),
+    ("I'l", "I'll", 'A', [658]), ('yown', 'town', 'A', [3471]),
+    ('wher', 'where', 'A', [1821]), ('Riedock', 'Reidock', 'A', [2679, 3528]),
+    ("did't", "didn't", 'A', [1202]), ('Eveyone', 'Everyone', 'A', [6812]),
+    ('beatiful', 'beautiful', 'A', [3578]), ('jounrey', 'journey', 'A', [1440]),
+    ('stroy', 'story', 'A', [2892]), ('stange', 'strange', 'A', [3596, 4928]),
+    ('daugher', 'daughter', 'A', [3123]), ('probaly', 'probably', 'A', [339]),
+    ('stength', 'strength', 'A', [1779]), ('Stength', 'Strength', 'A', [31]),
+    ('tring', 'trying', 'A', [4324]),
+    ('aquired', 'acquired', 'A', [155, 6076]),
+    ('Mahamen', 'Mahamed', 'A', [296]), ('bazzar', 'bazaar', 'A', [2986]),
+    ('botton', 'bottom', 'A', [5304]), ('somwhere', 'somewhere', 'A', [1549]),
+    ('splendind', 'splendid', 'A', [4202]),
+    ('Baptimsal', 'Baptismal', 'A', [5098, 5099]),
+    ('basptism', 'baptism', 'A', [1389]),
+    ('Congradulations', 'Congratulations', 'A', [2278]),
+    ('choise', 'choice', 'A', [2820]), ('Unfiorms', 'Uniforms', 'A', [874]),
+    ('Tommorow', 'Tomorrow', 'A', [966]),
+    ('enegergetic', 'energetic', 'A', [2663]),
+    ('suprise', 'surprise', 'A', [554]),
+    ('Poseiden', 'Poseidon', 'A', [4583]),
+    ('forunate', 'fortunate', 'A', [191]),
+    ('incantaion', 'incantation', 'A', [4950]),
+    ('Excellect', 'Excellent', 'A', [6930]), ('amoung', 'among', 'A', [4462]),
+    ('abscense', 'absence', 'A', [4664]),
+    ('decendant', 'descendant', 'A', [374]),
+    ('existance', 'existence', 'A', [6761]),
+    ('embarrasing', 'embarrassing', 'A', [1228]),
+    ('wimpering', 'whimpering', 'A', [64, 829]),
+    ('Theather', 'Theatre', 'A', [409]),
+    # clause B: not a word, one English spelling, nothing of theirs to attest it
+    ('adpot', 'adopt', 'B', [3152]), ('convient', 'convenient', 'B', [380]),
+    ('inconvient', 'inconvenient', 'B', [1606]),
+    ('devestation', 'devastation', 'B', [1493]),
+    ('disiplined', 'disciplined', 'B', [5070]),
+    ('embarassed', 'embarrassed', 'B', [5132]),
+    ('Foribidden', 'Forbidden', 'B', [2543]),
+    ('hesistate', 'hesitate', 'B', [4176]),
+    ('occured', 'occurred', 'B', [1044]),
+    ('penninsula', 'peninsula', 'B', [239, 248]),
+    ('persistant', 'persistent', 'B', [1258]),
+    ('porportional', 'proportional', 'B', [361]),
+    ('refering', 'referring', 'B', [296, 1973]),
+    ('siezed', 'seized', 'B', [1003]), ('thiefs', 'thieves', 'B', [3651]),
+    ('alot', 'a lot', 'B', [1093, 3480, 3851, 4719, 6551]),
+    # a word written twice; the correction is the deletion of the second
+    ('in in', 'in', 'B', [393]), ('the the', 'the', 'B', [1888]),
+]
+
+# Their name table carries three of the same kind. All three are exactly
+# length-neutral, so no break code moves and no per-region cap is approached.
+# The entries are $0328 'Amatuer|Class', $0354 'Congradulations.' and
+# $0355 ' coins recieved.'; only the word is named here because only the word
+# is touched. See _nt_correct for why that distinction is load-bearing.
+TYPOS_NT = [(0x0328, 'Amatuer', 'Amateur', 'B'),
+            (0x0354, 'Congradulations', 'Congratulations', 'A'),
+            (0x0355, 'recieved', 'received', 'A')]
+
+# Two of the message sites are internal event-flag strings the game never
+# draws. They are corrected for consistency and counted apart from the rest,
+# because a count that includes strings nobody can reach is not checkable by
+# playing.
+TYPOS_INTERNAL = {6076, 6146}
+
+
+def apply_typos(msgs, inv, lig_sym):
+    """Correct the listed misspellings in their messages, in symbol space.
+
+    Matching is done on symbols rather than on decoded text so that nothing
+    here depends on a glyph map: these words are letters, spaces and one
+    apostrophe, every one of which the ROM's own byte table names. A site that
+    does not match EXACTLY once fails the build rather than being skipped,
+    which is what makes it safe to run against a ROM nobody has checked.
+    """
+    word = set(inv[c] for c in
+               'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
+    word.add(inv["'"])
+    word.add(lig_sym)
+    sites = cells = 0
+    for bad, good, _tier, ids in TYPOS:
+        b = [inv[c] for c in bad]
+        g = [inv[c] for c in good]
+        for mid in ids:
+            syms, term = msgs[mid]
+            at = [i for i in range(len(syms) - len(b) + 1)
+                  if syms[i:i + len(b)] == b
+                  and (i == 0 or syms[i - 1] not in word)
+                  and (i + len(b) == len(syms) or syms[i + len(b)] not in word)]
+            if len(at) != 1:
+                raise SystemExit(
+                    'message %d: %r occurs %d times, expected exactly once.\n'
+                    '  The input ROM is not the one this list was measured '
+                    'against.' % (mid, bad, len(at)))
+            i = at[0]
+            msgs[mid] = (syms[:i] + g + syms[i + len(b):], term)
+            sites += 1
+            cells += len(g) - len(b)
+    return sites, cells
 
 
 REC = re.compile(r'^---- (\d+)$')
@@ -752,8 +939,9 @@ def main(src, cand, names_path, dst):
     g = apply_gold(rom)
     print('gold window restored: %d bytes' % g)
 
-    n_names = apply_names(rom, read_nametable(names_path))
+    n_names, n_nt_typo = apply_names(rom, read_nametable(names_path))
     print('name-table entries written: %d' % n_names)
+    print('name-table misspellings of theirs corrected: %d' % n_nt_typo)
 
     r = Rom(bytes(io.open(src, 'rb').read()))
     msgs = r.decode_all()
@@ -797,6 +985,12 @@ def main(src, cand, names_path, dst):
     for mid, text in C.items():
         msgs[mid] = (encode(text, mid), msgs[mid][1])
     print('messages substituted: %d' % len(C))
+
+    n_typo, n_cells = apply_typos(msgs, inv, LIGATURE[1])
+    print('their misspellings corrected: %d sites in %d messages, %+d cells '
+          '(%d of the sites are internal event strings)'
+          % (n_typo, len(set(m for _b, _g, _t, ids in TYPOS for m in ids)),
+             n_cells, len(TYPOS_INTERNAL)))
 
     n_marker = drop_speech_marker(msgs)
     print('redundant speech marker $%04X removed: %d occurrences'

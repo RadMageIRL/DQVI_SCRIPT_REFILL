@@ -156,7 +156,11 @@ which is why `Entice Dance` is stored as `Entice` + `$96` + `Dance`.
 Because the table is repacked wholesale, the check that matters is not a byte
 diff but a behavioral one: **every one of the 2,512 string IDs is resolved the
 way the game resolves it, in both the before and after ROMs, and compared.**
-187 changed to the intended text, 2,325 were untouched, none were wrong.
+190 changed to the intended text, 2,322 were untouched, none were wrong. The
+190 are the 187 authored entries plus the three of theirs corrected for spelling
+in v4.0, and those three are checked a second way as well: each is compared with
+their own entry byte for byte, with only the letters of the one misspelled word
+allowed to differ. See [`TYPO-CORRECTIONS.md`](TYPO-CORRECTIONS.md).
 
 `tools/verify.py <stock> <patched>` runs that comparison, and
 `tools/nametable.py <patched> --check nametable-en.txt` resolves every authored
