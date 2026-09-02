@@ -1,3 +1,5 @@
+** Made Public 9-2-2026 **
+
 # DQ6 Script Refill
 
 A patch that completes the untranslated messages in the **NoPrgress** English
