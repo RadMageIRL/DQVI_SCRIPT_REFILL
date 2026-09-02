@@ -30,8 +30,8 @@ the fix is his. See
 Nothing here replaces, rewrites or improves their translation. **Their wording
 is unchanged**: not a line of their dialogue is rephrased, no register is
 adjusted, no punctuation is touched, and that is verified on every build rather
-than asserted. Two things do change in their text, both narrow, both listed in
-full, and both checked mechanically.
+than asserted. Three things do change in their text, all narrow, all listed in
+full, and all checked mechanically.
 
 **67 misspellings are corrected**, across 77 sites you can read in play. `Stength
 Seed` is `Strength Seed`. `Congradulations` is `Congratulations`. `Ths king is
@@ -54,7 +54,17 @@ rests on is not there. Thirteen further candidates the audit found are excluded
 because each needs a judgment call somewhere, and they are listed with their
 reasons in the same document.
 
-A third thing changes no wording at all: a redundant marker symbol with no
+**Five item names lose a trailing asterisk of theirs**, new in v5.0.
+`Demon Hammer*` ran past the right edge of the item list: the asterisk is the
+last byte of their own name-table entry, the Japanese ROM has none of them, and
+no field or flag in any of the 255 item records gives it a meaning. Their item
+table caps at 12 characters and the only three names in the game above it were
+starred ones, each over by exactly that one mark. Dropping it lands each at 12.
+No letter of their text changes. Full account, including the eight entries that
+keep theirs, in
+[`docs/ITEM-NAME-ASTERISK.md`](docs/ITEM-NAME-ASTERISK.md).
+
+A fourth thing changes no wording at all: a redundant marker symbol with no
 English glyph is removed wherever it appeared. See "The speech marker" below.
 
 **One name-table entry of theirs has been changed for a different reason**, and
@@ -104,6 +114,10 @@ in play. That is new in v4.0 and it is the first version of this patch to change
 their spelling at all. The rule that permits it, the whole list, and the
 thirteen candidates it deliberately leaves alone are in
 [`docs/TYPO-CORRECTIONS.md`](docs/TYPO-CORRECTIONS.md).
+
+New in v5.0, it drops a **trailing asterisk from five item names** that pushed
+`Demon Hammer*`, `Mirror Armor*` and `Flame Shield*` past the right edge of the
+item window. See [`docs/ITEM-NAME-ASTERISK.md`](docs/ITEM-NAME-ASTERISK.md).
 
 ### The Tactics-equip hang
 
@@ -261,8 +275,8 @@ back.
 **This is what you want if you just want to play.** One step, no Python.
 
 **One patch contains everything** - the 421 messages, the 187 names, the 67
-corrected misspellings, both crash fixes, the Tactics-equip hang, the gold
-window and clymax's spell-target fix.
+corrected misspellings, the item-name asterisk, both crash fixes, the
+Tactics-equip hang, the gold window and clymax's spell-target fix.
 There is nothing else to apply and no order to get right. Do not apply the
 menu-fix patch as well, and do not apply clymax's patch as well; this one
 already contains both.
@@ -323,12 +337,13 @@ above. Standard-library Python 3, no dependencies.
 Check what you get, whichever route you used:
 
 ```
-result   CRC32 73B4B888   SHA-1 5bdc362472431117a0839ddbd1de8fed2ae4f8e0
+result   CRC32 64018C32   SHA-1 b58f349d3ae230b8c041ae0b414632e6e8b17de3
 ```
 
 That is the whole thing. **You are done** - the 421 messages, the 187 names,
-the 67 corrected misspellings, both crash fixes, the Tactics-equip hang, the
-gold window and clymax's spell-target fix are all in that one output file.
+the 67 corrected misspellings, the item-name asterisk, both crash fixes, the
+Tactics-equip hang, the gold window and clymax's spell-target fix are all in
+that one output file.
 
 If the CRC32 does not match, your source ROM is not the one this targets. BPS
 records its expected source, so Flips will normally refuse a wrong ROM rather
@@ -358,9 +373,9 @@ fetched from anywhere else.
 python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt DQ6-Refill.sfc
 ```
 
-![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, fixes the Tactics-equip hang and the in-battle spell target list, restores the gold window, writes the name-table entries and corrects three misspellings in theirs, decodes 6,960 messages, substitutes 421, corrects 76 misspelled sites in their own messages, drops the redundant speech marker, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
+![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, fixes the Tactics-equip hang and the in-battle spell target list, restores the gold window, writes the name-table entries, corrects three misspellings in theirs and trims the asterisk from five item names, decodes 6,960 messages, substitutes 421, corrects 76 misspelled sites in their own messages, drops the redundant speech marker, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
 
-If your output is not `73B4B888`, the input ROM is not the one this targets.
+If your output is not `64018C32`, the input ROM is not the one this targets.
 Check its CRC32 before anything else.
 
 The script refuses to write if the ROM is not what it expects. Every fix checks
@@ -428,7 +443,7 @@ so a location read `M194` and a battle action read `M6BA`. **186 are now
 written, leaving 208 in the release build.** Every figure here was measured
 against a ROM, and each says which ROM it describes:
 
-| | stock `B545C548` | release `73B4B888` |
+| | stock `B545C548` | release `64018C32` |
 |---|---|---|
 | entries displaying an identifier | **394** | **208** |
 | written by this patch | - | **186** |

@@ -14,8 +14,9 @@ fetched from anywhere else.
 It does eight things:
   1. applies both crash fixes, Info > All and Forget (see apply_crash_fixes)
   2. restores the gold window on the info screen (see apply_gold below)
-  3. writes the 187 name-table entries, and corrects 3 misspellings in theirs
-     (see apply_names and TYPOS_NT below)
+  3. writes the 187 name-table entries, corrects 3 misspellings in theirs, and
+     drops the trailing asterisk from 5 item names of theirs that overruns the
+     item window (see apply_names, TYPOS_NT and TRIM_NT below)
   4. decodes all 6,960 messages from the unmodified payload
   5. substitutes the 421 authored English messages
   6. corrects 76 misspellings in their own messages (see TYPOS below)
@@ -33,11 +34,13 @@ no punctuation is touched. tools/verify.py checks that on every build, and it
 fails if any symbol moves in any of their messages beyond the marker and the
 listed corrections.
 
-Two pieces of their text are changed by something other than spelling, both
-in the NAME TABLE and both named. $070B, under the rule that their text is
-changed only where their rendering blocks completing an untranslated entry;
-and three entries corrected for spelling under the rule in TYPOS below. See
-the README and docs/TYPO-CORRECTIONS.md.
+Everything else changed in their text is in the NAME TABLE, and each kind is
+named and listed. $070B, under the rule that their text is changed only where
+their rendering blocks completing an untranslated entry. Three entries
+corrected for spelling, under the rule in TYPOS below. And five item names
+trimmed of a trailing asterisk of theirs that overruns the item window, under
+TRIM_NT below. See the README, docs/TYPO-CORRECTIONS.md and
+docs/ITEM-NAME-ASTERISK.md.
 
 Message system, decoded from the ROM at $C0:2B69 onward:
   - Pointer table at $C1:5BB5, 870 entries of 3 bytes, indexed by (ID >> 3).
@@ -659,6 +662,16 @@ def apply_names(rom, table):
         entries[id_pos[idv]] = _nt_correct(entries[id_pos[idv]], was, now,
                                            dic, inv, idv)
 
+    # And the trailing asterisk on the five item names, dropped the same way:
+    # one byte off the end of their own entry, nothing else disturbed.
+    for idv in TRIM_NT:
+        if idv in table:
+            raise SystemExit('string ID $%04X is both authored and trimmed'
+                             % idv)
+        if idv not in id_pos:
+            raise SystemExit('string ID $%04X is not reachable' % idv)
+        entries[id_pos[idv]] = _nt_trim(entries[id_pos[idv]], idv)
+
     src_end = NT_BASE
     for e in entries[:live_end + 1]:
         src_end += len(e) + 1
@@ -678,7 +691,7 @@ def apply_names(rom, table):
         off = new_start[pos] - NT_BASE
         o = NT_PTR + g * 3
         rom[o], rom[o + 1], rom[o + 2] = off & 0xFF, (off >> 8) & 0xFF, (off >> 16) & 0xFF
-    return len(table), len(TYPOS_NT)
+    return len(table), len(TYPOS_NT), len(TRIM_NT)
 
 
 
@@ -836,6 +849,54 @@ TYPOS_NT = [(0x0328, 'Amatuer', 'Amateur', 'B'),
 TYPOS_INTERNAL = {6076, 6146}
 
 
+# ---------------------------------------------------------------------------
+# The trailing asterisk on five item names
+#
+# `Demon Hammer*` overruns the item window. The asterisk is the last byte of
+# the name-table entry, $89, not something the renderer appends, and it is
+# NoPrgress's own: the Japanese name table sits at the same address, is built
+# the same way, and exactly ONE entry in it ends on $89 - the standalone `*`
+# glyph at $0073, which is left alone here. Theirs has fourteen.
+#
+# It marks nothing. All 255 item records were checked field by field and bit by
+# bit against the five names that carry it, and no field and no flag separates
+# those five from the other 249. It is not a curse marker, not a "usable in
+# battle" marker, and not tied to any message the record points at.
+#
+# What it does do is overrun. Measured across all 218 distinct item names:
+#
+#     12 cells   36 names       the cap the rest of the table respects
+#     13 cells    3 names       Demon Hammer*, Mirror Armor*, Flame Shield*
+#
+# Those three are the only item names in the game wider than 12 cells, and they
+# are wider by exactly the asterisk. Dropping it puts each at 12, their own
+# limit, and touches no letter of their text.
+#
+# All five item names are trimmed rather than only the three that overrun,
+# because two items keeping a mark that means nothing while three lose it is a
+# worse table than either. The five are the item names. The eight other entries
+# ending in $89 are five monster and boss names and three vocation fragments;
+# none is an item, none overruns its own block, and none is touched. They are
+# listed in docs/ITEM-NAME-ASTERISK.md.
+
+TRIM_STAR = 0x89
+TRIM_NT = (0x0845, 0x084B, 0x086B, 0x088A, 0x08AB)
+
+
+def _nt_trim(raw, sid):
+    """Drop one trailing $89 from a name-table entry, byte for byte.
+
+    Everything else survives, including the break code in the two-line entry:
+    a break code counts the characters on line ONE, so a byte removed from the
+    end of line two cannot move it.
+    """
+    if not raw or raw[-1] != TRIM_STAR:
+        raise SystemExit('name-table entry $%04X does not end with $%02X.\n'
+                         '  The input ROM is not the one this list was '
+                         'measured against.' % (sid, TRIM_STAR))
+    return bytes(raw[:-1])
+
+
 def apply_typos(msgs, inv, lig_sym):
     """Correct the listed misspellings in their messages, in symbol space.
 
@@ -939,9 +1000,10 @@ def main(src, cand, names_path, dst):
     g = apply_gold(rom)
     print('gold window restored: %d bytes' % g)
 
-    n_names, n_nt_typo = apply_names(rom, read_nametable(names_path))
+    n_names, n_nt_typo, n_trim = apply_names(rom, read_nametable(names_path))
     print('name-table entries written: %d' % n_names)
     print('name-table misspellings of theirs corrected: %d' % n_nt_typo)
+    print('item names trimmed of a trailing $%02X: %d' % (TRIM_STAR, n_trim))
 
     r = Rom(bytes(io.open(src, 'rb').read()))
     msgs = r.decode_all()

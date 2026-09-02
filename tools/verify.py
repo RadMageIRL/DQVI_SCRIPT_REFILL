@@ -156,6 +156,15 @@ TYPOS_NT = ((0x0328, 'Amatuer', 'Amateur'),
             (0x0354, 'Congradulations', 'Congratulations'),
             (0x0355, 'recieved', 'received'))
 
+# The five item names that carried a trailing $89, NoPrgress's own asterisk,
+# which put three of them one cell past the 12 the rest of the item table keeps
+# to. Checked here byte for byte: the built entry must be the stock entry with
+# exactly that one byte gone. The Japanese ROM has none of these, and no field
+# or flag in any of the 255 item records separates the five from the other 249.
+# See docs/ITEM-NAME-ASTERISK.md.
+TRIM_STAR = 0x89
+TRIM_NT = (0x0845, 0x084B, 0x086B, 0x088A, 0x08AB)
+
 # Event-flag strings the game never draws. Corrected for consistency, counted
 # apart, and named here so the player-facing figure stays checkable by playing.
 TYPOS_INTERNAL = (6076, 6146)
@@ -504,6 +513,30 @@ def main(argv):
                 'the entries are otherwise identical' % len(TYPOS_NT),
                 '; '.join(nt_bad) if nt_bad else
                 ', '.join('$%04X' % s for s, _w, _n in TYPOS_NT))
+
+    # The trailing asterisk. Each trimmed entry must be its own stock entry
+    # with exactly one $89 gone from the end, and no other entry anywhere may
+    # lose one.
+    trim_bad = []
+    for sid in TRIM_NT:
+        before, after = on[sid], nn[sid]
+        if not before or before[-1] != TRIM_STAR or after != before[:-1]:
+            trim_bad.append('$%04X %s -> %s'
+                            % (sid, before.hex(), after.hex()))
+    stray = [sid for sid in sorted(on)
+             if sid not in TRIM_NT
+             and on[sid][-1:] == bytes([TRIM_STAR]) != nn[sid][-1:]]
+    bad += line(not trim_bad and not stray,
+                'the trailing $%02X is gone from the %d item names, and from '
+                'no other entry' % (TRIM_STAR, len(TRIM_NT)),
+                ('; '.join(trim_bad + ['unlisted: $%04X' % s for s in stray]))
+                if (trim_bad or stray) else
+                ', '.join('$%04X' % s for s in TRIM_NT))
+    if not trim_bad and not stray:
+        kept = sum(1 for sid in sorted(on)
+                   if nn[sid][-1:] == bytes([TRIM_STAR]))
+        print('       %d entries still end on $%02X, none of them an item name'
+              % (kept, TRIM_STAR))
     print()
 
     # 4 --------------------------------------------------------------------

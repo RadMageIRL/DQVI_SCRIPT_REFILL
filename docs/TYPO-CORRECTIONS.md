@@ -1,7 +1,12 @@
-# Their spelling: every correction in v4.0
+# Their spelling: every correction
 
-This is the whole list. It is generated from the two ROMs rather than kept
-by hand, and `tools/verify.py` re-derives the same claims on every build.
+This is the whole list, unchanged since v4.0 which introduced it. It is
+generated from the two ROMs rather than kept by hand, and `tools/verify.py`
+re-derives the same claims on every build.
+
+The trailing asterisk dropped from five item names in v5.0 is a different
+kind of change and has its own account in
+[`ITEM-NAME-ASTERISK.md`](ITEM-NAME-ASTERISK.md).
 
 **The rule, stated so it cannot widen.** Their text is corrected only where
 one of these holds:

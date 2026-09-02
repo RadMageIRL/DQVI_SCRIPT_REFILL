@@ -920,6 +920,55 @@ which is exactly why that check has to be mechanical.** The corrections are now
 applied to the bytes of their own entries, leaving punctuation, break codes and
 their choice between two identical-looking full stops as shipped.
 
+### 14b. A mark of theirs that overruns, and the third permission
+
+Added in v5.0, and it is deliberately not folded into either rule above.
+Rewording asks whether their choice blocks mine. Spelling asks whether a word is
+spelled the way they themselves spell it. This one asks a third question:
+**does a symbol they added fit the window it is drawn in?**
+
+`Demon Hammer*` runs past the right edge of the item list. The asterisk is the
+last byte of their name-table entry, `$89`, and the full account is in
+`docs/ITEM-NAME-ASTERISK.md`. Three things were established before it was
+touched, in this order, and the order is the method:
+
+1. **Is it in the data or drawn by the renderer?** In the data. This is asked
+   first because this project has already been wrong in the other direction:
+   METHOD 9 is an account of removing `$0559` while believing it drew the whole
+   mark, when the engine draws one of its own in every speech box.
+2. **Is it theirs or Enix's?** Theirs. The Japanese name table is at the same
+   address, reached by a byte-identical constant, and exactly one entry in it
+   ends on `$89` against their fourteen. **Do not change a byte of Enix's
+   because it looks like a translation artifact; look at the other ROM.**
+3. **Does it mean anything?** No. All 255 item records were compared with the
+   six that carry it, field by field and bit by bit, and nothing separates
+   them. A first hypothesis - that the six shared a description message - was
+   measured and killed: they do share `$168F`, and so do 245 of the 255,
+   because it is the default in an unused slot. **A shared value across a small
+   set means nothing until you check how common it is across the whole set.**
+
+Only then is the layout argument worth making, and it is the strongest part.
+Their own item table caps at **12 cells**: 36 names sit exactly there, 215 sit
+at or below it, and **the only three above it are starred, each over by exactly
+the asterisk.** Removing it lands them at 12, which is their limit, not one
+imposed on them. The fix is measured against their own practice rather than
+against taste, which is the same property that makes the spelling rule
+checkable.
+
+**The rule, stated so it cannot widen:**
+
+> A symbol NoPrgress added to their own text is removed only where it is
+> theirs rather than Enix's, carries no meaning any table in the game gives
+> it, and pushes its string past a limit their own text otherwise keeps to.
+
+All five item names are trimmed rather than only the three that overrun,
+because two items keeping a mark that means nothing while three lose it is a
+worse table than either. **The eight other entries ending on `$89` are monster
+and boss names and vocation fragments, none of them an item and none of them
+overrunning its own block. They are not touched, and the reason they are not is
+that nobody asked the question about them.** Scope that widens by itself is how
+a narrow rule stops being one.
+
 ---
 
 ## 15. Enumerate the emit sites, not the entry
