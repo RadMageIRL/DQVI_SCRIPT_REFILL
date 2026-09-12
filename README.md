@@ -1,4 +1,5 @@
 ** Made Public 9-2-2026 **
+** If you're using the RHDN base, use the patch in the RHDN folder **
 
 # DQ6 Script Refill
 
