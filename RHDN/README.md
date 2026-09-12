@@ -7,15 +7,15 @@ yourself gives a ROM with CRC32 `276D9893`, which is the same translation as
 the Japanese ROM's own internal checksum in place instead of recomputing it over
 the translated data. `DQ6-SFC-NoPrgress-RM-ScriptRefill-RHDN.bps` expects
 `276D9893` and refuses `B545C548`, exactly as the root one does in reverse, and
-both produce `CRC32 5F6542D2` / `SHA-1 19f09520365a1e5f7dfb6b7df47f5dbf1a871da4`.
+both produce `CRC32 A4532B94` / `SHA-1 170308cb12b3a70754cd2ef1d1a59505c2895a90`.
 The `.ips` is byte-identical to the one in the root, because IPS records only the
 bytes to write and both sources differ from the output in the same places; it is
 here so this directory is complete on its own.
 
 | File | Size | SHA-1 |
 |---|---:|---|
-| `DQ6-SFC-NoPrgress-RM-ScriptRefill-RHDN.bps` | 312,168 | `b6ab0521b8fdce991901f5bd7020c5db228aa3a9` |
-| `DQ6-SFC-NoPrgress-RM-ScriptRefill-RHDN.ips` | 318,325 | `98f4dd3bade9ac5e97148ca24433ab4b02ac2b11` |
+| `DQ6-SFC-NoPrgress-RM-ScriptRefill-RHDN.bps` | 312,175 | `9fa2e88b296ba79beec40e52241b4eeb3cea400f` |
+| `DQ6-SFC-NoPrgress-RM-ScriptRefill-RHDN.ips` | 318,337 | `b6173d5a702655d586c2aae4729c350dc4194651` |
 
 `patchRM.py` in the root needs none of this. It takes either ROM with either
 patch, corrects the four bytes in memory to match whichever patch you gave it,

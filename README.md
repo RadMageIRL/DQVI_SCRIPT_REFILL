@@ -119,6 +119,14 @@ New in v5.0, it drops a **trailing asterisk from five item names** that pushed
 `Demon Hammer*`, `Mirror Armor*` and `Flame Shield*` past the right edge of the
 item window. See [`docs/ITEM-NAME-ASTERISK.md`](docs/ITEM-NAME-ASTERISK.md).
 
+New in v6.1, it **widens the load screen's save-slot window** so a save
+location fits. `Dhama Shrine` was losing its last letter and `Southern Gate`
+two, and an over-long name did not merely clip: it wrapped around the tilemap
+row and drew over the menu behind it. Two bytes in one window descriptor take
+the location field from 11 cells to 13. This is the **load screen only**; the
+in-game save screen is a different window and is unchanged. Details, and what
+is still not fixed, in [`docs/SAVE-SLOT-WINDOW.md`](docs/SAVE-SLOT-WINDOW.md).
+
 New in v6.0, it writes **107 battle messages**. These live in a third string
 system that nothing in this project could see until it was looked for directly:
 a byte-encoded pool whose pointer table ends on the first byte of the Huffman
@@ -284,8 +292,9 @@ back.
 **This is what you want if you just want to play.** One step, no Python.
 
 **One patch contains everything** - the 421 messages, the 107 battle messages,
-the 187 names, the 67 corrected misspellings, the item-name asterisk, both crash
-fixes, the Tactics-equip hang, the gold window and clymax's spell-target fix.
+the 187 names, the 67 corrected misspellings, the item-name asterisk, the
+save-slot window, both crash fixes, the Tactics-equip hang, the gold window and
+clymax's spell-target fix.
 There is nothing else to apply and no order to get right. Do not apply the
 menu-fix patch as well, and do not apply clymax's patch as well; this one
 already contains both.
@@ -346,7 +355,7 @@ above. Standard-library Python 3, no dependencies.
 Check what you get, whichever route you used:
 
 ```
-result   CRC32 5F6542D2   SHA-1 19f09520365a1e5f7dfb6b7df47f5dbf1a871da4
+result   CRC32 A4532B94   SHA-1 170308cb12b3a70754cd2ef1d1a59505c2895a90
 ```
 
 That is the whole thing. **You are done** - the 421 messages, the 187 names,
@@ -383,9 +392,9 @@ fetched from anywhere else.
 python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt \n                battle-en.txt DQ6-Refill.sfc
 ```
 
-![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, fixes the Tactics-equip hang and the in-battle spell target list, restores the gold window, writes the name-table entries, corrects three misspellings in theirs and trims the asterisk from five item names, writes 107 battle messages and repacks that pool, decodes 6,960 messages, substitutes 421, corrects 76 misspelled sites in their own messages, drops the redundant speech marker, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
+![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, fixes the Tactics-equip hang and the in-battle spell target list, restores the gold window, widens the load screen's save-slot window, writes the name-table entries, corrects three misspellings in theirs and trims the asterisk from five item names, writes 107 battle messages and repacks that pool, decodes 6,960 messages, substitutes 421, corrects 76 misspelled sites in their own messages, drops the redundant speech marker, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
 
-If your output is not `5F6542D2`, the input ROM is not the one this targets.
+If your output is not `A4532B94`, the input ROM is not the one this targets.
 Check its CRC32 before anything else.
 
 The script refuses to write if the ROM is not what it expects. Every fix checks
@@ -454,7 +463,7 @@ so a location read `M194` and a battle action read `M6BA`. **186 are now
 written, leaving 208 in the release build.** Every figure here was measured
 against a ROM, and each says which ROM it describes:
 
-| | stock `B545C548` | release `5F6542D2` |
+| | stock `B545C548` | release `A4532B94` |
 |---|---|---|
 | entries displaying an identifier | **394** | **208** |
 | written by this patch | - | **186** |

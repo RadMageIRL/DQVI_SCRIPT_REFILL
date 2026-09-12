@@ -188,6 +188,13 @@ GOLD_CODE_NOW = bytes.fromhex('A91000223A76C3A93E0022FE83C3ABC2307AFA68286B')
 GOLD_DESC_AT = 0x057E88          # descriptor 58, bytes 0-2: X, Y, W
 GOLD_DESC_NOW = bytes([0x01, 0x01, 0x09])
 
+# The load screen's save-slot window, descriptor 141 in the same table. Moving
+# it two cells left and widening it by two gives the location name 13 cells
+# instead of 11, without moving its right edge. See docs/SAVE-SLOT-WINDOW.md.
+SLOT_DESC_AT = 0x058312          # descriptor 141, bytes 0-2: X, Y, W
+SLOT_DESC_WAS = bytes([0x03, 0x06, 0x1C])
+SLOT_DESC_NOW = bytes([0x01, 0x06, 0x1E])
+
 
 
 # ---------------------------------------------------------------------------
@@ -629,6 +636,29 @@ def _nt_correct(raw, was, now, dic, inv, sid):
             out.append(flat[i])
             i += 1
     return bytes(out)
+
+
+def apply_slot_window(rom):
+    """Widen the load screen's save-slot window. Refuses on anything else.
+
+    The window is descriptor 141 in the table at $C5:7B5C, read by the
+    window-open routine at $C3:736C, which stores the window's left column into
+    $388C. Every field on the slot line is drawn at $388C plus an offset, so
+    moving the window moves the whole line with it and no drawing code changes.
+
+    X 3 -> 1 and W 28 -> 30 keeps the right edge exactly where it was and takes
+    two cells off the left, which is where the slack is. The location name
+    field goes from 11 cells to 13. The internal checksum is unchanged by this
+    edit because the two byte changes cancel.
+    """
+    n = len(SLOT_DESC_WAS)
+    if bytes(rom[SLOT_DESC_AT:SLOT_DESC_AT + n]) != SLOT_DESC_WAS:
+        raise SystemExit(
+            'save-slot window: descriptor 141 at 0x%06X is not the '
+            'expected X=%d Y=%d W=%d. Refusing to write.'
+            % ((SLOT_DESC_AT,) + tuple(SLOT_DESC_WAS)))
+    rom[SLOT_DESC_AT:SLOT_DESC_AT + n] = SLOT_DESC_NOW
+    return n
 
 
 def apply_names(rom, table):
@@ -1118,6 +1148,11 @@ def main(src, cand, names_path, battle_path, dst):
           '(clymax of ff5central.com)' % (TARGET_BEFORE, TARGET_AFTER))
     g = apply_gold(rom)
     print('gold window restored: %d bytes' % g)
+
+    apply_slot_window(rom)
+    print('load-screen save-slot window widened: descriptor 141, X %d -> %d, '
+          'W %d -> %d' % (SLOT_DESC_WAS[0], SLOT_DESC_NOW[0],
+                          SLOT_DESC_WAS[2], SLOT_DESC_NOW[2]))
 
     n_names, n_nt_typo, n_trim = apply_names(rom, read_nametable(names_path))
     print('name-table entries written: %d' % n_names)
