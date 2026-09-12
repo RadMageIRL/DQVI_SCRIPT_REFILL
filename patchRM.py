@@ -22,7 +22,7 @@ Standard-library Python 3 only. No dependencies, nothing to install.
 
 The result is identical to what Flips produces from the same patch:
 
-    CRC32 64018C32   SHA-1 b58f349d3ae230b8c041ae0b414632e6e8b17de3
+    CRC32 5F6542D2   SHA-1 19f09520365a1e5f7dfb6b7df47f5dbf1a871da4
 """
 import glob
 import hashlib
@@ -32,7 +32,7 @@ import sys
 import zlib
 
 EXPECT_SRC_CRC = 0xB545C548
-EXPECT_DST_CRC = 0x64018C32
+EXPECT_DST_CRC = 0x5F6542D2
 DEFAULT_PATCH = 'DQ6-SFC-NoPrgress-RM-ScriptRefill.bps'
 NL = chr(10)
 
@@ -240,10 +240,10 @@ def main(argv):
         print('  WARNING: applied cleanly, but the result is not the expected')
         print('  release build (CRC32 %08X).' % EXPECT_DST_CRC)
     print()
-    print('  The patch contains everything: 421 messages, 187 name-table')
-    print('  entries, 67 corrected misspellings of theirs, the item-name')
-    print('  asterisk that overran the item window, both crash fixes, the')
-    print("  Tactics-equip hang, the gold window, clymax's in-battle spell")
+    print('  The patch contains everything: 421 messages, 107 battle messages,')
+    print('  187 name-table entries, 67 corrected misspellings of theirs, the')
+    print('  item-name asterisk that overran the item window, both crash fixes,')
+    print("  the Tactics-equip hang, the gold window, clymax's in-battle spell")
     print('  target fix, and the redundant speech marker dropped. Nothing else')
     print('  to apply. Your original ROM was not modified.')
     return 0

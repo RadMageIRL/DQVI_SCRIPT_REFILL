@@ -13,9 +13,9 @@ window, and the in-battle spell target list.
 
 **NoPrgress translated this game.** 6,539 of the 6,960 messages in the main
 script are theirs. Every character voice, every place name, every item and
-spell and joke you will read is theirs. This patch adds 421 messages, six
-percent, and spends most of its effort trying to sound like the other
-ninety-four.
+spell and joke you will read is theirs. This patch adds 421 messages to that
+script, 107 more to the battle text, and spends most of its effort trying to
+sound like the rest.
 
 **DeJap** did the foundational Dragon Quest VI translation work that this line
 of hacks descends from, and their name belongs alongside NoPrgress's whenever
@@ -118,6 +118,15 @@ thirteen candidates it deliberately leaves alone are in
 New in v5.0, it drops a **trailing asterisk from five item names** that pushed
 `Demon Hammer*`, `Mirror Armor*` and `Flame Shield*` past the right edge of the
 item window. See [`docs/ITEM-NAME-ASTERISK.md`](docs/ITEM-NAME-ASTERISK.md).
+
+New in v6.0, it writes **107 battle messages**. These live in a third string
+system that nothing in this project could see until it was looked for directly:
+a byte-encoded pool whose pointer table ends on the first byte of the Huffman
+one, so every tool walked past it. Unwritten messages there show their own ID in
+hex, so a confused character flailing at himself read `M17D <name>` and then
+`M17E`. Most of the 107 are the Goof-Off vocation's random actions. The system,
+how it was found, and what was checked before writing to it are in
+[`docs/BATTLE-POOL.md`](docs/BATTLE-POOL.md).
 
 ### The Tactics-equip hang
 
@@ -274,9 +283,9 @@ back.
 
 **This is what you want if you just want to play.** One step, no Python.
 
-**One patch contains everything** - the 421 messages, the 187 names, the 67
-corrected misspellings, the item-name asterisk, both crash fixes, the
-Tactics-equip hang, the gold window and clymax's spell-target fix.
+**One patch contains everything** - the 421 messages, the 107 battle messages,
+the 187 names, the 67 corrected misspellings, the item-name asterisk, both crash
+fixes, the Tactics-equip hang, the gold window and clymax's spell-target fix.
 There is nothing else to apply and no order to get right. Do not apply the
 menu-fix patch as well, and do not apply clymax's patch as well; this one
 already contains both.
@@ -337,7 +346,7 @@ above. Standard-library Python 3, no dependencies.
 Check what you get, whichever route you used:
 
 ```
-result   CRC32 64018C32   SHA-1 b58f349d3ae230b8c041ae0b414632e6e8b17de3
+result   CRC32 5F6542D2   SHA-1 19f09520365a1e5f7dfb6b7df47f5dbf1a871da4
 ```
 
 That is the whole thing. **You are done** - the 421 messages, the 187 names,
@@ -360,7 +369,8 @@ here so the patch does not have to be taken on trust: `build.py` rebuilds the re
 this repository, so anyone can check that what the patch writes is what these
 files say it writes, and get the same hash.
 
-That is also why `candidates-en.txt` and `nametable-en.txt` are published. Every
+That is also why `candidates-en.txt`, `nametable-en.txt` and `battle-en.txt` are
+published. Every
 authored line is readable text rather than something buried in a binary diff.
 
 The patch is reproducible from this repository alone. `build.py` performs every
@@ -370,12 +380,12 @@ ROM byte for byte. Standard-library Python, no dependencies, and nothing is
 fetched from anywhere else.
 
 ```
-python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt DQ6-Refill.sfc
+python build.py DQ6-NoPrgress.sfc candidates-en.txt nametable-en.txt \n                battle-en.txt DQ6-Refill.sfc
 ```
 
-![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, fixes the Tactics-equip hang and the in-battle spell target list, restores the gold window, writes the name-table entries, corrects three misspellings in theirs and trims the asterisk from five item names, decodes 6,960 messages, substitutes 421, corrects 76 misspelled sites in their own messages, drops the redundant speech marker, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
+![The build script running: it reports the source ROM as CRC32 B545C548, applies both crash fixes across 21 sites, fixes the Tactics-equip hang and the in-battle spell target list, restores the gold window, writes the name-table entries, corrects three misspellings in theirs and trims the asterisk from five item names, writes 107 battle messages and repacks that pool, decodes 6,960 messages, substitutes 421, corrects 76 misspelled sites in their own messages, drops the redundant speech marker, and reports the finished ROM's CRC32 and SHA-1](screenshots/build-run.png)
 
-If your output is not `64018C32`, the input ROM is not the one this targets.
+If your output is not `5F6542D2`, the input ROM is not the one this targets.
 Check its CRC32 before anything else.
 
 The script refuses to write if the ROM is not what it expects. Every fix checks
@@ -383,7 +393,7 @@ its own site first - the crash-fix span, all 21 Forget relocation sites, and the
 gold routine - so pointing it at the wrong ROM fails loudly rather than
 producing something broken.
 
-## How the 421 messages and 187 names were written
+## How the 421 messages, 107 battle lines and 187 names were written
 
 From the Japanese script and from NoPrgress's own English, and from nothing
 else. No later official localization was consulted at any point, including for
@@ -416,6 +426,7 @@ anything, and there are no dependencies.
 
 ```
 python tools/census.py    DQ6-NoPrgress.sfc            # 870 x 8 = 6,960 messages, 421 unwritten
+python tools/census.py    DQ6-NoPrgress.sfc --battle   # the battle pool, 608 messages, 107 unwritten
 python tools/census.py    DQ6-NoPrgress.sfc --roundtrip  # the byte-exact re-encode gate
 python tools/charset.py   DQ6-NoPrgress.sfc            # the trees, and what can be written at all
 python tools/nametable.py DQ6-NoPrgress.sfc            # the name table and the ID rule
@@ -443,7 +454,7 @@ so a location read `M194` and a battle action read `M6BA`. **186 are now
 written, leaving 208 in the release build.** Every figure here was measured
 against a ROM, and each says which ROM it describes:
 
-| | stock `B545C548` | release `64018C32` |
+| | stock `B545C548` | release `5F6542D2` |
 |---|---|---|
 | entries displaying an identifier | **394** | **208** |
 | written by this patch | - | **186** |
@@ -632,7 +643,8 @@ guess costs a commit. An identifier on screen costs a player.
   [`docs/TYPO-CORRECTIONS.md`](docs/TYPO-CORRECTIONS.md). The build fails if any
   other symbol in any of their messages moves, and it fails if a correction
   appears anywhere the list does not name.
-- **It does not claim to be complete or correct.** 421 messages and 187 names
+- **It does not claim to be complete or correct.** 421 messages, 107 battle
+  lines and 187 names
   were authored by someone who is not a professional translator, checked against
   a corpus rather than against a native speaker. Errors are mine. Reports are
   welcome.

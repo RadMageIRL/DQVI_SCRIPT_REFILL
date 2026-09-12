@@ -1,0 +1,372 @@
+DQ6 battle message pool - the 107 authored messages
+==================================================================
+
+These are battle messages that the NoPrgress translation left unwritten. In
+play each one displays the game's own internal identifier, so a Goof-Off action
+reads B1D2 and the confused-flail line reads M17D.
+
+They live in a THIRD string system, separate from the Huffman message script
+and from the name table:
+
+  pointer table   $C1:5AD1, 76 entries of 3 bytes, ending exactly where the
+                  Huffman message table at $C1:5BB5 begins
+  payload         $F6:DEBD
+  shape           8 messages per entry, 608 in all, $AC / $AE terminated
+  encoding        the name-table byte charset plus the ligature dictionary at
+                  $C3:FB50, not Huffman
+
+Each row is  ---- <message ID in hex>  followed by the English.
+
+NOTATION
+  {XX}  a control byte, written where the game's own message puts it
+
+  {B7} actor name     {B8} target name    {B3} a party member
+  {B4} monster        {B5} item           {B2} spell or skill name
+  {BB} a number       {BA} his / her / its
+  {B9} him / her / it, and only ever as {B9}self
+  {0D}{0E} the M and P of MP, which are control bytes rather than letters
+  {AD} line break     {B1} {C2} {AF} window control
+
+RULE FOLLOWED THROUGHOUT: a message uses exactly the control codes its own
+Japanese uses, in the same places, and no others. Where the Japanese carries no
+pronoun the English carries none either, which also keeps every line correct
+whichever party member performs it and whatever the player named them.
+
+This file carries no Japanese. The source text belongs to Enix and the
+translation of the surrounding script to NoPrgress.
+
+==================================================================
+Status, special attacks and events
+==================================================================
+
+---- $033
+  {BC}There were no monsters!{C2}
+
+---- $137
+  {BC}{B7} came charging in{AD}with tremendous force!{B1}
+
+---- $151
+  {BC}{B7} hurled the {B2}!{B1}
+
+---- $16F
+  {BC}{B7} switched weapons to the {B5}!{B1}
+
+---- $17D
+  {BC}{B7} swung {BA} weapon around wildly!{B1}
+  -- the confused-flail opening; pairs with $17E.
+
+---- $17E
+  But the swing carried too far, and a stumble{AD}drove the weapon into its own wielder!{B1}
+  -- no pronoun: the Japanese uses jibun no, and this message carries no name code of its own.
+
+---- $183
+  {BC}{B7} is frightened!{B1}
+
+---- $185
+  {BC}{B7} danced a strange dance!{B1}{AD}But nothing happened!{B1}
+
+---- $186
+  {BD}{B7} walked straight past{AD}and wandered off somewhere!{B1}
+
+---- $18B
+  {BD}{B8} still cannot get up!{B1}
+
+---- $18D
+  {BC}{B7} lost all sense of things{AD}and threw {B9}self at {B8}!{B1}
+
+---- $18E
+  {BD}But {B8}{AD}shook the grip loose!{B1}
+
+---- $193
+  {B8}'s head is confused!{B1}
+
+---- $194
+  {BD}A strange mist poured from {B7}'s body{AD}and wrapped everything around!{B1}
+
+---- $196
+  {BD}{B8}'s {0D}{0E} ran out!{B1}
+
+---- $197
+  {BD}A demon as big as a mountain arrived,{AD}roaring with terrible laughter!{B1}
+
+---- $198
+  {BC}The demon attacks!{B1}
+
+---- $199
+  {BC}The demon went away, still laughing.{B1}
+
+---- $19A
+  {BC}A freezing wind struck {B8}!{B1}
+
+---- $19B
+  {B8} was frozen solid!{B1}
+
+---- $19C
+  {BC}{B7} is frozen and cannot move!{B1}
+
+---- $19D
+  {BD}Meteors came pouring down from the sky{AD}across the whole field!{B1}
+
+---- $19E
+  {BD}{B8}'s {0D}{0E} was restored!{B1}
+
+---- $19F
+  {BD}{B8}'s {0D}{0E} recovered {BB} points!{B1}
+
+==================================================================
+Wagon, Luida's and equipment
+==================================================================
+
+---- $1AB
+  {BC}But the wagon and Luida's{AD}were both full!{AF}
+
+---- $1AC
+  {BC}{B4} looked lonely{AD}as it went away!
+
+---- $1AD
+  {BC}It would be better not to send{AD}that one back to Luida's just now.{AF}
+
+---- $1B0
+  {BC}{B7} used {B2}???{B1}
+
+---- $1B1
+  {B7} cannot equip{AD}the {B5}.
+
+---- $1B2
+  The {B5}{AD}cannot be equipped.
+
+---- $1B3
+  {B7} equipped{AD}the {B5}.
+
+---- $1B4
+  {B7} has no items.
+
+---- $1B5
+  There is no one left to give orders to!
+
+==================================================================
+Song, and the Goof-Off actions
+==================================================================
+
+---- $1C4
+  {BD}{B8} listened, caught by the singing!{B1}
+
+---- $1C5
+  {BD}But {B8} would not listen!{B1}
+
+---- $1C6
+  {BC}{B7} is lost in the echo{AD}of the {B2}.{B1}
+
+---- $1C7
+  {BD}{B8} is lost in the echo{AD}of the {B2}.{B1}
+
+---- $1CD
+  {BC}{B7} began thinking of a game to play.{AD}But until there is peace again, no one can{AD}play with a whole heart......{B1}
+
+---- $1D0
+  {BC}{B7} took it into {BA} head{AD}to start a word game!{B1}
+
+---- $1D1
+  {BC}{B7}:Right, I will go first! {B2}!{AD}     Ah! .........{AD}{B7} lost!{B1}
+
+---- $1D2
+  {BC}{B7} started a lonely game of cat's cradle!{B1}{AD}{B7} is playing a lonely game of cat's cradle!{B1}{AD}{B7} gave up the lonely game of cat's cradle!{B1}
+
+---- $1D3
+  {BC}{B7} pictured something indecent!{B1}{AD}{B7}:Heh heh heh heh......{B1}{AD}{B7}'s nosebleed will not stop!{B1}
+
+---- $1D4
+  {BC}{B7} took out a knife and began{AD}carving a doll!{B1}{AD}The doll looks almost alive!{B1}{AD}{BC}The doll attacks!{B1}
+
+---- $1D5
+  {BC}{B7} produced a hidden bottle{AD}and settled in for a drink!{B1}{AD}{B7}:How could anyone not drink this!{B1}
+
+---- $1D6
+  {BC}{B8} got drunk!{B1}{AD}And {B8} fell fast asleep!{B1}
+
+---- $1D7
+  {BC}{B7} began to sing at the top of {BA} voice!{AD}It is a dreadful noise!{B1}
+
+---- $1D8
+  {BD}{B8} ran away!{B1}
+
+---- $1D9
+  {BC}{B7} took a mouthful of the strongest drink{AD}and held a flame to it! Bwahh!{B1}{AD}{BC}A gout of fire bursts from {BA} mouth!{B1}
+
+---- $1DE
+  {BC}{B7} is looking down,{AD}thoroughly embarrassed!{B1}
+
+---- $1DF
+  {BD}{B8} is looking down,{AD}thoroughly embarrassed!{B1}
+
+---- $1EC
+  {BC}{B7} is playing in the mud!{B1}
+
+---- $1ED
+  {BC}{B7} suddenly began hunting for an ant hill!{B1}
+
+---- $1EE
+  {BD}But none could be found!{B1}
+
+---- $1EF
+  {BD}There! An ant hill!{AD}{B7} is poking it with a stick!{B1}
+
+---- $1F2
+  {B2}!!{B1}{AD}But nothing happened!{B1}
+
+---- $1F3
+  {BC}{B7} copied {B3}'s voice{AD}and tried to change the orders!{B1}{AD}{B7}:Leave it to me!{B1}{AD}But it sounded nothing like them!{B1}
+
+---- $1F4
+  {BC}{B7} broke without warning into{AD}a wild, flailing dance!{B1}{AD}The weapon whips through the air all around!{B1}{AD}{BC}{B7} attacks!{B1}
+
+---- $1F5
+  {BC}{B7} decided to try out a spell{AD}thought up on the spot!{AD}{B7}:Zaorima!!{B1}
+
+---- $1F6
+  {BD}And {B8} came back to life!{B1}
+
+---- $1F7
+  {BC}{B7} suddenly started playing house!{B1}{AD}{B7}:There now, dinner is ready.{B1}
+
+---- $1F8
+  {B8} came wandering over{AD}and started eating it!{B1}{AD}{BC}This is terrible!{B1}
+
+---- $1F9
+  But nobody paid the least attention!{B1}
+
+---- $1FA
+  {BC}{B7} swished a skirt about{AD}and tempted the monsters!{B1}
+
+---- $1FB
+  {BC}{B8} came stumbling closer, and{AD}{B7} landed a hard blow!{B1}
+
+---- $1FC
+  {BC}But {B8} was not{AD}taken in by the charm!{B1}
+
+---- $1FD
+  {BC}{B7} changed into a swimsuit{AD}and began to dance!{B1}
+
+---- $1FE
+  {BD}{B8} forgot itself entirely{AD}and stared at {B7}!{B1}
+
+---- $1FF
+  {BD}But {B8} takes no notice!{B1}
+
+---- $200
+  {BC}{B7} is worked up{AD}and lost in a daze!{B1}
+
+---- $201
+  {BD}{B8} is worked up{AD}and lost in a daze!{B1}
+
+---- $202
+  {BC}{B7} quietly began a game best not described!{AD}Th this will not do......!{B1}{AD}Everyone is carefully looking the other way!{B1}
+
+---- $203
+  {BC}{B7} began a game of self pity.{AD}Poor, poor me......{AD}Tears well up in {B7}'s eyes!{B1}{AD}{BC}{B7}'s tears will not stop!{AD}They rise into a wave and crash over the monsters!{B1}
+
+---- $204
+  {BC}{B7} brushed back {BA} untidy hair!{B1}
+
+---- $205
+  {BC}{B7} is chuckling quietly......{B1}
+
+---- $206
+  {BC}{B7} flipped a coin high into the air!{AD}Down it came, into {B7}'s palm!{B1}
+
+---- $207
+  It was heads!{B1}
+
+---- $208
+  It was tails!{B1}
+
+---- $209
+  {B8} gave a sly grin!{B1}
+
+---- $20A
+  {BC}{B7} gazed into the distance and wore{AD}a cool, affected little smile......{B1}{AD}But for all the pose,{AD}a hopeless emptiness came over {B7}!{B1}
+
+---- $20B
+  {BC}{B8}:C curse you!!{B1}{AD}{B8}'s attack power went up!{B1}
+
+---- $20C
+  {BC}{B7} tried to recall a game learned{AD}back in Duran's keeping.{B1}{AD}Duran:Become strong. Stronger still......{B1}{AD}{BC}Duran's words come flooding back!{AD}{B7}:Uoooooooh!!{B1}{AD}{BC}Lightning bursts out all around {B7}!{B1}
+  -- Duran is their spelling, from the name table and their own script.
+
+---- $20D
+  {BC}{B7} is leaping and dancing merrily!{B1}
+
+---- $20E
+  {BC}{B7} is happily playing with a Slime!{B1}
+
+---- $20F
+  {BC}{B7} is lazily grooming {B9}self.{B1}
+
+---- $210
+  {BC}{B7} is wondering what game to play next!{B1}
+
+---- $212
+  {BC}{B7} is balancing on a ball, of all things!{AD}Ah! The balance went and in {B7} crashed!{B1}
+
+---- $213
+  {BC}{B7} ran rings around the enemy{AD}faster than the eye could follow!{B1}
+
+---- $214
+  {BD}{B8} went dizzy{AD}and became confused!{B1}
+
+---- $215
+  {BC}{B7} tried to tell everyone{AD}an amusing story!{B1}{AD}{BC}But it came out badly told!{B1}
+
+---- $216
+  {BC}{B7} rolled about like a ball!{B1}
+
+---- $217
+  {BC}{B7} started playing with fire!{B1}
+
+---- $218
+  Oh no! The fire has spread!{B1}{AD}{BC}Pillars of flame rise across the whole field!{B1}
+
+---- $219
+  {BC}{B7} suddenly started skipping rope!{B1}
+
+---- $21A
+  The ground shakes all around!{B1}
+
+---- $21F
+  {BC}{B7} pretended to explode!{AD}The enemy stops dead for an instant......{B1}{AD}But nothing happened at all!{AD}{B7} is grinning away.{B1}
+
+---- $220
+  {BC}{BC}{B7} solemnly began a frightening story.{AD}Long, long ago, in a certain castle......{B1}{AD}It was a truly terrifying tale!{B1}
+
+---- $221
+  {BC}{B8} came out in goose bumps!{B1}
+
+---- $222
+  {BC}{B7} hit upon the ultimate game!{AD}It was to become something else entirely!{AD}{B7} changed into something dreadful!{B1}{AD}{BC}The dreadful thing breathed a freezing blizzard!{B1}
+
+---- $223
+  {BC}{B7} turned back to normal!{B1}
+
+---- $224
+  {BC}{B7} hit upon a brand new dance{AD}out of nowhere!{AD}{B7}:Rattara rattara tararillaraan{B1}
+
+---- $225
+  A strange mist has begun to gather!{B1}{AD}{BC}All magic has lost its power!{B1}
+
+---- $226
+  {BC}{B7} went all soft and squelchy{AD}and started to swell!{B1}{AD}{BC}Bigger and bigger! Bigger still!{AD}        Paaaaah!!!{B1}
+
+---- $227
+  {BD}{B8} was blown clean away!{B1}
+
+---- $228
+  {BD}{B8} held its ground!{B1}
+
+---- $229
+  {BC}{B7} went squelch squelch and turned back!{B1}
+
+---- $232
+  {BC}{B7} closed {BA} eyes and began to pray!{AD}An evil power floods the field!{B1}
+
+---- $233
+  {BD}{B8}'s magic power is recovering before your eyes!{B1}

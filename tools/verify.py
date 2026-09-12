@@ -329,6 +329,49 @@ class Rom(object):
         return out
 
 
+BAT_TBL, BAT_PAY = 0x015AD1, 0x36DEBD
+BAT_GROUPS, BAT_PER = 76, 8
+BAT_TERMS = (0xAC, 0xAE)
+
+
+def battle_pool(rom):
+    """(id, raw bytes, is it displaying its own ID) for all 608 messages.
+
+    Read the way $C0:27CD reads it. The identifier test is done on the bytes
+    rather than on decoded text: an unwritten message is the encoding of its
+    own ID in hex behind a B or M, and those are letters and digits, so no
+    dictionary code can appear in one.
+    """
+    d = rom.d
+    inv = {}
+    for i, c in enumerate('0123456789'):
+        inv[c] = 0x02 + i
+    for i, c in enumerate('ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
+        inv[c] = 0x10 + i
+
+    def ident(mid, pre):
+        return bytes(inv[c] for c in '%s%03X' % (pre, mid))
+
+    def ptr(n):
+        o = BAT_TBL + n * 3
+        return d[o] | d[o + 1] << 8 | d[o + 2] << 16
+
+    out = []
+    for g in range(BAT_GROUPS):
+        p = BAT_PAY + ptr(g)
+        for k in range(BAT_PER):
+            raw = bytearray()
+            while p < len(d) and d[p] not in BAT_TERMS:
+                raw.append(d[p])
+                p += 1
+            p += 1
+            mid = g * BAT_PER + k
+            raw = bytes(raw)
+            shown = any(ident(mid, c) in raw for c in ('B', 'M'))
+            out.append((mid, raw, shown))
+    return out
+
+
 def line(ok, text, detail=''):
     print('  [%s] %s%s' % ('PASS' if ok else 'FAIL', text,
                            ('   %s' % detail) if detail else ''))
@@ -565,6 +608,27 @@ def main(argv):
              GOLD_DESC_AT <= i < GOLD_DESC_AT + 14]
     bad += line(not moved, 'no other window descriptor changed',
                 '%d bytes differ elsewhere in the table' % len(moved))
+    print()
+
+    # 5b -------------------------------------------------------------------
+    # The battle message pool, the third string system. The promise here is
+    # the same one made about their dialogue: a message of theirs may not
+    # move. Only messages that displayed their own ID are allowed to differ.
+    b_base, b_built = battle_pool(base), battle_pool(built)
+    bad += line(len(b_base) == BAT_GROUPS * BAT_PER
+                and len(b_built) == BAT_GROUPS * BAT_PER,
+                'battle pool reads as %d messages in both'
+                % (BAT_GROUPS * BAT_PER),
+                '%d in, %d out' % (len(b_base), len(b_built)))
+    was_ph = set(mid for mid, raw, shown in b_base if shown)
+    still = [mid for mid, raw, shown in b_built if shown]
+    bad += line(not still, 'battle pool: no message displays its own ID',
+                '%d of %d unwritten in the source, %d left'
+                % (len(was_ph), len(b_base), len(still)))
+    moved = [a[0] for a, b in zip(b_base, b_built)
+             if a[1] != b[1] and a[0] not in was_ph]
+    bad += line(not moved, 'battle pool: not one message of theirs changed',
+                '%d would have' % len(moved))
     print()
 
     # 6 --------------------------------------------------------------------

@@ -5,6 +5,8 @@
 
   (none)             how many messages there are, how many are unwritten, and
                      where the unwritten ones cluster
+  --battle           the battle message pool, a third string system that is
+                     byte-encoded rather than Huffman-coded
   --placeholders     list every message that displays its own ID
   --breaks           the page-break invariant: what follows each page break
   --quotes           how often their speaker-tag quote actually follows a tag
@@ -444,6 +446,66 @@ def roundtrip(rom):
     return 1
 
 
+BAT_TBL, BAT_PAY = 0x015AD1, 0x36DEBD
+BAT_GROUPS, BAT_PER = 76, 8
+BAT_TERMS = (0xAC, 0xAE)
+
+
+def battle(rom):
+    """The battle message pool: a third string system, byte-encoded.
+
+    Read exactly the way $C0:27CD reads it. Its pointer table ends where the
+    Huffman message table at $C1:5BB5 begins, which is the reason nothing in
+    this project could see it until it was looked for directly.
+    """
+    import os
+    import re as _re
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import nametable as NT
+    d = rom.d
+    t = NT.Table(rom.path)
+
+    def ptr(n):
+        o = BAT_TBL + n * 3
+        return d[o] | d[o + 1] << 8 | d[o + 2] << 16
+
+    msgs = []
+    for g in range(BAT_GROUPS):
+        p = BAT_PAY + ptr(g)
+        for k in range(BAT_PER):
+            raw = bytearray()
+            while p < len(d) and d[p] not in BAT_TERMS:
+                raw.append(d[p])
+                p += 1
+            p += 1
+            msgs.append((g * BAT_PER + k, bytes(raw)))
+
+    print('battle message pool')
+    print('=' * 78)
+    identify(rom)
+    print()
+    print('  pointer table at 0x%06X                    %6d entries'
+          % (BAT_TBL, BAT_GROUPS))
+    print('  payload base                              0x%06X' % BAT_PAY)
+    print('  messages per entry                        %8d' % BAT_PER)
+    print('  messages                                  %8d' % len(msgs))
+    print()
+    unwritten = []
+    for mid, raw in msgs:
+        vis = _re.sub(r'<[0-9A-F]{2}>', '', t.decode(raw)).strip()
+        m = _re.fullmatch(r'([BM])([0-9A-F]{2,4})', vis)
+        if m and int(m.group(2), 16) == mid:
+            unwritten.append((mid, vis))
+    print('  messages displaying their own ID          %8d' % len(unwritten))
+    if unwritten:
+        print()
+        print('  The same ID rule as the message script: an unwritten message')
+        print('  shows its own ID in hex behind a B or M prefix.')
+        print()
+        for mid, vis in unwritten:
+            print('     $%03X   %s' % (mid, vis))
+
+
 def main(argv):
     if not argv or argv[0] in ('-h', '--help'):
         print(__doc__.strip())
@@ -452,6 +514,8 @@ def main(argv):
     rest = argv[1:]
     if not rest:
         report(rom)
+    elif rest[0] == '--battle':
+        battle(rom)
     elif rest[0] == '--placeholders':
         placeholders(rom)
     elif rest[0] == '--breaks':

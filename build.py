@@ -5,7 +5,8 @@ Build the DQ6 Script Refill ROM from a stock NoPrgress ROM.
 This is the script that produced the released patch. It is published so the
 build is reproducible and so anyone can see exactly what is written where.
 
-  usage:  build.py <noprgress.sfc> <candidates-en.txt> <nametable-en.txt> <out.sfc>
+  usage:  build.py <noprgress.sfc> <candidates-en.txt> <nametable-en.txt>
+                   <battle-en.txt> <out.sfc>
 
 Everything it needs is either in this repository or in this file, so a stock
 NoPrgress ROM plus the two text files reproduces the released ROM. Nothing is
@@ -62,6 +63,19 @@ NAMETBL = 0x011100
 GROUPS = 870
 HDR = 0x00FFC0
 FREE_END = 0x3B874B      # measured: no reads observed in $FB:2133-$FB:874B
+
+# The battle message pool: a third string system, byte-encoded rather than
+# Huffman, read by $C0:27CD. Its pointer table ends exactly where the Huffman
+# message table begins, which is how it stayed hidden. See docs/BATTLE-POOL.md.
+BAT_TBL = 0x015AD1       # $C1:5AD1, 76 entries of 3 bytes
+BAT_PAY = 0x36DEBD       # $F6:DEBD; a table value is the offset from here
+BAT_END = 0x37175B       # the Huffman payload starts here: a hard boundary
+BAT_GROUPS, BAT_PER = 76, 8
+BAT_TERMS = (0xAC, 0xAE)
+# Spill region for entries that no longer fit below BAT_END. Measured: the
+# ROM's own tail padding, $FF to the last byte of the image, with no
+# long-addressing opcode anywhere in the ROM referring into it.
+BAT_SPILL, BAT_SPILL_END = 0x3FF10B, 0x400000
 
 
 class Rom:
@@ -984,7 +998,112 @@ def read_candidates(path):
     return out
 
 
-def main(src, cand, names_path, dst):
+def read_battle(path):
+    """message ID -> the English written for it, from battle-en.txt."""
+    rows, cur = {}, None
+    for line in io.open(path, encoding='utf-8'):
+        m = re.match(r'^---- \$([0-9A-F]{2,4})\s*$', line.strip())
+        if m:
+            cur = int(m.group(1), 16)
+            continue
+        if cur is None:
+            continue
+        s = line.rstrip('\n')
+        if not s.strip() or s.strip().startswith('--'):
+            continue
+        if s.startswith('  '):
+            rows[cur] = s.strip()
+            cur = None
+    return rows
+
+
+def _bat_encode(text, inv, lig):
+    """Encode one battle message. {XX} is a control byte written literally."""
+    out = bytearray()
+    for part in re.split(r'(\{[0-9A-F]{2}\})', text):
+        if not part:
+            continue
+        m = re.fullmatch(r'\{([0-9A-F]{2})\}', part)
+        if m:
+            out.append(int(m.group(1), 16))
+        else:
+            out += _nt_encode(part, inv, lig)
+    return bytes(out)
+
+
+def apply_battle(rom, rows):
+    """Write the authored battle messages and repack the pool.
+
+    The pool is read back exactly the way $C0:27CD reads it, every message is
+    replaced or kept, and the whole thing is repacked with its pointer table
+    rewritten. A message is only written over if it currently displays its own
+    ID, so this can never overwrite a line of theirs.
+    """
+    inv, lig = _nt_encoder(rom)
+
+    def ptr(n):
+        o = BAT_TBL + n * 3
+        return rom[o] | rom[o + 1] << 8 | rom[o + 2] << 16
+
+    msgs = []
+    for g in range(BAT_GROUPS):
+        p = BAT_PAY + ptr(g)
+        for _k in range(BAT_PER):
+            raw = bytearray()
+            while p < len(rom) and rom[p] not in BAT_TERMS:
+                raw.append(rom[p])
+                p += 1
+            if p >= len(rom):
+                raise SystemExit('battle pool: entry %d runs off the ROM' % g)
+            msgs.append([bytes(raw), rom[p]])
+            p += 1
+
+    for mid, text in sorted(rows.items()):
+        if not 0 <= mid < len(msgs):
+            raise SystemExit('battle message $%03X is outside the pool' % mid)
+        raw = msgs[mid][0]
+        shown = [_nt_encode('%s%03X' % (c, mid), inv, lig) for c in ('B', 'M')]
+        if not any(s in raw for s in shown):
+            raise SystemExit(
+                'battle message $%03X does not display its own identifier.\n'
+                '  found %s\n'
+                '  Refusing to write: this build only fills messages that were '
+                'left unwritten.' % (mid, raw.hex(' ')))
+        msgs[mid][0] = _bat_encode(text, inv, lig)
+
+    blobs = []
+    for g in range(BAT_GROUPS):
+        b = bytearray()
+        for k in range(BAT_PER):
+            raw, term = msgs[g * BAT_PER + k]
+            b += raw
+            b.append(term)
+        blobs.append(bytes(b))
+
+    regions = [[BAT_PAY, BAT_END], [BAT_SPILL, BAT_SPILL_END]]
+    ri, cur, addr, spilled = 0, BAT_PAY, [], 0
+    for b in blobs:
+        while cur + len(b) > regions[ri][1]:
+            ri += 1
+            if ri >= len(regions):
+                raise SystemExit('battle pool does not fit in either region')
+            cur = regions[ri][0]
+        if ri:
+            spilled += 1
+        addr.append(cur)
+        rom[cur:cur + len(b)] = b
+        cur += len(b)
+
+    for g in range(BAT_GROUPS):
+        v = addr[g] - BAT_PAY
+        o = BAT_TBL + g * 3
+        rom[o], rom[o + 1], rom[o + 2] = v & 0xFF, (v >> 8) & 0xFF, (v >> 16) & 0xFF
+
+    used = sum(len(b) for b in blobs)
+    return len(rows), used, spilled, cur
+
+
+def main(src, cand, names_path, battle_path, dst):
     rom = bytearray(io.open(src, 'rb').read())
     src_crc = zlib.crc32(bytes(rom)) & 0xFFFFFFFF
     print('source ROM: %d bytes, CRC32 %08X' % (len(rom), src_crc))
@@ -1004,6 +1123,11 @@ def main(src, cand, names_path, dst):
     print('name-table entries written: %d' % n_names)
     print('name-table misspellings of theirs corrected: %d' % n_nt_typo)
     print('item names trimmed of a trailing $%02X: %d' % (TRIM_STAR, n_trim))
+
+    n_bat, bat_used, bat_spill, bat_end = apply_battle(rom, read_battle(battle_path))
+    print('battle messages written: %d' % n_bat)
+    print('battle pool: %d bytes, %d entries spilled to the ROM tail, ends at '
+          '0x%06X' % (bat_used, bat_spill, bat_end))
 
     r = Rom(bytes(io.open(src, 'rb').read()))
     msgs = r.decode_all()
@@ -1097,7 +1221,7 @@ def main(src, cand, names_path, dst):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 6:
         print(__doc__.strip().split('\n\n')[1])
         sys.exit(2)
     main(*sys.argv[1:])
