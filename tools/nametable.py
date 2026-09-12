@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# nametable.py - read the DQ6 name table out of a ROM and check it.
+# https://github.com/RadMageIRL/DQVI_SCRIPT_REFILL
+# MIT licensed. Covers this tooling only, not the game, the
+# NoPrgress translation, or any ROM.
+# Copyright (c) 2026 RadMageIRL
 """Read the DQ6 name table out of a ROM and check what the docs claim about it.
 
   usage:  nametable.py <rom.sfc> [option]
@@ -26,6 +31,9 @@ the charset and the dictionary all come out of the ROM, and --dictionary shows
 a second, independent measurement agreeing with the first.
 
 Standard-library Python 3 only. No dependencies, nothing to install.
+
+Part of the DQ6 Script Refill project by RadMageIRL.
+https://github.com/RadMageIRL/DQVI_SCRIPT_REFILL
 """
 import io
 import os
@@ -41,7 +49,9 @@ TERMINATOR = 0xAC
 
 # The dictionary expander at $C3:FB23. Its CMP #imm gives the lowest
 # dictionary code and its LDA long gives the table, so both are read rather
-# than assumed. $FF terminates the table.
+# than assumed. $FF terminates the table. RadMageIRL reconstructed this table
+# by hand once and ten of its fifty codes were wrong, which broke 131 entries
+# in a way that still read as fluent English. Read it from the ROM.
 DICT_CMP = 0x03FB25
 DICT_PTR = 0x03FB30
 

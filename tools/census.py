@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# census.py - census the DQ6 message script and the battle message pool.
+# https://github.com/RadMageIRL/DQVI_SCRIPT_REFILL
+# MIT licensed. Covers this tooling only, not the game, the
+# NoPrgress translation, or any ROM.
+# Copyright (c) 2026 RadMageIRL
 """Census the DQ6 message script in a ROM, and check the claims made about it.
 
   usage:  census.py <rom.sfc> [option]
@@ -32,6 +37,9 @@ falls back to a space instead produces legal-looking output and hid an entire
 punctuation system in this ROM for weeks.
 
 Standard-library Python 3 only. No dependencies, nothing to install.
+
+Part of the DQ6 Script Refill project by RadMageIRL.
+https://github.com/RadMageIRL/DQVI_SCRIPT_REFILL
 """
 import io
 import os
@@ -446,6 +454,10 @@ def roundtrip(rom):
     return 1
 
 
+# The battle message pool. Read out of the loader at $C0:27CD by RadMageIRL,
+# not inferred: the table address is the operand there and the payload base is
+# the constant it adds. The table ends on the first byte of the Huffman
+# message table at $C1:5BB5, which is why every tool here walked past it.
 BAT_TBL, BAT_PAY = 0x015AD1, 0x36DEBD
 BAT_GROUPS, BAT_PER = 76, 8
 BAT_TERMS = (0xAC, 0xAE)

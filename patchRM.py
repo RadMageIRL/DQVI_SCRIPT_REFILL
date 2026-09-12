@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# patchRM.py - apply the DQ6 Script Refill patch without needing Flips.
+# https://github.com/RadMageIRL/DQVI_SCRIPT_REFILL
+# MIT licensed. Covers this tooling only, not the game, the
+# NoPrgress translation, or any ROM.
+# Copyright (c) 2026 RadMageIRL
 """Apply the DQ6 Script Refill patch without needing Flips.
 
   usage:  patchRM.py <DQ6 NoPrgress.sfc>
@@ -23,6 +28,9 @@ Standard-library Python 3 only. No dependencies, nothing to install.
 The result is identical to what Flips produces from the same patch:
 
     CRC32 A4532B94   SHA-1 170308cb12b3a70754cd2ef1d1a59505c2895a90
+
+Part of the DQ6 Script Refill project by RadMageIRL.
+https://github.com/RadMageIRL/DQVI_SCRIPT_REFILL
 """
 import glob
 import hashlib

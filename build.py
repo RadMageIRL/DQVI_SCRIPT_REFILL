@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# build.py - build the DQ6 Script Refill ROM from a stock NoPrgress ROM.
+# https://github.com/RadMageIRL/DQVI_SCRIPT_REFILL
+# MIT licensed. Covers this tooling only, not the game, the
+# NoPrgress translation, or any ROM.
+# Copyright (c) 2026 RadMageIRL
 """
 Build the DQ6 Script Refill ROM from a stock NoPrgress ROM.
 
@@ -53,6 +58,9 @@ Message system, decoded from the ROM at $C0:2B69 onward:
   - Messages end on $00AC or $00AE and each message keeps its own terminator.
 
 Standard library only. Writes one file, the output ROM.
+
+Part of the DQ6 Script Refill project by RadMageIRL.
+https://github.com/RadMageIRL/DQVI_SCRIPT_REFILL
 """
 import io, re, sys, hashlib, zlib
 
@@ -62,19 +70,25 @@ TERM = (0x00AC, 0x00AE)
 NAMETBL = 0x011100
 GROUPS = 870
 HDR = 0x00FFC0
-FREE_END = 0x3B874B      # measured: no reads observed in $FB:2133-$FB:874B
+# Measured by RadMageIRL by watching the region during play: no reads were
+# observed anywhere in $FB:2133-$FB:874B, which is what makes it usable.
+FREE_END = 0x3B874B
 
 # The battle message pool: a third string system, byte-encoded rather than
 # Huffman, read by $C0:27CD. Its pointer table ends exactly where the Huffman
-# message table begins, which is how it stayed hidden. See docs/BATTLE-POOL.md.
+# message table begins, which is how it stayed hidden until RadMageIRL went
+# looking for it directly. Addresses below are read out of that loader, not
+# guessed. See docs/BATTLE-POOL.md.
 BAT_TBL = 0x015AD1       # $C1:5AD1, 76 entries of 3 bytes
 BAT_PAY = 0x36DEBD       # $F6:DEBD; a table value is the offset from here
 BAT_END = 0x37175B       # the Huffman payload starts here: a hard boundary
 BAT_GROUPS, BAT_PER = 76, 8
 BAT_TERMS = (0xAC, 0xAE)
-# Spill region for entries that no longer fit below BAT_END. Measured: the
-# ROM's own tail padding, $FF to the last byte of the image, with no
-# long-addressing opcode anywhere in the ROM referring into it.
+# Spill region for entries that no longer fit below BAT_END. Measured by
+# RadMageIRL before a byte was written to it: the ROM's own tail padding, $FF
+# to the last byte of the image, with no long-addressing opcode anywhere in
+# the ROM referring into it. The same check cleared the dead Japanese remnant
+# after the old pool, which is unreachable through the 76-entry table.
 BAT_SPILL, BAT_SPILL_END = 0x3FF10B, 0x400000
 
 
@@ -190,7 +204,13 @@ GOLD_DESC_NOW = bytes([0x01, 0x01, 0x09])
 
 # The load screen's save-slot window, descriptor 141 in the same table. Moving
 # it two cells left and widening it by two gives the location name 13 cells
-# instead of 11, without moving its right edge. See docs/SAVE-SLOT-WINDOW.md.
+# instead of 11, without moving its right edge.
+#
+# 11 and 13 are measured, not estimated: RadMageIRL built a throwaway ROM with
+# 1234567890ABCDEFGHIJ written into the location entry, so each character
+# names its own position, and read the last visible one off the screen before
+# and after. The window cannot go further either way - either edge lands where
+# overscan cuts it, on a CRT and emulated alike. See docs/SAVE-SLOT-WINDOW.md.
 SLOT_DESC_AT = 0x058312          # descriptor 141, bytes 0-2: X, Y, W
 SLOT_DESC_WAS = bytes([0x03, 0x06, 0x1C])
 SLOT_DESC_NOW = bytes([0x01, 0x06, 0x1E])

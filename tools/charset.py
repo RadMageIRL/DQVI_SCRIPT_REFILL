@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# charset.py - read the DQ6 text encoding out of a ROM.
+# https://github.com/RadMageIRL/DQVI_SCRIPT_REFILL
+# MIT licensed. Covers this tooling only, not the game, the
+# NoPrgress translation, or any ROM.
+# Copyright (c) 2026 RadMageIRL
 """Read the DQ6 text encoding out of a ROM: Huffman trees and the byte table.
 
   usage:  charset.py <rom.sfc> [option]
@@ -23,12 +28,18 @@ written whatever the font contains. "Does not appear in their text" and "cannot
 be written" are different claims and only the second is a constraint.
 
 Standard-library Python 3 only. No dependencies, nothing to install.
+
+Part of the DQ6 Script Refill project by RadMageIRL.
+https://github.com/RadMageIRL/DQVI_SCRIPT_REFILL
 """
 import io
 import os
 import sys
 import zlib
 
+# The tree root differs per ROM, so it is read from the code rather than
+# hardcoded - RadMageIRL found this the hard way when a second ROM decoded to
+# plausible garbage with the first ROM's root.
 ROOT_AT = 0x002BFB         # operand of the LDX #imm at $C0:2BFA
 TREE0 = 0x0167BE           # bit clear
 TREE1 = 0x01700E           # bit set

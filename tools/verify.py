@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# verify.py - check a patched DQ6 ROM against the one it was built from.
+# https://github.com/RadMageIRL/DQVI_SCRIPT_REFILL
+# MIT licensed. Covers this tooling only, not the game, the
+# NoPrgress translation, or any ROM.
+# Copyright (c) 2026 RadMageIRL
 """Check a patched DQ6 ROM against the one it was built from.
 
   usage:  verify.py <stock NoPrgress.sfc> <patched.sfc>
@@ -29,6 +34,9 @@ name table is repacked wholesale, so almost every byte in it moves; comparing
 bytes tells you nothing at all. Resolving IDs tells you what changed on screen.
 
 Standard-library Python 3 only. No dependencies, nothing to install.
+
+Part of the DQ6 Script Refill project by RadMageIRL.
+https://github.com/RadMageIRL/DQVI_SCRIPT_REFILL
 """
 import io
 import os
@@ -79,13 +87,17 @@ GOLD_DESC_NOW = bytes([0x01, 0x01, 0x09])
 # The animal counter. English has no counter words, so this entry is written
 # empty, which is the translation's own convention: 75 of their entries are
 # blank where the Japanese has content and none of the Japanese ones are.
+# Counted by RadMageIRL across both tables; the assertion below was checked
+# against a build where it fails, so a pass here means something.
 COUNTER_ID = 0x00F5
 
 HDR = 0x00FFC0
 
 # The redundant speech marker. The engine draws the real mark itself in every
 # box that carries speech; $0559 is the one symbol in their script with no
-# English glyph behind it, and it is removed wherever it appears.
+# English glyph behind it, and it is removed wherever it appears. It took
+# RadMageIRL three releases to settle: it round-trips cleanly and passes every
+# structural check, so only a screen capture can show it is wrong.
 MARKER = 0x0559
 
 # --- their spelling ---------------------------------------------------------
@@ -94,6 +106,8 @@ MARKER = 0x0559
 # is deliberate and it is the point: this file and the build state the same
 # claim separately, so if one is edited and the other is not, verification
 # fails rather than agreeing with itself. Do not import the list from build.py.
+# The two-tier rule below is RadMageIRL's, and tier A is checked against the
+# stock ROM rather than asserted.
 #
 # Tier A means the ROM attests the corrected spelling elsewhere in their own
 # writing. That is checked below against the STOCK ROM, not asserted: if an
