@@ -658,6 +658,7 @@ guess costs a commit. An identifier on screen costs a player.
 - **Enix** - *Dragon Quest VI: Maboroshi no Daichi*, 1995.
 - The **RetroGameTalk** user GwardoJones whose report first established that the missing
   messages were dialogue rather than menu strings, which is what started this.
+- ioev - Conducted thorough playtesting that uncovered critical text placeholders, typos, and translation gaps in the Battle Message Pool.
 
 ## License
 
